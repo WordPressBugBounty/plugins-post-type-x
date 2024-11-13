@@ -373,25 +373,22 @@ function ic_system_status() {
                 </thead>
 				<?php
 				$active_theme = wp_get_theme();
+				if ( $active_theme->exists() ) {
 				?>
                 <tbody>
                 <tr>
                     <td><?php _e( 'Name', 'post-type-x' ); ?>:</td>
-                    <td><?php echo $active_theme->Name; ?></td>
+                    <td><?php echo $active_theme->display( 'Name' ); ?></td>
                 </tr>
                 <tr>
                     <td><?php _e( 'Version', 'post-type-x' ); ?>:</td>
                     <td><?php
-						echo $active_theme->Version;
-
-						if ( ! empty( $theme_version_data['version'] ) && version_compare( $theme_version_data['version'], $active_theme->Version, '!=' ) ) {
-							echo ' &ndash; <strong style="color:red;">' . $theme_version_data['version'] . ' ' . __( 'is available', 'post-type-x' ) . '</strong>';
-						}
+						echo $active_theme->display( 'Version' );
 						?></td>
                 </tr>
                 <tr>
                     <td><?php _e( 'Author URL', 'post-type-x' ); ?>:</td>
-                    <td><?php echo $active_theme->{'Author URI'}; ?></td>
+                    <td><?php echo $active_theme->display( 'AuthorURI' ); ?></td>
                 </tr>
                 <tr>
                     <td><?php _e( 'Child Theme', 'post-type-x' ); ?>:</td>
@@ -400,22 +397,25 @@ function ic_system_status() {
 						?></td>
                 </tr>
 				<?php
-				if ( is_child_theme() ) :
-					$parent_theme = wp_get_theme( $active_theme->Template );
+				if ( is_child_theme() && $active_theme->get( 'Template' ) ) {
+					$parent_theme = wp_get_theme( $active_theme->get_template() );
 					?>
                     <tr>
                         <td><?php _e( 'Parent Theme Name', 'post-type-x' ); ?>:</td>
-                        <td><?php echo $parent_theme->Name; ?></td>
+                        <td><?php echo $parent_theme->display( 'Name' ); ?></td>
                     </tr>
                     <tr>
                         <td><?php _e( 'Parent Theme Version', 'post-type-x' ); ?>:</td>
-                        <td><?php echo $parent_theme->Version; ?></td>
+                        <td><?php echo $parent_theme->display( 'Version' ); ?></td>
                     </tr>
                     <tr>
                         <td><?php _e( 'Parent Theme Author URL', 'post-type-x' ); ?>:</td>
-                        <td><?php echo $parent_theme->{'Author URI'}; ?></td>
+                        <td><?php echo $parent_theme->display( 'AuthorURI' ); ?></td>
                     </tr>
-				<?php endif ?>
+					<?php
+				}
+				}
+				?>
                 <tr>
                     <td><?php echo sprintf( __( '%s Support', 'post-type-x' ), IC_CATALOG_PLUGIN_NAME ); ?>
                         :

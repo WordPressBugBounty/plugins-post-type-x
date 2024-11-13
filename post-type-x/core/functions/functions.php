@@ -317,7 +317,7 @@ function get_product_catalog_page_title() {
 		} else {
 			$title = $the_tax->name;
 		}
-	} else if ( is_ic_product_search() ) {
+	} else if ( is_ic_product_search() && isset( $_GET['s'] ) ) {
 		$search_keyword = apply_filters( 'ic_search_keayword', wp_unslash( strval( $_GET['s'] ) ) );
 		if ( ! empty( $search_keyword ) ) {
 			$title = __( 'Search Results for:', 'post-type-x' ) . ' <span class="ic-search-keyword">' . wp_unslash( esc_html( $search_keyword ) ) . '</span>';
@@ -386,7 +386,15 @@ add_action( 'single_product_end', 'show_related_categories', 10, 3 );
 function show_related_categories( $post, $single_names, $taxonomy_name ) {
 	$settings = get_multiple_settings();
 	if ( $settings['related'] == 'categories' ) {
-		echo get_related_categories( $post->ID, $single_names, $taxonomy_name );
+		if ( ! empty( $post->ID ) ) {
+			$product_id = $post->ID;
+		} else if ( is_numeric( $post ) ) {
+			$product_id = $post;
+		}
+		if ( empty( $product_id ) ) {
+			return;
+		}
+		echo get_related_categories( $product_id, $single_names, $taxonomy_name );
 	} else if ( $settings['related'] == 'products' ) {
 		echo get_related_products( null, true );
 	}
@@ -1370,30 +1378,36 @@ function get_current_screen_post_type() {
 	return apply_filters( 'ic_current_post_type', $post_type );
 }
 
-function ic_strtolower( $string ) {
-	if ( function_exists( 'mb_strtolower' ) ) {
-		return mb_strtolower( $string );
-	} else {
-		return strtolower( $string );
+if ( ! function_exists( 'ic_strtolower' ) ) {
+	function ic_strtolower( $string ) {
+		if ( function_exists( 'mb_strtolower' ) ) {
+			return mb_strtolower( $string );
+		} else {
+			return strtolower( $string );
+		}
 	}
 }
 
-function ic_strtoupper( $string ) {
-	if ( function_exists( 'mb_strtoupper' ) ) {
-		return mb_strtoupper( $string );
-	} else {
-		return strtoupper( $string );
+if ( ! function_exists( 'ic_strtoupper' ) ) {
+
+	function ic_strtoupper( $string ) {
+		if ( function_exists( 'mb_strtoupper' ) ) {
+			return mb_strtoupper( $string );
+		} else {
+			return strtoupper( $string );
+		}
 	}
 }
+if ( ! function_exists( 'ic_substr' ) ) {
 
-function ic_substr( $string, $start, $length ) {
-	if ( function_exists( 'mb_substr' ) ) {
-		return mb_substr( $string, $start, intval( $length ) );
-	} else {
-		return substr( $string, $start, intval( $length ) );
+	function ic_substr( $string, $start, $length ) {
+		if ( function_exists( 'mb_substr' ) ) {
+			return mb_substr( $string, $start, intval( $length ) );
+		} else {
+			return substr( $string, $start, intval( $length ) );
+		}
 	}
 }
-
 /**
  * Returns current product ID
  *
@@ -1625,7 +1639,10 @@ if ( ! function_exists( 'ic_is_function_disabled' ) ) {
 if ( ! function_exists( 'ic_set_time_limit' ) ) {
 
 	function ic_set_time_limit( $limit = 0 ) {
-		if ( function_exists( 'set_time_limit' ) && ! ic_is_function_disabled( 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) {
+		if ( filter_var( ini_get( 'safe_mode' ), FILTER_VALIDATE_BOOLEAN ) ) {
+			return;
+		}
+		if ( function_exists( 'set_time_limit' ) && ! ic_is_function_disabled( 'set_time_limit' ) ) {
 			@set_time_limit( $limit );
 		}
 	}

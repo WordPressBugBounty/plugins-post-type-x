@@ -63,9 +63,15 @@ jQuery(document).ready(function () {
     jQuery('body').on('click', ic_click_elements, function (e) {
         var filter = jQuery(this);
         var form_sort_bar = filter.closest('.product-sort-bar');
-        if (form_sort_bar.length) {
+        let pagination = filter.closest('.product-archive-nav');
+        if (form_sort_bar.length > 0) {
             ic_filters_bar = form_sort_bar;
             ic_product_list = form_sort_bar.nextAll('.product-list').first();
+        } else if (pagination.length > 0) {
+            let pagination_product_list = pagination.prev('.product-list');
+            if (pagination_product_list.length > 0) {
+                ic_product_list = pagination_product_list.first();
+            }
         }
         if (!ic_ajax_product_list_on_screen()) {
             return true;
@@ -92,7 +98,7 @@ jQuery(document).ready(function () {
             replace_url = filter.attr('href');
         }
         var scroll = false;
-        if (filter.closest('.product-archive-nav').length) {
+        if (pagination.length > 0) {
             scroll = true;
         }
         ic_ajax_update_product_listing(form_data, replace_url, '', scroll);
@@ -139,6 +145,7 @@ function ic_ajax_update_product_listing(form_data, url_replace, change_only, scr
         'is_search': ic_ajax.is_search,
         'security': ic_ajax.nonce
     };
+
     jQuery.ic.doAction('ic_self_submit_before');
     var ic_ajax_elements = jQuery('.ic_ajax').not('.product-sort-bar .ic_ajax');
     if (ic_filters_bar.length && change_only === '') {
@@ -190,7 +197,6 @@ function ic_ajax_update_product_listing(form_data, url_replace, change_only, scr
                 return false;
             }
             var listing = jQuery(response['product-listing']).not('form, div.product-sort-bar, .reset-filters');
-            //jQuery( ".product-list" ).replaceWith( listing );
             ic_product_list.animate({opacity: 0}, 'fast', function () {
                 listing = listing.hide();
                 jQuery('.product-list').removeClass('active-product-listing');

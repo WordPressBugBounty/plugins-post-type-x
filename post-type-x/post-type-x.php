@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.7.8
+ * Version: 1.7.9
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x
@@ -91,7 +91,7 @@ function ic_post_type_x_extensions( $param ) {
  */
 function type_x_free_extensions( $existing_extensions = null ) {
 	if ( false === ( $extensions = get_site_transient( 'implecode_free_extensions_data' ) ) ) {
-		$extensions = wp_remote_get( 'http://app.implecode.com/index.php?provide_extensions&free=1' );
+		$extensions = wp_remote_get( 'https://app.implecode.com/index.php?provide_extensions&free=1' );
 		if ( ! is_wp_error( $extensions ) && 200 == wp_remote_retrieve_response_code( $extensions ) ) {
 			$extensions = json_decode( wp_remote_retrieve_body( $extensions ), true );
 			if ( $extensions ) {

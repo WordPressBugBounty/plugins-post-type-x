@@ -123,7 +123,7 @@ jQuery(document).ready(function ($) {
         }
         ic_adjust_responsive_filters_height();
     });
-    jQuery('.ic-icon-url.ic-show-content').on('click', function (e) {
+    jQuery('body').on('click', '.ic-icon-url.ic-show-content', function (e) {
         e.preventDefault();
         var hidden_content = jQuery(this).closest('.ic-bar-icon').find('.ic-icon-hidden-content');
         jQuery('.ic-icon-url').hide();

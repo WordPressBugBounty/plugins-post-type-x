@@ -26,7 +26,6 @@ class ic_catalog_ajax {
 
 	function ajax_get() {
 		if ( is_admin() && ! empty( $_POST['self_submit_data'] ) ) {
-			//check_ajax_referer( 'ic_ajax', 'security' );
 			$params = array();
 			parse_str( $_POST['self_submit_data'], $params );
 			$_GET = $params;
@@ -38,7 +37,6 @@ class ic_catalog_ajax {
 	 *
 	 */
 	function ajax_self_submit() {
-		//check_ajax_referer( 'ic_ajax', 'security' );
 		if ( isset( $_POST['self_submit_data'] ) ) {
 			ic_set_time_limit( 3 );
 			remove_filter( 'parse_tax_query', 'exclude_products_from_child_cat' );
@@ -69,7 +67,6 @@ class ic_catalog_ajax {
 			}
 			if ( isset( $params['page'] ) ) {
 				$ic_ajax_query_vars['paged'] = $params['page'];
-				//$ic_ajax_query_vars[ 'page' ] = $params[ 'page' ];
 			}
 			if ( ! empty( $ic_ajax_query_vars['post_type'] ) && ! ic_string_contains( $ic_ajax_query_vars['post_type'], 'al_product' ) ) {
 				$_GET['post_type'] = $ic_ajax_query_vars['post_type'];
@@ -81,13 +78,11 @@ class ic_catalog_ajax {
 			}
 			add_filter( 'parse_tax_query', 'exclude_products_from_child_cat' );
 			$posts = apply_filters( 'ic_catalog_ajax_posts', '', $ic_ajax_query_vars );
-			//$ic_ajax_query_vars['ic_ajax_query'] = true;
 			if ( empty( $posts ) ) {
 				foreach ( $ic_ajax_query_vars as $query_var_key => $query_var_value ) {
 					$GLOBALS['wp_query']->set( $query_var_key, $query_var_value );
 				}
 				$GLOBALS['wp_query']->get_posts();
-				//$posts = ic_wp_query( $ic_ajax_query_vars, false, true );
 				$posts = $GLOBALS['wp_query'];
 			}
 			if ( ! empty( $ic_ajax_query_vars['paged'] ) && $ic_ajax_query_vars['paged'] > 1 && empty( $posts->post ) ) {
@@ -97,9 +92,7 @@ class ic_catalog_ajax {
 				$return['remove_pagination'] = 1;
 				$GLOBALS['wp_query']->get_posts();
 				$posts = $GLOBALS['wp_query'];
-				//$posts                       = ic_wp_query( $ic_ajax_query_vars, false, true );
 			}
-			//$ic_ajax_query_vars['ic_ajax_query'] = false;
 			remove_filter( 'parse_tax_query', 'exclude_products_from_child_cat' );
 			if ( ! empty( $posts->query['post_type'] ) && count( $posts->query ) === 2 && ic_string_contains( $posts->query['post_type'], 'al_product' ) ) {
 				$posts->is_post_type_archive = true;
@@ -108,8 +101,6 @@ class ic_catalog_ajax {
 				global $shortcode_query;
 				$shortcode_query = $posts;
 			}
-			//$GLOBALS['wp_query']     = $posts;
-			//$GLOBALS['wp_the_query'] = $posts;
 			if ( ! empty( $ic_ajax_query_vars['archive_template'] ) ) {
 				$archive_template = $ic_ajax_query_vars['archive_template'];
 			} else {
@@ -160,7 +151,13 @@ class ic_catalog_ajax {
 			$_SERVER['REQUEST_URI'] = $old_request_url;
 			$encoded                = array();
 			foreach ( $return as $key => $string ) {
-				$encoded[ $key ] = mb_convert_encoding( $string, 'UTF-8', 'UTF-8' );
+				if ( function_exists( 'mb_convert_encoding' ) ) {
+					$encoded[ $key ] = mb_convert_encoding( $string, 'UTF-8', 'UTF-8' );
+				} else if ( function_exists( 'iconv' ) ) {
+					$encoded[ $key ] = iconv( 'UTF-8', 'UTF-8', $string );
+				} else {
+					$encoded[ $key ] = $string;
+				}
 			}
 			echo json_encode( $encoded );
 		}

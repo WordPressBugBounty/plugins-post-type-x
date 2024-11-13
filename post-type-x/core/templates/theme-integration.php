@@ -339,8 +339,11 @@ class ic_catalog_theme_integration {
 
 	static function get_real_integration_mode() {
 		$archive_multiple_settings = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
-		$theme                     = get_option( 'template' );
-		$prev_int                  = ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) ? $archive_multiple_settings['integration_type'] : 'simple';
+		if ( ! is_array( $archive_multiple_settings ) ) {
+			$archive_multiple_settings = array();
+		}
+		$theme    = get_option( 'template' );
+		$prev_int = ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) ? $archive_multiple_settings['integration_type'] : 'simple';
 		if ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) {
 			$archive_multiple_settings['integration_type'] = array();
 		}

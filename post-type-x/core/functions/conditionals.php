@@ -86,6 +86,7 @@ function ic_ic_catalog_archive( $query = null ) {
 		global $wp_query;
 		$this_query = $wp_query;
 	}
+	$is_wp_query_catalog_archive = 0;
 	if ( ! isset( $this_query->ic_ic_catalog_archive ) ) {
 		if ( empty( $query ) && ! ic_is_wp_query_available() ) {
 			ic_doing_it_wrong( __function__, 'Conditional called to early.', '3.0.61' );
@@ -93,12 +94,16 @@ function ic_ic_catalog_archive( $query = null ) {
 			return false;
 		}
 		if ( is_ic_product_listing( $query ) || is_ic_taxonomy_page( $query ) || is_ic_product_search( $query ) ) {
-			$this_query->ic_ic_catalog_archive = 1;
-		} else {
-			$this_query->ic_ic_catalog_archive = 0;
+			$is_wp_query_catalog_archive = 1;
 		}
+		global $wp_version;
+		if ( version_compare( $wp_version, 6.1, '>=' ) ) {
+			$this_query->ic_ic_catalog_archive = $is_wp_query_catalog_archive;
+		}
+	} else {
+		$is_wp_query_catalog_archive = $this_query->ic_ic_catalog_archive;
 	}
-	if ( ! empty( $this_query->ic_ic_catalog_archive ) ) {
+	if ( ! empty( $is_wp_query_catalog_archive ) ) {
 		return true;
 	} else {
 
@@ -122,6 +127,7 @@ function is_ic_taxonomy_page( $query = null ) {
 		global $wp_query;
 		$this_query = $wp_query;
 	}
+	$is_wp_query_taxonomy_page = 0;
 	if ( ! isset( $this_query->is_ic_taxonomy_page ) ) {
 		if ( empty( $query ) && ! ic_is_wp_query_available() ) {
 			ic_doing_it_wrong( __function__, 'Conditional called to early.', '3.0.61' );
@@ -130,21 +136,26 @@ function is_ic_taxonomy_page( $query = null ) {
 		}
 		$taxonomies = product_taxonomy_array();
 		if ( empty( $query ) && is_tax( $taxonomies ) ) {
-			$this_query->is_ic_taxonomy_page = 1;
+			$is_wp_query_taxonomy_page = 1;
 		} else if ( ! empty( $query ) ) {
 			if ( $query->is_tax( $taxonomies ) ) {
-				$this_query->is_ic_taxonomy_page = 1;
+				$is_wp_query_taxonomy_page = 1;
 			} else if ( current_filter() === 'parse_tax_query' && ! empty( $query->query ) && is_array( $query->query ) ) {
 				$query_keys = array_keys( array_filter( $query->query ) );
 				if ( array_intersect( $query_keys, $taxonomies ) ) {
 					return true;
 				}
 			}
-		} else {
-			$this_query->is_ic_taxonomy_page = 0;
 		}
+		global $wp_version;
+		if ( version_compare( $wp_version, 6.1, '>=' ) ) {
+			$this_query->is_ic_taxonomy_page = $is_wp_query_taxonomy_page;
+		}
+	} else {
+		$is_wp_query_taxonomy_page = $this_query->is_ic_taxonomy_page;
 	}
-	if ( ! empty( $this_query->is_ic_taxonomy_page ) ) {
+
+	if ( ! empty( $is_wp_query_taxonomy_page ) ) {
 		return true;
 	} else {
 		return false;
@@ -218,6 +229,7 @@ function is_ic_product_listing( $query = null ) {
 		global $wp_query;
 		$this_query = $wp_query;
 	}
+	$is_wp_query_product_listing = 0;
 	if ( ! isset( $this_query->is_ic_product_listing ) ) {
 		if ( empty( $query ) && ! ic_is_wp_query_available() ) {
 			ic_doing_it_wrong( __function__, 'Conditional called to early.', '3.0.61' );
@@ -225,14 +237,18 @@ function is_ic_product_listing( $query = null ) {
 			return false;
 		}
 		if ( empty( $query ) && ( ( is_post_type_archive( product_post_type_array() ) && ! is_search() ) || is_home_archive() || is_custom_product_listing_page() ) ) {
-			$this_query->is_ic_product_listing = 1;
+			$is_wp_query_product_listing = 1;
 		} else if ( ! empty( $query ) && is_object( $query ) && ( ( $query->is_post_type_archive( product_post_type_array() ) && ! $query->is_search() && ! is_ic_taxonomy_page( $query ) && ! is_ic_product_search( $query ) ) || is_home_archive( $query ) || is_custom_product_listing_page( $query ) ) ) {
-			$this_query->is_ic_product_listing = 1;
-		} else {
-			$this_query->is_ic_product_listing = 0;
+			$is_wp_query_product_listing = 1;
 		}
+		global $wp_version;
+		if ( version_compare( $wp_version, 6.1, '>=' ) ) {
+			$this_query->is_ic_product_listing = $is_wp_query_product_listing;
+		}
+	} else {
+		$is_wp_query_product_listing = $this_query->is_ic_product_listing;
 	}
-	if ( ! empty( $this_query->is_ic_product_listing ) ) {
+	if ( ! empty( $is_wp_query_product_listing ) ) {
 		return true;
 	} else {
 		return false;
@@ -688,6 +704,7 @@ function is_ic_only_main_cats( $query = null ) {
 	} else {
 		$this_query = $wp_query;
 	}
+	$is_wp_query_only_main_cats = 0;
 	if ( ! isset( $this_query->is_ic_only_main_cats ) ) {
 		if ( empty( $query ) && ! ic_is_wp_query_available() ) {
 			ic_doing_it_wrong( __function__, 'Conditional called to early.', '3.0.61' );
@@ -696,19 +713,21 @@ function is_ic_only_main_cats( $query = null ) {
 		}
 		$multiple_settings = get_multiple_settings();
 		if ( is_ic_product_listing( $query ) && $multiple_settings['product_listing_cats'] == 'cats_only' ) {
-			$this_query->is_ic_only_main_cats = 1;
+			$is_wp_query_only_main_cats = 1;
 		} else if ( is_ic_taxonomy_page( $query ) && $multiple_settings['category_top_cats'] == 'only_subcategories' ) {
 			$term = ic_get_queried_object();
-			if ( /* empty( $term->count ) && */ ic_has_category_children( $term ) ) {
-				$this_query->is_ic_only_main_cats = 1;
-			} else {
-				$this_query->is_ic_only_main_cats = 0;
+			if ( ic_has_category_children( $term ) ) {
+				$is_wp_query_only_main_cats = 1;
 			}
-		} else {
-			$this_query->is_ic_only_main_cats = 0;
 		}
+		global $wp_version;
+		if ( version_compare( $wp_version, 6.1, '>=' ) ) {
+			$this_query->is_ic_only_main_cats = $is_wp_query_only_main_cats;
+		}
+	} else {
+		$is_wp_query_only_main_cats = $this_query->is_ic_only_main_cats;
 	}
-	if ( ! empty( $this_query->is_ic_only_main_cats ) ) {
+	if ( ! empty( $is_wp_query_only_main_cats ) ) {
 
 		return true;
 	} else {
@@ -1103,16 +1122,18 @@ if ( ! function_exists( 'is_ic_ajax' ) ) {
 	}
 
 }
-
-function is_ic_front_ajax() {
-	if ( is_ic_ajax() ) {
-		if ( ! empty( $_REQUEST['action'] ) && has_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ) ) {
-			return true;
+if ( ! function_exists( 'is_ic_front_ajax' ) ) {
+	function is_ic_front_ajax() {
+		if ( is_ic_ajax() ) {
+			if ( ! empty( $_REQUEST['action'] ) && has_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ) ) {
+				return true;
+			}
 		}
-	}
 
-	return false;
+		return false;
+	}
 }
+
 
 function ic_is_rendering_catalog_block() {
 	global $ic_rendering_catalog_block;
@@ -1132,13 +1153,16 @@ function ic_is_rendering_products_block() {
 	return false;
 }
 
-function ic_is_rendering_block() {
-	if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST ) ) || ( ! empty( $_REQUEST['context'] ) && $_REQUEST['context'] === 'edit' && ! empty( $_REQUEST['attributes'] ) ) ) {
-		return true;
-	}
+if ( ! function_exists( 'ic_is_rendering_block' ) ) {
+	function ic_is_rendering_block() {
+		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST ) ) || ( ! empty( $_REQUEST['context'] ) && $_REQUEST['context'] === 'edit' && ! empty( $_REQUEST['attributes'] ) ) ) {
+			return true;
+		}
 
-	return false;
+		return false;
+	}
 }
+
 
 function is_ic_in_shortcode() {
 	$in_shortcode = ic_get_global( 'in_shortcode' );

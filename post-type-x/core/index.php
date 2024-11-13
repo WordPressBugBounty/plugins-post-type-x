@@ -32,6 +32,8 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof eCommerce_Product_Catalog ) ) {
 				self::$instance = new eCommerce_Product_Catalog;
 				self::$instance->setup_constants();
+				require_once( AL_BASE_PATH . '/includes/tracking.php' );
+
 				//add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
 				//add_action( 'plugins_loaded', array( self::$instance, 'implecode_addons' ), 30 );
 				add_action( 'admin_enqueue_scripts', array( self::$instance, 'implecode_run_admin_styles' ) );

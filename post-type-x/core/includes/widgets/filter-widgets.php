@@ -39,6 +39,9 @@ function register_product_filter_bar() {
 function ic_set_filter_bar_default_widgets() {
 	$sidebar_id     = 'product_sort_bar';
 	$active_widgets = get_option( 'sidebars_widgets' );
+	if ( empty( $active_widgets ) ) {
+		$active_widgets = array();
+	}
 	if ( ! empty( $active_widgets[ $sidebar_id ] ) ) {
 
 		return;
@@ -209,12 +212,15 @@ class product_category_filter extends WP_Widget {
 							if ( ! in_array( $category->term_id, $parsed_current_categories ) ) {
 								$parsed_current_categories[] = $category->term_id;
 							}
-							if ( ! empty( $category->parent ) ) {
+							if ( ! empty( $category->parent ) && is_numeric( $category->parent ) ) {
 								if ( in_array( $category->parent, $category_ids ) ) {
 									continue;
 								} else {
-									$categories[]   = get_term( $category->parent );
-									$category_ids[] = $category->parent;
+									$parent_category = get_term( $category->parent );
+									if ( ! empty( $parent_category ) && ! is_wp_error( $parent_category ) ) {
+										$categories[]   = $parent_category;
+										$category_ids[] = $category->parent;
+									}
 									continue;
 								}
 							}
@@ -222,7 +228,7 @@ class product_category_filter extends WP_Widget {
 						}
 					}
 					foreach ( $categories as $category ) {
-						if ( empty( $category->parent ) ) {
+						if ( empty( $category->parent ) && ! empty( $category->name ) ) {
 							$category_elements[ $category->name ] = apply_filters( 'ic_catalog_category_filter_parent', get_product_category_filter_element( $category, $post_ids, true, $show_count_by_default ), $category, $post_ids, $instance, $parsed_current_categories, $category_ids );
 						}
 					}

@@ -29,7 +29,7 @@ if ( ! function_exists( 'implecode_show_wp_tooltips' ) ) {
 
 	function implecode_show_wp_tooltips() {
 		$tooltips = apply_filters( 'implecode_wp_tooltips', implecode_wp_tooltip_get() );
-		if ( empty( $tooltips ) || $tooltips === 'disabled' || ! is_array( $tooltips ) ) {
+		if ( empty( $tooltips ) || ! is_array( $tooltips ) ) {
 			return;
 		}
 		foreach ( $tooltips as $key => $tooltip ) {
@@ -214,9 +214,11 @@ if ( ! function_exists( 'implecode_wp_tooltip_hide' ) ) {
 		$selector = isset( $_POST['selector'] ) ? stripslashes( $_POST['selector'] ) : '';
 		implecode_wp_tooltip_hide( $selector );
 		$tooltips = implecode_wp_tooltip_get();
-		//if ( empty( $tooltips ) ) {
-		$tooltips[] = implecode_wp_tooltip_default();
-		//	}
+		if ( is_array( $tooltips ) ) {
+			$tooltips[] = implecode_wp_tooltip_default();
+		} else {
+			$tooltips = array();
+		}
 		echo json_encode( $tooltips );
 		wp_die();
 	}
@@ -336,7 +338,10 @@ if ( ! function_exists( 'implecode_wp_tooltip_add' ) ) {
 		}
 
 		$tooltips = implecode_wp_tooltip_get();
-		$tooltip  = array(
+		if ( ! is_array( $tooltips ) ) {
+			$tooltips = array();
+		}
+		$tooltip = array(
 			'title'    => $title,
 			'text'     => $text,
 			'selector' => $selector

@@ -32,11 +32,11 @@ function run_ext_comp_files() {
 	}
 	if ( did_action( 'elementor/loaded' ) ) {
 		add_action( 'elementor/init', 'ic_load_elementor_integration' );
-
-		function ic_load_elementor_integration() {
-			require_once( AL_BASE_PATH . '/ext-comp/elementor/index.php' );
+		if ( ! function_exists( 'ic_load_elementor_integration' ) ) {
+			function ic_load_elementor_integration() {
+				require_once( AL_BASE_PATH . '/ext-comp/elementor/index.php' );
+			}
 		}
-
 	}
 
 	if ( class_exists( 'WooCommerce' ) ) {
@@ -67,8 +67,9 @@ if ( ! function_exists( 'run_ic_session' ) ) {
 				if ( ! defined( 'WP_SESSION_COOKIE' ) ) {
 					define( 'WP_SESSION_COOKIE', '_wp_session' );
 				}
-
-				require_once( AL_BASE_PATH . '/ext-comp/wp_session/class-wp-session.php' );
+				if ( ! class_exists( 'WP_Session' ) ) {
+					require_once( AL_BASE_PATH . '/ext-comp/wp_session/class-wp-session.php' );
+				}
 				require_once( AL_BASE_PATH . '/ext-comp/wp_session/wp-session.php' );
 			}
 		}

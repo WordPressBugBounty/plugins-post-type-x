@@ -759,7 +759,9 @@ function start_free_implecode_install() {
 			add_filter( 'install_plugin_complete_actions', 'implecode_install_actions', 10, 3 );
 			echo '<div class="extension_installer">';
 			include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
-			$upgrader = new Plugin_Upgrader( new Plugin_Installer_Skin( compact( 'title', 'url', 'nonce', 'plugin', 'api' ) ) );
+			$upgrader = new Plugin_Upgrader( new Plugin_Installer_Skin( array(
+				'url' => $url
+			) ) );
 			$upgrader->install( $url );
 			echo '</div>';
 		} else {
@@ -801,9 +803,15 @@ function get_implecode_active_free_plugins() {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 	$all_plugins = get_plugins();
-	$i           = 0;
-	$ic_plugins  = array();
+	if ( empty( $all_plugins ) ) {
+		return array();
+	}
+	$i          = 0;
+	$ic_plugins = array();
 	foreach ( $all_active as $active_name ) {
+		if ( ! isset( $all_plugins[ $active_name ] ) ) {
+			continue;
+		}
 		if ( $all_plugins[ $active_name ]['Author'] == 'impleCode' && $all_plugins[ $active_name ]['Name'] != 'eCommerce Product Catalog for WordPress' && $all_plugins[ $active_name ]['Name'] != 'Product Catalog Simple' ) {
 			$ic_plugins[ $i ]['dir_file'] = $active_name;
 			$active_name                  = explode( '/', $active_name );
@@ -831,7 +839,10 @@ function implecode_installation_url() {
 				$license_owner = url_to_array( $pluginInfo->license_owner );
 				update_option( 'implecode_license_owner', array_to_url( $license_owner ), false );
 				update_option( 'no_implecode_license_error', 0, false );
-				$active_license   = unserialize( get_option( 'license_active_plugins' ) );
+				$active_license = unserialize( get_option( 'license_active_plugins' ) );
+				if ( empty( $active_license ) ) {
+					$active_license = array();
+				}
 				$active_license[] = $_GET['slug'];
 				update_option( 'license_active_plugins', serialize( $active_license ), false );
 
@@ -855,7 +866,7 @@ function implecode_installation_url() {
 function implecode_free_installation_url( $slug ) {
 	$url          = 'https://downloads.wordpress.org/plugin/' . $slug . '.latest-stable.zip';
 	$file_headers = @get_headers( $url );
-	if ( $file_headers[0] == 'HTTP/1.1 404 Not Found' ) {
+	if ( empty( $file_headers[0] ) || $file_headers[0] == 'HTTP/1.1 404 Not Found' ) {
 		return 'error';
 	} else {
 		return $url;
@@ -903,11 +914,13 @@ function add_product_catalog_extensions_url() {
            href="<?php echo admin_url( 'edit.php?post_type=al_product&page=extensions.php' ) ?>"><?php _e( 'Add-ons & Integrations', 'post-type-x' ); ?></a>
 		<?php
 	}
-	?>
-    <a id="help" class="nav-tab"
-       href="<?php echo admin_url( 'edit.php?post_type=al_product&page=extensions.php&tab=help' ) ?>"><?php _e( 'Help', 'post-type-x' ); ?></a>
+	if ( current_user_can( 'manage_product_settings' ) ) {
+		?>
+        <a id="help" class="nav-tab"
+           href="<?php echo admin_url( 'edit.php?post_type=al_product&page=extensions.php&tab=help' ) ?>"><?php _e( 'Help', 'post-type-x' ); ?></a>
 
-	<?php
+		<?php
+	}
 }
 
 add_action( 'settings-menu', 'add_product_catalog_upgrade_url', 99 );

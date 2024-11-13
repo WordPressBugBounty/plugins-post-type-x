@@ -22,7 +22,9 @@ if ( $this_product_id && $this_product_id !== $product_id ) {
 	$product    = get_post( $product_id );
 	setup_postdata( $product );
 }
-
+if ( empty( $product ) ) {
+	return;
+}
 $taxonomy       = get_current_screen_tax();
 $single_names   = get_single_names();
 $single_options = get_product_page_settings();

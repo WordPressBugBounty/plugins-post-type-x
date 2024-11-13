@@ -119,6 +119,9 @@ function ic_enqueue_main_catalog_js_css() {
 add_action( 'ic_catalog_localize_scripts', 'ic_localize_main_catalog_js' );
 
 function ic_localize_main_catalog_js() {
+	if ( ! function_exists( 'admin_url' ) ) {
+		return;
+	}
 	$colorbox_set = json_decode( apply_filters( 'colorbox_set', '{"transition": "elastic", "initialWidth": 200, "maxWidth": "90%", "maxHeight": "90%", "rel":"gal"}', ic_get_product_id() ) );
 	$localize     = apply_filters( 'ic_catalog_product_object_js', array(
 		'ajaxurl'             => admin_url( 'admin-ajax.php' ),

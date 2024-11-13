@@ -132,27 +132,30 @@ function ic_lcfirst( $string ) {
 	}
 }
 
-/**
- * Compatibility with PHP <5.3 for ic_ucfirst
- *
- * @param type $string
- *
- * @return type
- */
-function ic_ucfirst( $string ) {
-	if ( ic_is_multibyte( $string ) ) {
-		$firstChar = mb_substr( $string, 0, 1 );
-		$then      = mb_substr( $string, 1, null );
+if ( ! function_exists( 'ic_ucfirst' ) ) {
+	/**
+	 * Compatibility with PHP <5.3 for ic_ucfirst
+	 *
+	 * @param type $string
+	 *
+	 * @return type
+	 */
+	function ic_ucfirst( $string ) {
+		if ( ic_is_multibyte( $string ) ) {
+			$firstChar = mb_substr( $string, 0, 1 );
+			$then      = mb_substr( $string, 1, null );
 
-		return mb_strtoupper( $firstChar ) . $then;
-	} else if ( function_exists( 'ucfirst' ) ) {
-		return ucfirst( $string );
-	} else {
-		$string['0'] = strtoupper( $string['0'] );
+			return mb_strtoupper( $firstChar ) . $then;
+		} else if ( function_exists( 'ucfirst' ) ) {
+			return ucfirst( $string );
+		} else {
+			$string['0'] = strtoupper( $string['0'] );
 
-		return $string;
+			return $string;
+		}
 	}
 }
+
 
 function ic_ucwords( $string ) {
 	if ( ic_is_multibyte( $string ) ) {
@@ -167,13 +170,16 @@ function ic_ucwords( $string ) {
 	}
 }
 
-function ic_is_multibyte( $string ) {
-	if ( function_exists( 'mb_check_encoding' ) ) {
-		return ! mb_check_encoding( $string, 'ASCII' ) && mb_check_encoding( $string, 'UTF-8' );
-	}
+if ( ! function_exists( 'ic_is_multibyte' ) ) {
+	function ic_is_multibyte( $string ) {
+		if ( function_exists( 'mb_check_encoding' ) ) {
+			return ! mb_check_encoding( $string, 'ASCII' ) && mb_check_encoding( $string, 'UTF-8' );
+		}
 
-	return false;
+		return false;
+	}
 }
+
 
 /**
  * Check if any post type has the same rewrite parameter

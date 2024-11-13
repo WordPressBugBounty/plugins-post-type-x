@@ -84,7 +84,10 @@ class ic_cat_activation_wizard extends ic_activation_wizard {
 	}
 
 	function update_mode( $mode ) {
-		$settings                 = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
+		$settings = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
 		$settings['catalog_mode'] = $mode;
 		update_option( 'archive_multiple_settings', $settings );
 		$this->update_shipping( $mode );

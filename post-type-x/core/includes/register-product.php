@@ -239,23 +239,22 @@ class ic_register_product {
 				'map_meta_cap'         => true,
 				'menu_position'        => 30,
 				/*
-				  'capabilities'			 => array(
-				  'publish_posts'			 => 'publish_products',
-				  'edit_posts'			 => 'edit_products',
-				  'edit_others_posts'		 => 'edit_others_products',
-				  'edit_published_posts'	 => 'edit_published_products',
-				  'edit_private_posts'	 => 'edit_private_products',
-				  'delete_posts'			 => 'delete_products',
-				  'delete_others_posts'	 => 'delete_others_products',
-				  'delete_private_posts'	 => 'delete_private_products',
-				  'delete_published_posts' => 'delete_published_products',
-				  'read_private_posts'	 => 'read_private_products',
-				  'edit_post'				 => 'edit_product',
-				  'delete_post'			 => 'delete_product',
-				  'read_post'				 => 'read_product',
-				  ),
-				 *
-				 */
+								'capabilities'        => array(
+									'publish_posts'          => 'publish_products',
+									'edit_posts'             => 'edit_products',
+									'edit_others_posts'      => 'edit_others_products',
+									'edit_published_posts'   => 'edit_published_products',
+									'edit_private_posts'     => 'edit_private_products',
+									'delete_posts'           => 'delete_products',
+									'delete_others_posts'    => 'delete_others_products',
+									'delete_private_posts'   => 'delete_private_products',
+									'delete_published_posts' => 'delete_published_products',
+									'read_private_posts'     => 'read_private_products',
+									'edit_post'              => 'edit_product',
+									'delete_post'            => 'delete_product',
+									'read_post'              => 'read_product',
+								),
+				*/
 				'exclude_from_search'  => false,
 			);
 			if ( apply_filters( 'ic_epc_allow_gutenberg', false ) && ! in_array( 'custom-fields', $reg_settings['supports'] ) ) {

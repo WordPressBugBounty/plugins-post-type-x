@@ -37,6 +37,7 @@ class IC_EPC_Tracking {
 
 		add_action( 'init', array( $this, 'schedule_send' ) );
 		add_action( 'admin_init', array( $this, 'init' ) );
+		$this->init_errors();
 	}
 
 	function init() {
@@ -47,10 +48,11 @@ class IC_EPC_Tracking {
 		add_action( 'ic_system_tools', array( $this, 'settings_optin' ) );
 		add_filter( 'ic_epc_links', array( $this, 'confirm_deactivation' ) );
 		add_action( 'wp_ajax_ic_submit_deactivation_reason', array( $this, 'submit_deactivation_reason' ) );
+	}
 
-		if ( $this->tracking_allowed() ) {
-			add_filter( 'recovery_mode_email', array( $this, 'paused_plugin_report_email' ), 10, 2 );
-		}
+	function init_errors() {
+		add_filter( 'recovery_mode_email', array( $this, 'paused_plugin_report_email' ), 10, 2 );
+		register_shutdown_function( array( $this, 'fatal' ) );
 	}
 
 	/**
@@ -74,8 +76,8 @@ class IC_EPC_Tracking {
 		$data = array();
 
 		$data['php_version']    = phpversion();
-		$data['plugin_name']    = IC_CATALOG_PLUGIN_NAME;
-		$data['plugin_version'] = IC_EPC_VERSION;
+		$data['plugin_name']    = defined( 'IC_CATALOG_PLUGIN_NAME' ) ? IC_CATALOG_PLUGIN_NAME : 'not set';
+		$data['plugin_version'] = defined( 'IC_EPC_VERSION' ) ? IC_EPC_VERSION : 'not set';
 		$data['wp_version']     = get_bloginfo( 'version' );
 		$data['server']         = isset( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : '';
 
@@ -85,13 +87,16 @@ class IC_EPC_Tracking {
 		$data['url']       = home_url();
 
 // Retrieve current theme info
-		$theme_data          = wp_get_theme();
-		$theme               = $theme_data->Name . ' ' . $theme_data->Version;
-		$data['theme']       = $theme;
-		$data['theme_name']  = $theme_data->Name;
+		$theme_data = wp_get_theme();
+		if ( $theme_data->exists() ) {
+			$theme              = $theme_data->display( 'Name' ) . ' ' . $theme_data->display( 'Version' );
+			$data['theme']      = $theme;
+			$data['theme_name'] = $theme_data->display( 'Name' );
+		} else {
+			$data['theme']      = 'Incorrect theme data';
+			$data['theme_name'] = 'Incorrect theme data';
+		}
 		$data['integration'] = $this->get_integration_type();
-
-//$data[ 'email' ]	 = get_bloginfo( 'admin_email' );
 // Retrieve current plugin information
 		if ( ! function_exists( 'get_plugins' ) ) {
 			include ABSPATH . '/wp-admin/includes/plugin.php';
@@ -167,7 +172,7 @@ class IC_EPC_Tracking {
 		if ( empty( $last_send ) ) {
 			$action_name .= '-first';
 		}
-		$request = wp_remote_post( 'http://check.implecode.com/?ic_epc_action=' . $action_name, array(
+		$request = wp_remote_post( 'https://check.implecode.com/?ic_epc_action=' . $action_name, array(
 			'method'      => 'POST',
 			'timeout'     => 20,
 			'redirection' => 5,
@@ -431,7 +436,7 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 			if ( ! empty( $_POST['reason_desc'] ) ) {
 				$data['deactivation_reason_desc'] = $_POST['reason_desc'];
 			}
-			wp_remote_post( 'http://check.implecode.com/?ic_epc_action=deactivation', array(
+			wp_remote_post( 'https://check.implecode.com/?ic_epc_action=deactivation', array(
 				'method'      => 'POST',
 				'timeout'     => 20,
 				'redirection' => 5,
@@ -451,6 +456,72 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 		}
 
 		return $email;
+	}
+
+	function fatal() {
+		$error = error_get_last();
+		if ( $error !== null && ! empty( $error['file'] ) ) {
+			if ( $this->supported_slug( $error['file'] ) ) {
+				$message = '';
+				if ( ! empty( $error['type'] ) ) {
+					$message .= '[' . $error['type'] . '] ';
+				}
+				if ( ! empty( $error['message'] ) ) {
+					$message .= str_replace( untrailingslashit( plugin_dir_path( AL_BASE_PATH ) ), '', $error['message'] ) . ' ';
+				}
+				$message .= 'in file ' . str_replace( untrailingslashit( plugin_dir_path( AL_BASE_PATH ) ), '', $error['file'] ) . ' ';
+
+				if ( ! empty( $error['line'] ) ) {
+					$message .= 'on line ' . $error['line'] . ' ';
+				}
+				if ( defined( 'IC_CATALOG_VERSION' ) ) {
+					$message .= '[' . IC_CATALOG_VERSION . ']';
+				}
+				/** Fully anonymized error report */
+				$this->send_paused_checkin( array( $message ), true );
+			}
+
+		}
+	}
+
+	function supported_slug( $file ) {
+		if ( empty( $file ) ) {
+			return false;
+		}
+		if ( defined( 'AL_BASE_PATH' ) && strpos( $file, AL_BASE_PATH ) !== false ) {
+			return true;
+		} else {
+			$slugs = $this->slugs();
+			foreach ( $slugs as $slug ) {
+				if ( strpos( $file, $slug ) !== false ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	function slugs() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		$all_plugins = get_plugins();
+		if ( empty( $all_plugins ) ) {
+			return array();
+		}
+		$slugs = array();
+		foreach ( $all_plugins as $name => $plugin ) {
+			if ( $plugin['Author'] !== 'impleCode' ) {
+				continue;
+			}
+			$name = explode( '/', $name );
+			if ( ! in_array( $name[0], $slugs ) ) {
+				$slugs[] = $name[0];
+			}
+		}
+
+		return $slugs;
 	}
 
 	/**
@@ -478,12 +549,17 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 		}
 
 		$this->setup_data();
-		$this->data['errors'] = json_encode( $errors );
-		$action_name          = 'error';
+		$anonymize            = array( WP_PLUGIN_DIR, untrailingslashit( plugin_dir_path( AL_BASE_PATH ) ) );
+		$this->data['errors'] = str_replace( $anonymize, '', json_encode( $errors ) );
+		if ( ! $this->tracking_allowed() ) {
+			/** Anonymize if forced checkin */
+			$this->data['url'] = 'not_provided';
+		}
+		$action_name = 'error';
 		if ( empty( $last_send ) ) {
 			$action_name .= '-first';
 		}
-		$request = wp_remote_post( 'http://errors.implecode.com/?ic_epc_action=' . $action_name, array(
+		$request = wp_remote_post( 'https://errors.implecode.com/?ic_epc_action=' . $action_name, array(
 			'method'      => 'POST',
 			'timeout'     => 20,
 			'redirection' => 5,
@@ -491,7 +567,7 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 			'blocking'    => true,
 			'body'        => $this->data,
 			'sslverify'   => false,
-			'user-agent'  => 'IC_EPC/' . IC_EPC_VERSION . '; ' . get_bloginfo( 'url' )
+			'user-agent'  => 'IC_EPC/' . IC_EPC_VERSION . '; '
 		) );
 
 		if ( is_wp_error( $request ) ) {

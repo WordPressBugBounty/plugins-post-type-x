@@ -226,16 +226,18 @@ if ( ! function_exists( 'implecode_settings_number' ) ) {
 		if ( ! empty( $tr_class ) ) {
 			$tr_class = ' class="' . $tr_class . '"';
 		}
-		$return   = '<tr' . $tr_class . '>';
-		$return   .= '<td>';
-		$class    = 'number_box ' . $class;
-		$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
-		if ( ! empty( $tip_html ) ) {
-			$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
+		$return = '<tr' . $tr_class . '>';
+		$class  = 'number_box ' . $class;
+		if ( ! empty( $option_label ) ) {
+			$return   .= '<td>';
+			$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
+			if ( ! empty( $tip_html ) ) {
+				$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
+			}
+			$return .= $option_label . ':</td>';
 		}
-		$return .= $option_label . ':</td>';
-		$min    = isset( $min ) ? 'min="' . floatval( $min ) . '" ' : '';
-		$max    = isset( $max ) ? 'max="' . floatval( $max ) . '" ' : '';
+		$min = isset( $min ) ? 'min="' . floatval( $min ) . '" ' : '';
+		$max = isset( $max ) ? 'max="' . floatval( $max ) . '" ' : '';
 
 		$return .= '<td>';
 		if ( ! empty( $attr ) ) {
@@ -283,6 +285,9 @@ if ( ! function_exists( 'implecode_upload_image' ) ) {
 		}
 		if ( empty( $current_screen->id ) || $current_screen->id !== 'widgets' ) {
 			wp_enqueue_media();
+			if ( function_exists( 'wp_enqueue_editor' ) ) {
+				wp_enqueue_editor();
+			}
 		}
 		if ( empty( $id ) ) {
 			$id = sanitize_title( $option_name );
@@ -692,6 +697,9 @@ if ( ! function_exists( 'ic_get_registered_settings' ) ) {
 
 	function ic_get_registered_settings() {
 		$registered_settings = get_option( 'ic_registered_settings', array() );
+		if ( ! is_array( $registered_settings ) ) {
+			$registered_settings = array();
+		}
 
 		return $registered_settings;
 	}

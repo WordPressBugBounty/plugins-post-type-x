@@ -56,7 +56,10 @@ function epc_activation_function() {
 function save_default_multiple_settings() {
 	$check = get_option( 'archive_multiple_settings' );
 	if ( empty( $check ) ) {
-		$archive_multiple_settings                                      = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
+		$archive_multiple_settings = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
+		if ( ! is_array( $archive_multiple_settings ) ) {
+			$archive_multiple_settings = array();
+		}
 		$archive_multiple_settings['catalog_plural']                    = isset( $archive_multiple_settings['catalog_plural'] ) ? $archive_multiple_settings['catalog_plural'] : DEF_CATALOG_PLURAL;
 		$archive_multiple_settings['catalog_singular']                  = isset( $archive_multiple_settings['catalog_singular'] ) ? $archive_multiple_settings['catalog_singular'] : DEF_CATALOG_SINGULAR;
 		$archive_multiple_settings['shortcode_mode']['show_everywhere'] = isset( $archive_multiple_settings['shortcode_mode']['show_everywhere'] ) ? $archive_multiple_settings['shortcode_mode']['show_everywhere'] : 1;
@@ -243,7 +246,10 @@ function ecommerce_product_catalog_upgrade() {
 				delete_transient( 'implecode_extensions_data' );
 			}
 			if ( version_compare( $first_version, '2.2.5' ) < 0 && version_compare( $database_plugin_version, '2.2.5' ) < 0 ) {
-				$archive_names                        = get_option( 'archive_names' );
+				$archive_names = get_option( 'archive_names' );
+				if ( ! is_array( $archive_names ) ) {
+					$archive_names = array();
+				}
 				$archive_names['all_main_categories'] = '';
 				$archive_names['all_products']        = '';
 				$archive_names['all_subcategories']   = '';
@@ -358,7 +364,7 @@ function ic_update_product_data() {
 		$done = 0;
 	}
 	if ( get_transient( 'ic_doing_update_product_data_loop' ) ) {
-		wp_schedule_single_event( time(), $hook_name );
+		wp_schedule_single_event( time() + MINUTE_IN_SECONDS, $hook_name );
 
 		return;
 	}
@@ -405,6 +411,7 @@ function ic_update_product_data_loop( $done, $start_time = 0, $done_option_name 
 		if ( ! empty( $done_option_name ) ) {
 			update_option( $done_option_name, $done );
 		}
+		set_transient( 'ic_doing_update_product_data_loop', $done, MINUTE_IN_SECONDS * 15 );
 
 		return ic_update_product_data_loop( $done, $start_time, $done_option_name );
 	}

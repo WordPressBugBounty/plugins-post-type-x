@@ -158,6 +158,9 @@ function product_filter_element( $id, $what, $label, $class = null ) {
 }
 
 function get_product_category_filter_element( $category, $posts = null, $show_count = true, $check_count = true ) {
+	if ( empty( $category->term_id ) ) {
+		return '';
+	}
 	if ( false && is_ic_product_listing() && ! empty( $category->count ) && ! is_product_filters_active() && ! apply_filters( 'ic_force_query_count_calculation', false ) ) {
 		$count = $category->count;
 	} else if ( $check_count ) {

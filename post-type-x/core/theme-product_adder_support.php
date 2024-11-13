@@ -282,7 +282,7 @@ class ic_catalog_notices extends ic_activation_wizard {
 
 	static function add_catalog_shortcode_script() {
 		$screen = get_current_screen();
-		if ( $screen->id !== 'widgets' ) {
+		if ( empty( $screen->id ) || $screen->id !== 'widgets' ) {
 			return;
 		}
 		?>
@@ -316,10 +316,11 @@ class ic_catalog_notices extends ic_activation_wizard {
 	}
 
 	function catalog_links( $links ) {
-		$links['extensions'] = '<a href="' . get_admin_url( null, 'edit.php?post_type=al_product&page=extensions.php' ) . '">' . __( 'Add-ons & Integrations', 'post-type-x' ) . '</a>';
-		$links['settings']   = '<a href="' . get_admin_url( null, 'edit.php?post_type=al_product&page=product-settings.php' ) . '">' . __( 'Settings', 'post-type-x' ) . '</a>';
+		if ( function_exists( 'get_admin_url' ) ) {
+			$links['extensions'] = '<a href="' . get_admin_url( null, 'edit.php?post_type=al_product&page=extensions.php' ) . '">' . __( 'Add-ons & Integrations', 'post-type-x' ) . '</a>';
+			$links['settings']   = '<a href="' . get_admin_url( null, 'edit.php?post_type=al_product&page=product-settings.php' ) . '">' . __( 'Settings', 'post-type-x' ) . '</a>';
+		}
 
-//$links[] = '<a href="https://implecode.com/wordpress/plugins/premium-support/#cam=catalog-settings-link&key=support-link" target="_blank">Premium Support</a>';
 		return apply_filters( 'ic_epc_links', array_reverse( $links ) );
 	}
 

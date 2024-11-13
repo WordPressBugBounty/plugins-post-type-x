@@ -16,8 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 function is_integration_mode_selected() {
 	$return                    = false;
 	$archive_multiple_settings = get_option( 'archive_multiple_settings', get_default_multiple_settings() );
-	$theme                     = get_option( 'template' );
-	$prev_type                 = ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) ? $archive_multiple_settings['integration_type'] : '';
+	if ( ! is_array( $archive_multiple_settings ) ) {
+		$archive_multiple_settings = array();
+	}
+	$theme     = get_option( 'template' );
+	$prev_type = ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) ? $archive_multiple_settings['integration_type'] : '';
 	if ( ! isset( $archive_multiple_settings['integration_type'] ) || ( isset( $archive_multiple_settings['integration_type'] ) && ! is_array( $archive_multiple_settings['integration_type'] ) ) ) {
 		$archive_multiple_settings['integration_type'] = array();
 	}

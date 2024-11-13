@@ -2,8 +2,8 @@
 Contributors: impleCode, ndre
 Tags: product catalog, product catalogue, catalog, catalogue, product, implecode, manage, plugin, display products, list products, items, products, wp catalog, blog catalog, product feed, product management, product portfolio, portfolio, directory, gallery, product gallery, widget, post, plugin, admin, posts, inventory, restaurant menu, responsive, wp catalogue, catalog of goods, collection, catalogs, digital goods, list, listing, products catalog, wp catalog, custom post type, custom post types
 Requires at least: 3.7
-Tested up to: 6.6
-Stable tag: 1.7.8
+Tested up to: 6.7
+Stable tag: 1.7.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -123,6 +123,15 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 If on the off-chance you do encounter issues with the plugin pages after an update you simply need to flush the permalinks by going to WordPress > Settings > Permalinks and hitting 'save'. That should return things to normal.
 
 == Changelog ==
+
+= 1.7.9 – 13/11/2024  =
+
+* WordPress 6.7 compatibility update
+* Fix PHP notices for older WordPress versions
+* Fix show products shortcode pagination on main catalog page
+* Fix PHP depreciated errors for some configurations
+* Category description shortcode handling
+* Avoid PHP errors within the category filter under certain exceptional circumstances
 
 = 1.7.8 – 09/04/2024  =
 

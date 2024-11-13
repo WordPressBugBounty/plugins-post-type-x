@@ -54,8 +54,8 @@ class ic_catalog_frontend_admin {
 		if ( get_edit_post_link( $product->ID ) && empty( $_GET['test_advanced'] ) ) {
 			?>
             <div class="product-meta">
+                <span><?php _e( 'Admin Options', 'post-type-x' ) ?>: </span>
 				<?php
-				echo '<span>' . __( 'Admin Options', 'post-type-x' ) . ': </span>';
 				edit_post_link( __( 'Edit Product', 'post-type-x' ), '<span class="edit-link">', '</span>' );
 				if ( current_user_can( 'administrator' ) ) {
 					do_action( 'ic_product_meta', $product );

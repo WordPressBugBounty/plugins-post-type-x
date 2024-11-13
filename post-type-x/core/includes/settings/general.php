@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author        impleCode
  */
 function general_menu() {
-	if ( current_user_can( 'manage_product_settings' ) ) {
+	if ( current_user_can( 'manage_product_settings' ) && function_exists( 'admin_url' ) ) {
 		?>
         <a id="general-settings" class="nav-tab"
            href="<?php echo admin_url( 'edit.php?post_type=al_product&page=product-settings.php&tab=product-settings' ) ?>"><?php _e( 'General Settings', 'post-type-x' ); ?></a>
@@ -163,7 +163,9 @@ function general_settings_content() {
 
                             <h3><?php
 								$theme = wp_get_theme();
-								echo __( 'Catalog Layout Integration with the theme', 'post-type-x' ) . ' (' . $theme->name . ')'
+								if ( $theme->exists() ) {
+									echo __( 'Catalog Layout Integration with the theme', 'post-type-x' ) . ' (' . $theme->display( 'Name' ) . ')';
+								}
 								?>
                             </h3>
 							<?php

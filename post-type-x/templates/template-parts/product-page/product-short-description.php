@@ -22,6 +22,5 @@ if ( ! empty( $shortdesc ) ) {
 		echo $shortdesc;
 		?>
     </div>
-
 	<?php
 }

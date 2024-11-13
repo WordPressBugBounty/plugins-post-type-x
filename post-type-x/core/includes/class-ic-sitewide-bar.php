@@ -103,7 +103,7 @@ class ic_sitewide_bar {
 			$url     = '';
 		}
 		$design_schemes = ic_get_design_schemes();
-		$class          = ' button ' . implode( ' ', $design_schemes );
+		$class          = ' button ' . implode( ' ', array_filter( $design_schemes ) );
 		if ( ! empty( $content ) ) {
 			$class .= ' ic-show-content';
 		}

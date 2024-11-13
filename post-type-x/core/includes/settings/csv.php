@@ -239,10 +239,12 @@ function simple_insert_csv_product( $data ) {
 		//update_post_meta( $id, 'content', $long_description );
 		$image_url = get_product_image_id( $data['image_url'] );
 		set_post_thumbnail( $id, $image_url );
-		if ( ic_string_contains( $data['product_categories'], ' | ' ) ) {
-			$data['product_categories'] = explode( ' | ', $data['product_categories'] );
+		if ( ! empty( $data['product_categories'] ) ) {
+			if ( ic_string_contains( $data['product_categories'], ' | ' ) ) {
+				$data['product_categories'] = explode( ' | ', $data['product_categories'] );
+			}
+			wp_set_object_terms( $id, $data['product_categories'], 'al_product-cat' );
 		}
-		wp_set_object_terms( $id, $data['product_categories'], 'al_product-cat' );
 		ic_set_time_limit( 30 );
 	}
 

@@ -55,7 +55,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * @return bool|WP_Session
 	 */
 	public static function get_instance() {
-		if ( !self::$instance ) {
+		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
 
@@ -68,6 +68,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * create a new session with that ID.
 	 *
 	 * @param $session_id
+	 *
 	 * @uses apply_filters Calls `wp_session_expiration` to determine how long until sessions expire.
 	 */
 	private function __construct() {
@@ -80,8 +81,9 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 		$this->expires = time() + intval( apply_filters( 'wp_session_expiration', 24 * 60 ) );
 
 		$this->read_data();
-
-		setcookie( WP_SESSION_COOKIE, $this->session_id, $this->expires, COOKIEPATH, COOKIE_DOMAIN );
+		if ( headers_sent() !== true ) {
+			setcookie( WP_SESSION_COOKIE, $this->session_id, $this->expires, COOKIEPATH, COOKIE_DOMAIN );
+		}
 	}
 
 	/**
@@ -106,6 +108,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	private function read_data() {
 		$this->touch_session();
 		$this->container = get_option( "_wp_session_{$this->session_id}", array() );
+
 		return $this->container;
 	}
 
@@ -123,13 +126,13 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	private function touch_session() {
 		$session_list = get_option( '_wp_session_list', array() );
 
-		$session_list[ $this->session_id ]	 = $this->expires;
-		$i									 = 0;
+		$session_list[ $this->session_id ] = $this->expires;
+		$i                                 = 0;
 		foreach ( $session_list as $id => $expires ) {
 			if ( time() > $expires ) {
 				delete_option( "_wp_session_{$id}" );
 				unset( $session_list[ $id ] );
-				$i++;
+				$i ++;
 			}
 			if ( $i > 300 ) {
 				break;
@@ -160,6 +163,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 
 		if ( is_array( $array ) ) {
 			$this->container = $array;
+
 			return true;
 		}
 
@@ -191,7 +195,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * @return bool
 	 */
 	public function session_started() {
-		return !!self::$instance;
+		return ! ! self::$instance;
 	}
 
 	/**
@@ -223,6 +227,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return boolean true on success or false on failure.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->container[ $offset ] );
 	}
@@ -236,6 +241,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return mixed Can return all value types.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		return isset( $this->container[ $offset ] ) ? $this->container[ $offset ] : null;
 	}
@@ -246,10 +252,11 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * @link http://php.net/manual/en/arrayaccess.offsetset.php
 	 *
 	 * @param mixed $offset The offset to assign the value to.
-	 * @param mixed $value  The value to set.
+	 * @param mixed $value The value to set.
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		if ( is_null( $offset ) ) {
 			$this->container[] = $value;
@@ -267,6 +274,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->container[ $offset ] );
 	}
@@ -282,6 +290,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		return current( $this->container );
 	}
@@ -293,6 +302,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return key( $this->container );
 	}
@@ -304,6 +314,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		next( $this->container );
 	}
@@ -315,6 +326,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		reset( $this->container );
 	}
@@ -326,6 +338,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return $this->offsetExists( $this->key() );
 	}
@@ -341,6 +354,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count() {
 		return count( $this->container );
 	}

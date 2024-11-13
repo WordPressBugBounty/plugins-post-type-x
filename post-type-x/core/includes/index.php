@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package        post-type-x/core/includes
  * @author        impleCode
  */
+require_once( AL_BASE_PATH . '/includes/tracking.php' );
 require_once( AL_BASE_PATH . '/includes/util/index.php' );
 require_once( AL_BASE_PATH . '/includes/class-ic-activation-wizard.php' );
 require_once( AL_BASE_PATH . '/includes/activation-config.php' );
@@ -29,7 +30,6 @@ require_once( AL_BASE_PATH . '/includes/product-filter.php' );
 require_once( AL_BASE_PATH . '/includes/product-filters.php' );
 require_once( AL_BASE_PATH . '/includes/product-ajax.php' );
 require_once( AL_BASE_PATH . '/includes/customizer.php' );
-require_once( AL_BASE_PATH . '/includes/tracking.php' );
 require_once( AL_BASE_PATH . '/includes/cron.php' );
 require_once( AL_BASE_PATH . '/includes/class-ic-featured-products.php' );
 require_once( AL_BASE_PATH . '/includes/class-ic-sitewide-bar.php' );

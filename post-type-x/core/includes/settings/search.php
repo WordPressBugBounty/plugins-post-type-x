@@ -25,7 +25,7 @@ class ic_settings_search {
 		if ( isset( $_GET['tab'] ) && $_GET['tab'] === 'help' ) {
 			$placeholder = __( 'Describe your issue', 'post-type-x' );
 		} else {
-			$placeholder = __( 'Search settings', 'post-type-x' );
+			$placeholder = __( 'Search settings & docs', 'post-type-x' );
 		}
 
 		return $placeholder;
