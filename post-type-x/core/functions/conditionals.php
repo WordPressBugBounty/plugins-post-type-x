@@ -135,9 +135,9 @@ function is_ic_taxonomy_page( $query = null ) {
 			return false;
 		}
 		$taxonomies = product_taxonomy_array();
-		if ( empty( $query ) && is_tax( $taxonomies ) ) {
+		if ( ( empty( $query ) || ! is_object( $query ) ) && is_tax( $taxonomies ) ) {
 			$is_wp_query_taxonomy_page = 1;
-		} else if ( ! empty( $query ) ) {
+		} else if ( ! empty( $query ) && is_object( $query ) ) {
 			if ( $query->is_tax( $taxonomies ) ) {
 				$is_wp_query_taxonomy_page = 1;
 			} else if ( current_filter() === 'parse_tax_query' && ! empty( $query->query ) && is_array( $query->query ) ) {

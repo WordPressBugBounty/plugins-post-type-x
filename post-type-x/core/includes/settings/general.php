@@ -59,6 +59,9 @@ function archive_multiple_settings_validation( $new_value ) {
  * @return array
  */
 function product_currency_settings_validation( $new_value ) {
+	if ( empty( $new_value ) ) {
+		return $new_value;
+	}
 	if ( $new_value['th_sep'] == $new_value['dec_sep'] ) {
 		if ( $new_value['th_sep'] == ',' ) {
 			$new_value['th_sep'] = '.';
