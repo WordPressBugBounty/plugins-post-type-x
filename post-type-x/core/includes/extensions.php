@@ -1162,8 +1162,8 @@ function ic_license_renewal_notice() {
 	remove_action( 'admin_notices', 'license_key_expired' );
 }
 
-//add_action( 'ic_license_expiration_message', 'ic_license_reverify_schedule' );
-//add_action( 'ic_license_reverify_schedule', 'ic_license_reverify_schedule' );
+add_action( 'ic_license_expiration_message', 'ic_license_reverify_schedule' );
+add_action( 'ic_license_reverify_schedule', 'ic_license_reverify_schedule' );
 
 function ic_license_reverify_schedule() {
 	if ( ! function_exists( 'check_all_implecode_license' ) ) {
@@ -1223,12 +1223,25 @@ function ic_is_license_valid() {
 }
 
 function ic_license_will_expire_soon() {
+	if ( ic_license_is_subscription() ) {
+		return false;
+	}
 	if ( $valid_until_time = ic_is_license_valid() ) {
 		$current_time = date( 'U' );
 		$in_to_weeks  = $valid_until_time - ( WEEK_IN_SECONDS * 2 );
 		if ( $current_time > $in_to_weeks ) {
 			return true;
 		}
+	}
+
+	return false;
+}
+
+function ic_license_is_subscription() {
+	$license_owner_param = get_option( 'implecode_license_owner' );
+	$license_owner       = url_to_array( $license_owner_param );
+	if ( ! empty( $license_owner['subscription'] ) ) {
+		return true;
 	}
 
 	return false;

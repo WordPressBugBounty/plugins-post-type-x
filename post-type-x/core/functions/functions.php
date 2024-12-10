@@ -768,9 +768,8 @@ if ( ! function_exists( 'product_post_type_array' ) ) {
 }
 
 function product_taxonomy_array() {
-	$array = apply_filters( 'product_taxonomy_array', array( 'al_product-cat' ) );
 
-	return $array;
+	return apply_filters( 'product_taxonomy_array', array( 'al_product-cat' ) );
 }
 
 if ( ! function_exists( 'array_to_url' ) ) {

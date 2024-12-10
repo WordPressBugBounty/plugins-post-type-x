@@ -154,7 +154,6 @@ function is_ic_taxonomy_page( $query = null ) {
 	} else {
 		$is_wp_query_taxonomy_page = $this_query->is_ic_taxonomy_page;
 	}
-
 	if ( ! empty( $is_wp_query_taxonomy_page ) ) {
 		return true;
 	} else {

@@ -55,7 +55,7 @@ if ( ! class_exists( 'ic_html_util' ) ) {
 		function button( $label, $class = 'ic-secondary-button', $onclick = null, $attr = array() ) {
 			$class = 'button ' . $class;
 			if ( function_exists( 'design_schemes' ) ) {
-				$class .= design_schemes( 'box', 0 );
+				$class .= ' ' . design_schemes( 'box', 0 );
 			}
 			if ( ! empty( $onclick ) ) {
 				$attr['onclick'] = $onclick;
@@ -76,11 +76,19 @@ if ( ! class_exists( 'ic_html_util' ) ) {
 			$button_tags = '';
 			foreach ( $buttons as $button ) {
 				if ( ! empty( $button['for'] ) ) {
-					$class = 'button ' . design_schemes( 'box', 0 ) . ' ' . $button['class'];
+					$class          = 'button ' . design_schemes( 'box', 0 ) . ' ' . $button['class'];
+					$restore_fix_id = false;
 					if ( ! empty( $button['input'] ) ) {
+						if ( $this->fix_id ) {
+							$this->fix_id   = false;
+							$restore_fix_id = true;
+						}
 						$button['label'] .= $button['input'];
 					}
 					$button_tags .= $this->label( $button['label'], $button['for'], $class );
+					if ( ! empty( $restore_fix_id ) ) {
+						$this->fix_id = true;
+					}
 				} else if ( ! empty( $button['url'] ) ) {
 					$class       = 'button ' . design_schemes( 'box', 0 ) . ' ' . $button['class'];
 					$button_tags .= $this->link( $button['label'], $class, $button['url'] );
