@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product               = ic_get_product_object();
 $classic_grid_settings = get_classic_grid_settings();
 ?>
-
-
     <div class="archive-listing product-<?php echo $product->ID ?> classic-grid <?php echo product_class( $product->ID ) ?>">
         <a href="<?php echo $product->url() ?>">
             <div class="classic-grid-image-wrapper">

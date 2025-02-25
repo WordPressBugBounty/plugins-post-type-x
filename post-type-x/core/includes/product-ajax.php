@@ -33,18 +33,32 @@ class ic_catalog_ajax {
 	}
 
 	/**
-	 * Manages ajax price format
+	 * Handles AJAX self-submissions for modifying query variables, retrieving products,
+	 * and generating updated parts of a product archive, such as listings, pagination,
+	 * and various filters.
 	 *
+	 * This function processes submitted form data, performs query modifications based
+	 * on the incoming parameters, and returns the updated HTML for product listing,
+	 * pagination, and filters in a JSON format.
+	 *
+	 * @return void Outputs a JSON-encoded string containing the updated product
+	 *              listing, pagination, and filter elements. Terminates script execution.
 	 */
 	function ajax_self_submit() {
-		if ( isset( $_POST['self_submit_data'] ) ) {
+		if ( isset( $_POST['self_submit_data'] ) && isset( $_POST['security'] ) && wp_verify_nonce( $_POST['security'], 'ic_ajax' ) ) {
 			ic_set_time_limit( 3 );
 			remove_filter( 'parse_tax_query', 'exclude_products_from_child_cat' );
 			$params = array();
 			parse_str( $_POST['self_submit_data'], $params );
-			$_GET = $params;
+			$params = array_map( 'ic_sanitize', $params );
+			$_GET   = $params;
 			global $ic_ajax_query_vars;
-			$ic_ajax_query_vars     = apply_filters( 'ic_catalog_query', json_decode( stripslashes( $_POST['query_vars'] ), true ) );
+			$ic_ajax_query_vars = apply_filters( 'ic_catalog_query', json_decode( stripslashes( $_POST['query_vars'] ), true ) );
+			if ( is_array( $ic_ajax_query_vars ) ) {
+				$ic_ajax_query_vars = array_map( 'ic_sanitize', $ic_ajax_query_vars );
+			} else if ( ! empty( $ic_ajax_query_vars ) ) {
+				$ic_ajax_query_vars = ic_sanitize( $ic_ajax_query_vars );
+			}
 			$pre_ic_ajax_query_vars = $ic_ajax_query_vars;
 			unset( $ic_ajax_query_vars['pagename'] );
 			unset( $ic_ajax_query_vars['page_id'] );
@@ -213,7 +227,7 @@ class ic_catalog_ajax {
 		global $shortcode_query;
 		if ( ! empty( $shortcode_query->query ) ) {
 			unset( $shortcode_query->query['post_status'] );
-			$attr .= " data-ic_ajax_query='" . json_encode( $shortcode_query->query ) . "'";
+			$attr .= " data-ic_ajax_query='" . esc_attr( json_encode( $shortcode_query->query ) ) . "'";
 		}
 
 		return $attr;

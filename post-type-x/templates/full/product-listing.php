@@ -17,7 +17,6 @@ $multiple_settings     = get_multiple_settings();
 do_action( 'product_listing_begin', $multiple_settings );
 $archive_names = get_archive_names();
 $listing_class = apply_filters( 'product_listing_classes', 'al_product responsive type-page' );
-
 ?>
     <article id="product_listing" <?php post_class( $listing_class ); ?>>
 		<?php do_action( 'before_product_listing_entry', $post, $archive_names ); ?>

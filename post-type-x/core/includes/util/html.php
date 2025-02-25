@@ -149,8 +149,15 @@ if ( ! class_exists( 'ic_html_util' ) ) {
 				$buttons_container = '';
 			}
 			$container = $this->div( $inside_container . $buttons_container, $class_base );
+			if ( function_exists( 'ic_message_hash' ) ) {
+				$hash = ic_message_hash( $id . $container );
+				$attr = array( 'data-hash' => $hash );
+				if ( ic_is_user_hidden_content( $hash ) ) {
+					return '';
+				}
+			}
 
-			return $this->div( $container, $class_base . '-container ic-overlay-container' . $class, $id );
+			return $this->div( $container, $class_base . '-container ic-overlay-container' . $class, $id, $attr );
 		}
 
 		/**

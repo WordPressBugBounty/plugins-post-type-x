@@ -187,8 +187,18 @@ function ic_product_description( $atts ) {
 		'product' => get_the_ID(),
 	), $atts );
 	$product_description = get_product_description( $args['product'] );
+	$add_filter          = false;
+	if ( has_filter( 'the_content', array( 'ic_catalog_template', "product_page_content" ) ) ) {
+		remove_filter( 'the_content', array( 'ic_catalog_template', "product_page_content" ) );
+		$add_filter = true;
+	}
 
-	return apply_filters( 'the_content', $product_description );
+	$content = apply_filters( 'the_content', $product_description );
+	if ( $add_filter ) {
+		add_filter( 'the_content', array( 'ic_catalog_template', "product_page_content" ) );
+	}
+
+	return $content;
 }
 
 add_shortcode( 'product_short_description', 'ic_product_short_description' );

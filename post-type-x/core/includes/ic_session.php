@@ -98,7 +98,7 @@ class ic_session {
 	 * Constructor for the session class.
 	 */
 	public function __construct() {
-		$this->_cookie = 'wp_ic_session_' . COOKIEHASH;
+		$this->_cookie = 'wordpress_ic_session_' . COOKIEHASH;
 		$this->_table  = $GLOBALS['wpdb']->prefix . 'ic_sessions';
 	}
 

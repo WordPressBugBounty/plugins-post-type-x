@@ -369,7 +369,15 @@ function show_product_description( $product_id = false ) {
 	add_filter( 'product_simple_description', 'convert_chars' );
 	add_filter( 'product_simple_description', 'wpautop' );
 	add_filter( 'product_simple_description', 'shortcode_unautop' );
+	$add_filter = false;
+	if ( has_filter( 'the_content', array( 'ic_catalog_template', 'product_page_content' ) ) ) {
+		remove_filter( 'the_content', array( 'ic_catalog_template', 'product_page_content' ) );
+		$add_filter = true;
+	}
 	ic_show_template_file( 'product-page/product-description.php', AL_BASE_TEMPLATES_PATH, $product_id );
+	if ( $add_filter ) {
+		add_filter( 'the_content', array( 'ic_catalog_template', 'product_page_content' ) );
+	}
 }
 
 add_action( 'single_product_end', 'show_related_categories', 10, 3 );
@@ -785,9 +793,7 @@ if ( ! function_exists( 'array_to_url' ) ) {
 if ( ! function_exists( 'url_to_array' ) ) {
 
 	function url_to_array( $url ) {
-		$array = unserialize( stripslashes( urldecode( $url ) ) );
-
-		return $array;
+		return maybe_unserialize( stripslashes( urldecode( $url ) ) );
 	}
 
 }
@@ -1157,7 +1163,7 @@ function ic_get_to_hidden_field( $get, $exclude = '', $name = '', $value = null 
 
 				foreach ( $get_value as $val ) {
 					if ( $value === null || $value != $val ) {
-						$fields .= '<input type="hidden" value="' . esc_attr( $val ) . '" name="' . esc_attr( $key ) . '" />';
+						$fields .= '<input type="hidden" value="' . esc_attr( ic_sanitize( $val ) ) . '" name="' . esc_attr( ic_sanitize( $key ) ) . '" />';
 					}
 				}
 			}

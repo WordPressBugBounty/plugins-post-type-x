@@ -16,6 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ic_epc_blocks {
 
 	public $singular_name, $plural_name;
+	/**
+	 * @var ic_epc_widget_blocks
+	 */
+	public $widget_blocks;
 
 	function __construct() {
 		if ( function_exists( 'register_block_type' ) ) {
@@ -25,8 +29,8 @@ class ic_epc_blocks {
 			require_once( AL_BASE_PATH . '/includes/blocks/context-blocks.php' );
 			require_once( AL_BASE_PATH . '/includes/blocks/product-parts.php' );
 
-			$widget_blocks                 = new ic_epc_widget_blocks;
-			$widget_blocks->context_blocks = new ic_epc_context_blocks;
+			$this->widget_blocks                 = new ic_epc_widget_blocks;
+			$this->widget_blocks->context_blocks = new ic_epc_context_blocks;
 
 			add_action( 'init', array( $this, 'register' ), 50 );
 			add_action( 'admin_print_scripts', array( $this, 'js_global' ) );
@@ -47,7 +51,7 @@ class ic_epc_blocks {
 	}
 
 	function description_placeholder( $text, $post ) {
-		if ( ic_string_contains( $post->post_type, 'al_product' ) ) {
+		if ( isset( $post->post_type ) && ic_string_contains( $post->post_type, 'al_product' ) ) {
 			$catalog_placeholder = sprintf( __( 'Enter %s description.' ), get_catalog_names( 'singular' ) );
 			$text                = $catalog_placeholder . ' ' . $text;
 		}
@@ -172,14 +176,28 @@ class ic_epc_blocks {
 				'render_callback' => array( $this, 'render_active_filters' ),
 			)
 		);
+		register_block_type( __DIR__ . '/product-page/',
+			array(
+				'render_callback' => array( $this, 'render_product_page' ),
+			)
+		);
+		register_block_type( __DIR__ . '/product-category/',
+			array(
+				'render_callback' => array( $this, 'render_product_category' ),
+			)
+		);
 
 		do_action( 'ic_register_blocks' );
 	}
 
-	function render_catalog() {
+	function render_catalog( $atts = null ) {
 		global $ic_rendering_catalog_block;
 		$ic_rendering_catalog_block = 1;
 		$rendered                   = do_shortcode( '[show_product_catalog]' );
+		if ( ! empty( $rendered ) ) {
+			//$rendered = '<div class="ic-catalog-block-container alignwide">' . $rendered . '</div>';
+			$rendered = '<div class="ic-catalog-block-container">' . $rendered . '</div>';
+		}
 		if ( empty( $rendered ) && ic_is_rendering_catalog_block() ) {
 			if ( is_ic_product_listing_enabled() ) {
 				$rendered = '<hr>';
@@ -194,7 +212,61 @@ class ic_epc_blocks {
 		}
 		$ic_rendering_catalog_block = 0;
 
-		return $rendered;
+		return $this->widget_blocks->context_blocks->container( $atts, $rendered, 'show-catalog' );
+	}
+
+	function render_product_page( $atts = null, $block_content = null, $block = null ) {
+		ob_start();
+		if ( ! empty( $atts['selectedProduct'] ) ) {
+			foreach ( $atts['selectedProduct'] as $product ) {
+				if ( empty( $product['value'] ) ) {
+					continue;
+				}
+				ic_set_product_id( intval( $product['value'] ), false, false, true );
+				content_product_adder( 'is_catalog' );
+				ic_reset_product_id();
+			}
+		} else {
+			content_product_adder();
+		}
+
+		return $this->widget_blocks->context_blocks->container( $atts, ob_get_clean(), 'product-page' );
+	}
+
+	function render_product_listing( $atts ) {
+		ob_start();
+		content_product_adder();
+
+		return $this->widget_blocks->context_blocks->container( $atts, ob_get_clean(), 'product-listing' );
+	}
+
+	function render_product_category( $atts ) {
+		ob_start();
+		if ( ! empty( $atts['selectedCategory'] ) ) {
+			foreach ( $atts['selectedCategory'] as $category ) {
+				if ( empty( $category['value'] ) ) {
+					continue;
+				}
+				global $wp_query;
+				$pre_query = $wp_query;
+				$wp_query  = new WP_Query( array(
+					'post_type' => 'al_product',
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'al_product-cat',
+							'field'    => 'term_id',
+							'terms'    => $category['value']
+						)
+					)
+				) );
+				content_product_adder( 'is_catalog' );
+				$wp_query = $pre_query;
+			}
+		} else {
+			content_product_adder();
+		}
+
+		return $this->widget_blocks->context_blocks->container( $atts, ob_get_clean(), 'product-listing' );
 	}
 
 	function render_products( $atts = null ) {

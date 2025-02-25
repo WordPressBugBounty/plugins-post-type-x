@@ -70,7 +70,9 @@ if ( ! function_exists( 'run_ic_session' ) ) {
 				if ( ! class_exists( 'WP_Session' ) ) {
 					require_once( AL_BASE_PATH . '/ext-comp/wp_session/class-wp-session.php' );
 				}
-				require_once( AL_BASE_PATH . '/ext-comp/wp_session/wp-session.php' );
+				if ( ! function_exists( 'wp_session_cache_expire' ) ) {
+					require_once( AL_BASE_PATH . '/ext-comp/wp_session/wp-session.php' );
+				}
 			}
 		}
 		get_product_catalog_session();

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/block.json",
   "apiVersion": 2,
-  "name": "ic-epc/show-catalog",
+  "name": "ic-epc/product-category",
   "textdomain": "ecommerce-product-catalog",
-  "title": "Show Catalog",
+  "title": "Product Category Page",
   "icon": "store",
   "category": "ic-epc-block-cat",
   "attributes": {
@@ -16,6 +16,17 @@
       "default": "none"
     },
     "spacing": {
+      "type": "string",
+      "default": ""
+    },
+    "selectedCategory": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object"
+      }
+    },
+    "categorySearch": {
       "type": "string",
       "default": ""
     }

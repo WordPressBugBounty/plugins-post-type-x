@@ -116,7 +116,6 @@ class Elementor_IC_Show_Catalog_Widget extends \Elementor\Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-
 		global $ic_shortcode_catalog;
 		if ( ! empty( $ic_shortcode_catalog ) ) {
 			if ( $ic_shortcode_catalog->is_page_builder_edit() ) {
@@ -125,6 +124,10 @@ class Elementor_IC_Show_Catalog_Widget extends \Elementor\Widget_Base {
 				echo '[show_product_catalog]';
 			}
 		}
+	}
+
+	protected function is_dynamic_content(): bool {
+		return true;
 	}
 
 }

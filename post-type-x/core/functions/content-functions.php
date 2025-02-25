@@ -137,9 +137,25 @@ function ic_localize_main_catalog_js() {
 	wp_localize_script( 'al_product_scripts', 'product_object', $localize );
 }
 
-function ic_popup( $content, $class = '', $ok_url = null, $ok_label = '', $cancel_label = '', $ok_class = 'ic-popup-ok', $cancel_class = 'ic-popup-cancel' ) {
-	$html  = new ic_html_util;
-	$class .= ' ic-hidden';
+/**
+ * Renders a popup with customizable content, buttons, and classes.
+ *
+ * @param string $content The content to display in the popup.
+ * @param string $class Optional. Additional CSS classes for the popup. Default is an empty string.
+ * @param string|array|null $ok_url Optional. URL or array of buttons for the "OK" action. Default is null.
+ * @param string $ok_label Optional. Label for the "OK" button. Default is an empty string.
+ * @param string $cancel_label Optional. Label for the "Cancel" button. Default is an empty string.
+ * @param string $ok_class Optional. CSS classes for the "OK" button. Default is 'ic-popup-ok'.
+ * @param string $cancel_class Optional. CSS classes for the "Cancel" button. Default is 'ic-popup-cancel'.
+ * @param array $additional_buttons Optional. Additional buttons to display in the popup. Default is an empty array.
+ *
+ * @return void
+ */
+function ic_popup( $content, $class = '', $ok_url = null, $ok_label = '', $cancel_label = '', $ok_class = 'ic-popup-ok', $cancel_class = 'ic-popup-cancel', $additional_buttons = array(), $show_by_default = false ) {
+	$html = new ic_html_util;
+	if ( ! $show_by_default ) {
+		$class .= ' ic-hidden';
+	}
 	if ( ! empty( $ok_url ) && ! is_array( $ok_url ) ) {
 		if ( empty( $ok_label ) ) {
 			$ok_label = __( 'OK', 'post-type-x' );
@@ -147,17 +163,23 @@ function ic_popup( $content, $class = '', $ok_url = null, $ok_label = '', $cance
 		if ( empty( $cancel_label ) ) {
 			$cancel_label = __( 'Cancel', 'implecode-quote-cart' );
 		}
-		$buttons = array(
+		$buttons   = array_merge( array(
 			array(
 				'label' => $ok_label,
 				'class' => $ok_class,
 				'url'   => $ok_url
 			),
-			array(
-				'label' => $cancel_label,
-				'class' => 'ic-secondary-button ' . $cancel_class,
-			)
+		), $additional_buttons );
+		$buttons[] = array(
+			'label' => $cancel_label,
+			'class' => 'ic-secondary-button ' . $cancel_class,
 		);
+		if ( $show_by_default && is_user_logged_in() ) {
+			$buttons[] = array(
+				'label' => __( 'Never show again', 'implecode-quote-cart' ),
+				'class' => 'ic-secondary-button ic-popup-never-show',
+			);
+		}
 	} else if ( is_array( $ok_url ) ) {
 		$buttons = $ok_url;
 	} else {
@@ -172,4 +194,96 @@ if ( ! function_exists( 'create_ic_overlay' ) ) {
 		echo '<div id="ic_overlay" class="ic-overlay" style="display:none"></div>';
 	}
 
+}
+
+add_action( 'wp_ajax_ic_user_hide_content', 'ic_hide_content_for_user' );
+add_action( 'wp_ajax_nopriv_ic_user_hide_content', 'ic_hide_content_for_user' );
+
+/**
+ * Hides specific content for the user based on the provided hash from a POST request.
+ * Retrieves the 'hash' parameter from the POST request, and if it's not empty,
+ * calls the function to hide the content for the user.
+ *
+ * @return void Terminates script execution after processing the request.
+ */
+function ic_hide_content_for_user() {
+	$popup_hash = isset( $_POST['hash'] ) ? $_POST['hash'] : '';
+	if ( ! empty( $popup_hash ) ) {
+		ic_user_hide_content( $popup_hash );
+	}
+
+	wp_die();
+}
+
+/**
+ * Hides specific content for a user by adding the content hash to the user's hidden content metadata.
+ *
+ * @param string $content_hash The hash of the content to be hidden.
+ * @param int|string $user_id Optional. The ID of the user. Defaults to the current logged-in user's ID.
+ *
+ * @return void
+ */
+function ic_user_hide_content( $content_hash, $user_id = '' ) {
+	if ( empty( $content_hash ) ) {
+		return;
+	}
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+	if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
+		return;
+	}
+	if ( ! ic_is_user_hidden_content( $content_hash, $user_id ) ) {
+		$hidden_content   = ic_user_hidden_content( $user_id );
+		$hidden_content[] = $content_hash;
+		update_user_meta( $user_id, '_ic_hidden_content', $hidden_content );
+	}
+}
+
+/**
+ * Retrieves the hidden content for a specific user.
+ *
+ * @param int $user_id The ID of the user. If empty, the current logged-in user's ID is used.
+ *
+ * @return array An array of hidden content for the specified user.
+ */
+function ic_user_hidden_content( $user_id ) {
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+	if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
+		return array();
+	}
+	$hidden = get_user_meta( $user_id, '_ic_hidden_content', true );
+	if ( empty( $hidden ) ) {
+		$hidden = array();
+	}
+
+	return $hidden;
+}
+
+/**
+ * Checks if the specified content is hidden for a given user.
+ *
+ * @param string $content_hash The unique identifier for the content being checked.
+ * @param int|string $user_id Optional. The user ID. Defaults to the current user's ID.
+ *
+ * @return bool Returns true if the content is hidden for the user, false otherwise.
+ */
+function ic_is_user_hidden_content( $content_hash, $user_id = '' ) {
+	if ( empty( $content_hash ) ) {
+		return false;
+	}
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+	if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
+		return false;
+	}
+	$hidden_content = ic_user_hidden_content( $user_id );
+	if ( in_array( $content_hash, $hidden_content ) ) {
+		return true;
+	}
+
+	return false;
 }

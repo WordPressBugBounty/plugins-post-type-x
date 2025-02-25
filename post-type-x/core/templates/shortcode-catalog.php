@@ -678,10 +678,17 @@ class ic_shortcode_catalog {
 		}
 		if ( ! empty( $_GET['elementor-preview'] ) || ( ! empty( $_GET['action'] ) && $_GET['action'] === 'elementor' ) ) {
 			// ELEMENTOR PAGE BUILDER DETECTED
+
 			return true;
 		}
 		if ( ! empty( $_GET['ct_builder'] ) ) {
 			// OXYGEN PAGE BUILDER DETECTED
+			return true;
+		}
+
+		if ( class_exists( 'Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+			// ELEMENTOR PAGE BUILDER DETECTED
+
 			return true;
 		}
 
@@ -785,6 +792,7 @@ class ic_shortcode_catalog {
             <div id="<?php echo $id ?>" <?php post_class() ?>>
 			<?php
 		}
+		//echo '<div class="ic-catalog-container alignwide">';
 		echo '<div class="ic-catalog-container">';
 		if ( $id === 'product_listing' ) {
 			$this->product_listing();

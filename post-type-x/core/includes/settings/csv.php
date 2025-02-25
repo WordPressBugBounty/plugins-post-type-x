@@ -145,9 +145,11 @@ function simple_import_product_from_csv() {
 					continue;
 				}
 				foreach ( $data as $key => $val ) {
-					unset( $data[ $key ] );
-					$new_key          = $import_array[ $key ];
-					$data[ $new_key ] = $val;
+					if ( isset( $import_array[ $key ] ) ) {
+						unset( $data[ $key ] );
+						$new_key          = $import_array[ $key ];
+						$data[ $new_key ] = $val;
+					}
 				}
 
 				$product_id = simple_insert_csv_product( $data );
@@ -272,7 +274,7 @@ function sample_import_file_url() {
 	fprintf( $fp, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 	$sep = apply_filters( 'simple_csv_separator', ';' );
 	foreach ( $fields as $field ) {
-		fputcsv( $fp, $field, $sep, '"' );
+		fputcsv( $fp, $field, $sep, '"', "\\" );
 	}
 	simple_close_csv_file( $fp );
 

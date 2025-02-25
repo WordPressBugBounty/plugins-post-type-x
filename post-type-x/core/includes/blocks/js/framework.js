@@ -1063,7 +1063,7 @@ function ic_register_block(name, context, transform_from) {
                         return {value: parseInt(item, 10), label: 'Loading...'};
                     }
                 });
-            } else if (attributes.product.length) {
+            } else if (attributes.product !== undefined && attributes.product.length) {
                 selectedProduct = attributes.product.map(function (item) {
                     return {value: parseInt(item, 10), label: 'Loading...'};
                 });
@@ -1085,7 +1085,7 @@ function ic_register_block(name, context, transform_from) {
                         return {value: parseInt(item, 10), label: 'Loading...'};
                     }
                 });
-            } else if (attributes.category.length) {
+            } else if (attributes.category !== undefined && attributes.category.length) {
                 selectedCategory = attributes.category.map(function (item) {
                     return {value: parseInt(item, 10), label: 'Loading...'};
                 });

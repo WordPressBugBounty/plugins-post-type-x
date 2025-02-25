@@ -144,9 +144,8 @@ class ic_epc_context_blocks {
 	function block_sample( $attributes, $block_name ) {
 		$block_content = '';
 		if ( empty( $attributes['sample'] ) ) {
-			$products = get_all_catalog_products( null, null, 1 );
-			if ( ! empty( $products[0] ) && isset( $products[0]->ID ) ) {
-				$product_id    = $products[0]->ID;
+			$product_id = $this->sample_product_id();
+			if ( $product_id ) {
 				$block_content = apply_filters( 'ic_block_content', '', $product_id, $block_name, $attributes );
 			}
 		} else {
@@ -157,6 +156,15 @@ class ic_epc_context_blocks {
 		}
 
 		return $block_content;
+	}
+
+	function sample_product_id() {
+		$products = get_all_catalog_products( null, null, 1 );
+		if ( ! empty( $products[0] ) && isset( $products[0]->ID ) ) {
+			return $products[0]->ID;
+		}
+
+		return 0;
 	}
 
 	function container( $attr, $content, $name, $product_id = null ) {

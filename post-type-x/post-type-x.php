@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.7.11
+ * Version: 1.8.0
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x
  * Domain Path: /lang/
  *
- * Copyright: 2024 impleCode.
+ * Copyright: 2025 impleCode.
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html */
 if ( ! ( is_admin() && isset( $_GET['action'] ) && $_GET['action'] == 'activate' && isset( $_GET['plugin'] ) && $_GET['plugin'] == 'post-type-x/post-type-x.php' ) ) {

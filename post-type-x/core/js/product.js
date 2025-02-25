@@ -145,6 +145,20 @@ jQuery(document).ready(function ($) {
         }
         jQuery(this).hide();
     });
+    jQuery('.ic-overlay-container').on('click', '.ic-popup-never-show', function (e) {
+        const container = jQuery(this).closest('.ic-overlay-container');
+        const hash = container.data('hash');
+        const data = {
+            'action': 'ic_user_hide_content',
+            'hash': hash,
+            'nonce': product_object.nonce
+        };
+        jQuery.post(product_object.ajaxurl, data, function (response) {
+            if (response.success) {
+                container.hide();
+            }
+        })
+    })
 });
 
 function ic_adjust_responsive_filters_height() {

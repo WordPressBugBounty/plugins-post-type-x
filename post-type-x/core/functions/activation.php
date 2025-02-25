@@ -368,6 +368,9 @@ function ic_update_product_data() {
 
 		return;
 	}
+	if ( empty( $done ) ) {
+		do_action( 'ic_product_data_reassignment_start' );
+	}
 	set_transient( 'ic_doing_update_product_data_loop', $done, MINUTE_IN_SECONDS * 15 );
 	wp_defer_term_counting( true );
 	$done = ic_update_product_data_loop( $done, $start_time, $option_name );

@@ -19,8 +19,8 @@ add_shortcode( 'content_product_adder', 'content_product_adder' );
  * The function wrapper to show product catalog content for current URL
  *
  */
-function content_product_adder() {
-	if ( ! is_ic_catalog_page() ) {
+function content_product_adder( $is_catalog = null ) {
+	if ( $is_catalog !== 'is_catalog' && ! is_ic_catalog_page() ) {
 		return;
 	}
 	echo '<div class="ic-catalog-container">';

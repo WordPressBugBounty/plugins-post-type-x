@@ -44,6 +44,7 @@ class ic_catalog_template {
 		require_once( AL_BASE_PATH . '/templates/templates-functions.php' );
 		require_once( AL_BASE_PATH . '/templates/templates-woo.php' );
 		require_once( AL_BASE_PATH . '/templates/shortcode-catalog.php' );
+		require_once( AL_BASE_PATH . '/templates/block-catalog.php' );
 	}
 
 	function load_templates() {

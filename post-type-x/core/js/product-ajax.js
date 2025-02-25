@@ -314,6 +314,12 @@ function ic_ajax_product_list_on_screen() {
     if (ic_product_list === '') {
         ic_product_list = jQuery('.product-list').first();
     }
+    if (ic_product_list.length === 0) {
+        return false;
+    }
+    if (ic_product_list.offset().top === 0 && ic_product_list.offset().left === 0) {
+        return false;
+    }
     if (jQuery(window).scrollTop() + jQuery(window).height() > ic_product_list.offset().top) {
         return true;
     }

@@ -200,7 +200,7 @@ add_action( 'save_post', 'save_product_quick_edit' );
  */
 function save_product_quick_edit( $product_id ) {
 	$slug = 'al_product';
-	if ( ! isset( $_POST['post_type'] ) ) {
+	if ( empty( $_POST['post_type'] ) ) {
 		return;
 	}
 	if ( strpos( $slug, $_POST['post_type'] ) === false ) {

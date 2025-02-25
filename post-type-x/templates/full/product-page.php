@@ -21,7 +21,7 @@ if ( $this_product_id && $this_product_id !== $product_id ) {
 	$product_id = $this_product_id;
 	$product    = get_post( $product_id );
 	setup_postdata( $product );
-	the_post();
+	//the_post();
 }
 
 $current_post_type = get_post_type( $product_id );
