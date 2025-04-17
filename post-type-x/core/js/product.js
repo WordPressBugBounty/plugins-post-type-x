@@ -83,7 +83,8 @@ jQuery(document).ready(function ($) {
     $.ic.addAction('ic_self_submit', function () {
         responsive_product_catalog();
         //ic_responsive_filters_bar();
-        $('.product-size-filter-container.toReload').trigger('reload');
+        //$('.product-size-filter-container.toReload').trigger('reload');
+        $('.ic-slider-container.toReload').trigger('reload');
     });
     $.ic.addAction('ic_self_submit_before', function () {
         jQuery('.responsive-filters').hide();

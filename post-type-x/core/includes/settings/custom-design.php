@@ -243,10 +243,11 @@ function ic_product_page_design_settings() {
     <h3><?php _e( 'Single Page Template', 'post-type-x' ) ?></h3>
     <table>
 		<?php
-		implecode_settings_radio( __( 'Select template', 'post-type-x' ), 'multi_single_options[template]', $single_options['template'], array(
+		$template_options = apply_filters( 'ic_catalog_single_template_available_options', array(
 			'boxed' => __( 'Formatted', 'post-type-x' ),
 			'plain' => __( 'Plain', 'post-type-x' )
 		) );
+		implecode_settings_radio( __( 'Select template', 'post-type-x' ), 'multi_single_options[template]', $single_options['template'], $template_options );
 		?>
     </table>
 	<?php

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.8.0
+ * Version: 1.8.1
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x

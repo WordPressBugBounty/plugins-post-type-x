@@ -54,9 +54,10 @@ class ic_catalog_ajax {
 			$_GET   = $params;
 			global $ic_ajax_query_vars;
 			$ic_ajax_query_vars = apply_filters( 'ic_catalog_query', json_decode( stripslashes( $_POST['query_vars'] ), true ) );
-			if ( is_array( $ic_ajax_query_vars ) ) {
+			/*if ( is_array( $ic_ajax_query_vars ) ) {
 				$ic_ajax_query_vars = array_map( 'ic_sanitize', $ic_ajax_query_vars );
-			} else if ( ! empty( $ic_ajax_query_vars ) ) {
+			} else */
+			if ( ! empty( $ic_ajax_query_vars ) ) {
 				$ic_ajax_query_vars = ic_sanitize( $ic_ajax_query_vars );
 			}
 			$pre_ic_ajax_query_vars = $ic_ajax_query_vars;
@@ -68,6 +69,7 @@ class ic_catalog_ajax {
 
 				return;
 			}
+
 			do_action( 'ic_ajax_self_submit', $ic_ajax_query_vars, $params );
 
 			if ( isset( $params['s'] ) ) {

@@ -436,7 +436,7 @@ class ic_product_size_filter extends WP_Widget {
 					echo $args['before_title'] . $title . $args['after_title'];
 				}
 				do_action( 'ic_size_widget_before_sliders', $instance );
-				echo '<form class="product-size-filter-container toReload ic_ajax ' . design_schemes( 'box', 0 ) . '" data-ic_responsive_label="' . __( 'Size', 'post-type-x' ) . '" data-ic_ajax="product-size-filter-container" action="' . get_filter_widget_action( $instance ) . '">';
+				echo '<form class="product-size-filter-container ic-slider-container toReload ic_ajax ' . design_schemes( 'box', 0 ) . '" data-ic_responsive_label="' . __( 'Size', 'post-type-x' ) . '" data-ic_ajax="product-size-filter-container" action="' . get_filter_widget_action( $instance ) . '">';
 				$hidden_fields = array_keys( ic_size_field_names() );
 				echo ic_get_to_hidden_field( $_GET, $hidden_fields );
 				echo $size_filters;
@@ -567,7 +567,7 @@ function register_filter_widgets() {
  * @global type $post
  */
 function get_filter_widget_action( $instance ) {
-	if ( ( ! empty( $instance['shortcode_support'] ) && has_show_products_shortcode() ) || is_ic_taxonomy_page() || is_ic_product_search() ) {
+	if ( is_ic_inside_filters_bar() || ( ! empty( $instance['shortcode_support'] ) && has_show_products_shortcode() ) || is_ic_taxonomy_page() || is_ic_product_search() ) {
 		$action = '';
 	} else {
 		if ( ! is_ic_catalog_page() && ic_get_global( 'inside_show_catalog_shortcode' ) ) {

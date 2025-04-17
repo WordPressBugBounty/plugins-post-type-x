@@ -1407,3 +1407,9 @@ function is_ic_multiple_key( $meta_key ) {
 
 	return false;
 }
+
+function is_ic_inside_filters_bar() {
+	global $is_filter_bar;
+
+	return ! empty( $is_filter_bar );
+}

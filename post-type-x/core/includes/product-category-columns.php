@@ -65,6 +65,7 @@ function delete_product_cat_image( $term_id ) {
 	if ( function_exists( 'delete_term_meta' ) ) {
 		delete_term_meta( $term_id, 'thumbnail_id' );
 	}
+	do_action( 'ic_delete_product_category', $term_id );
 }
 
 add_action( 'al_product-cat_add_form_fields', 'product_category_add_form_fields' );

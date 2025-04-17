@@ -1680,7 +1680,12 @@ function ic_data_should_be_hidden( $product_status ) {
 
 function ic_sanitize( $data, $strict = true ) {
 	if ( is_array( $data ) ) {
-		return array_map( 'ic_sanitize', $data, array( $strict ) );
+		$return = array();
+		foreach ( $data as $key => $value ) {
+			$return[ $key ] = ic_sanitize( $value, $strict );
+		}
+
+		return $return;
 	}
 	if ( $strict ) {
 		return sanitize_text_field( $data );

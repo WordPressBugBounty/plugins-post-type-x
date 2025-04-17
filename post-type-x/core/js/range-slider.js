@@ -46,7 +46,7 @@ function ic_apply_range_slider( field ) {
     } );
 }
 jQuery( document ).ready( function ( $ ) {
-    $( "body" ).on( "reload", ".product-size-filter-container", function () {
+    $( "body" ).on( "reload", ".ic-slider-container", function () {
         var container = $( this );
         container.removeClass( "toReload" );
         container.find( ".ic-range-slider" ).each( function () {
@@ -54,5 +54,5 @@ jQuery( document ).ready( function ( $ ) {
             ic_apply_range_slider( field );
         } );
     } );
-    $( ".product-size-filter-container.toReload" ).trigger( "reload" );
+    $( ".ic-slider-container.toReload" ).trigger( "reload" );
 } );

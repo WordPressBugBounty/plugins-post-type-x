@@ -839,12 +839,12 @@ function implecode_installation_url() {
 				$license_owner = url_to_array( $pluginInfo->license_owner );
 				update_option( 'implecode_license_owner', array_to_url( $license_owner ), false );
 				update_option( 'no_implecode_license_error', 0, false );
-				$active_license = unserialize( get_option( 'license_active_plugins' ) );
+				$active_license = maybe_unserialize( get_option( 'license_active_plugins' ) );
 				if ( empty( $active_license ) ) {
 					$active_license = array();
 				}
 				$active_license[] = $_GET['slug'];
-				update_option( 'license_active_plugins', serialize( $active_license ), false );
+				update_option( 'license_active_plugins', maybe_serialize( $active_license ), false );
 
 				return $pluginInfo;
 			}
@@ -1138,6 +1138,8 @@ function ic_license_renewal_notice() {
 	if ( ic_is_license_valid() ) {
 		if ( ic_license_will_expire_soon() ) {
 			$message = __( 'Your license will expire soon. Use the button below to prevent it, so the updates work without any interruptions.', 'post-type-x' );
+		} else if ( ic_license_will_expire_soon( false ) ) {
+			ic_license_reverify_schedule();
 		}
 	} else {
 		$message = __( 'Your license is expired. The latest security and feature updates cannot be applied without an active license.', 'post-type-x' );
@@ -1181,11 +1183,17 @@ function ic_license_reverify_schedule() {
 	check_all_implecode_license();
 	$unschedule = false;
 	$reschedule = false;
-	if ( ! function_exists( 'get_implecode_active_plugins' ) || ( ic_is_license_valid() && ! ic_license_will_expire_soon() ) ) {
+	if ( ! function_exists( 'get_implecode_active_plugins' ) || ( ic_is_license_valid() && ! ic_license_will_expire_soon( false ) ) ) {
 		$unschedule = true;
+		if ( ic_license_is_subscription() ) {
+			$reschedule = 'weekly';
+		}
 	} else if ( function_exists( 'get_implecode_active_plugins' ) && ! ic_is_license_valid() ) {
 		$unschedule = true;
 		$reschedule = 'weekly';
+	} else if ( ic_license_will_expire_soon( false ) ) {
+		$unschedule = true;
+		$reschedule = 'twicedaily';
 	}
 	if ( $unschedule ) {
 		wp_unschedule_hook( 'ic_license_reverify_schedule' );
@@ -1193,7 +1201,12 @@ function ic_license_reverify_schedule() {
 	if ( $reschedule ) {
 		$schedules = wp_get_schedules();
 		if ( ! empty( $schedules[ $reschedule ]['interval'] ) ) {
-			wp_schedule_event( time() + $schedules[ $reschedule ]['interval'], $reschedule, 'ic_license_reverify_schedule' );
+			if ( $reschedule === 'weekly' ) {
+				$time = time() + HOUR_IN_SECODS + DAY_IN_SECONDS;
+			} else {
+				$time = time() + $schedules[ $reschedule ]['interval'];
+			}
+			wp_schedule_event( $time, $reschedule, 'ic_license_reverify_schedule' );
 		}
 	}
 }
@@ -1215,15 +1228,15 @@ function ic_is_license_valid() {
 	}
 	$valid_until_time = strtotime( $valid_until );
 	$current_time     = date( 'U' );
-	if ( $valid_until_time > $current_time ) {
+	if ( $valid_until_time + DAY_IN_SECONDS >= $current_time ) {
 		return $valid_until_time;
 	} else {
 		return false;
 	}
 }
 
-function ic_license_will_expire_soon() {
-	if ( ic_license_is_subscription() ) {
+function ic_license_will_expire_soon( $check_is_sub = true ) {
+	if ( $check_is_sub && ic_license_is_subscription() ) {
 		return false;
 	}
 	if ( $valid_until_time = ic_is_license_valid() ) {
