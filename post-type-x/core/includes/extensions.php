@@ -1175,7 +1175,7 @@ function ic_license_reverify_schedule() {
 	}
 	if ( current_filter() !== 'ic_license_reverify_schedule' ) {
 		if ( ! wp_next_scheduled( 'ic_license_reverify_schedule' ) ) {
-			wp_schedule_event( time() + DAY_IN_SECONDS, 'twicedaily', 'ic_license_reverify_schedule' );
+			wp_schedule_event( time() + MINUTE_IN_SECONDS, 'twicedaily', 'ic_license_reverify_schedule' );
 		}
 
 		return;

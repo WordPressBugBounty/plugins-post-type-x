@@ -1708,6 +1708,7 @@ div.relative-box {
     font-size: 14px;
     clear: both;
     position: relative;
+    z-index: 1;
 }
 
 .product-sort-bar .filter-widget, .product-sort-bar .widget {

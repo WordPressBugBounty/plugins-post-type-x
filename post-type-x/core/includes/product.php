@@ -144,6 +144,7 @@ class ic_product {
 		if ( empty( $image_html ) ) {
 			$image_html = $this->default_listing_image_html( $this->ID );
 		}
+		$image_html = apply_filters( 'ic_listing_image_final_html', $image_html, $this->ID, $this );
 		ic_save_global( 'ic_listing_image_html_' . $this->ID, $image_html );
 
 		return $image_html;

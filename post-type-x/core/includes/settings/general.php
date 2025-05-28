@@ -43,6 +43,9 @@ add_action( 'product-settings-list', 'general_settings' );
  * @return array
  */
 function archive_multiple_settings_validation( $new_value ) {
+	if ( function_exists( 'ic_force_clear_cache' ) ) {
+		ic_force_clear_cache();
+	}
 	$product_slug = get_product_slug();
 	if ( isset( $new_value['category_archive_url'] ) && $new_value['category_archive_url'] == $product_slug ) {
 		$new_value['category_archive_url'] = $new_value['category_archive_url'] . '-1';

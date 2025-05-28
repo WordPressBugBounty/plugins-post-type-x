@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.8.1
+ * Version: 1.8.2
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x
@@ -22,12 +22,6 @@ if ( ! ( is_admin() && isset( $_GET['action'] ) && $_GET['action'] == 'activate'
 
 function start_post_type_x() {
 	if ( ! defined( 'AL_BASE_PATH' ) ) {
-		if ( ! defined( 'DEF_CATALOG_SINGULAR' ) ) {
-			define( 'DEF_CATALOG_SINGULAR', __( 'Item', 'post-type-x' ) );
-		}
-		if ( ! defined( 'DEF_CATALOG_PLURAL' ) ) {
-			define( 'DEF_CATALOG_PLURAL', __( 'Catalog', 'post-type-x' ) );
-		}
 		if ( ! defined( 'AL_BASE_TEMPLATES_PATH' ) ) {
 			define( 'AL_BASE_TEMPLATES_PATH', dirname( __FILE__ ) );
 		}
@@ -65,6 +59,16 @@ function start_post_type_x() {
 		//add_action( 'ic_before_extensions_list', 'type_x_free_extensions' );
 		add_filter( 'ic_cat_extensions', 'type_x_free_extensions' );
 		add_action( 'after_setup_theme', 'ic_post_type_x_addons', - 2 );
+		add_action( 'init', 'ic_post_type_x_constants' );
+	}
+}
+
+function ic_post_type_x_constants() {
+	if ( ! defined( 'DEF_CATALOG_SINGULAR' ) ) {
+		define( 'DEF_CATALOG_SINGULAR', __( 'Item', 'post-type-x' ) );
+	}
+	if ( ! defined( 'DEF_CATALOG_PLURAL' ) ) {
+		define( 'DEF_CATALOG_PLURAL', __( 'Catalog', 'post-type-x' ) );
 	}
 }
 
@@ -158,7 +162,7 @@ function implecode_x_free_extensions() {
  */
 function post_type_x_upgrade() {
 	if ( is_admin() ) {
-		$plugin_data             = get_plugin_data( AL_PLUGIN_MAIN_FILE );
+		$plugin_data             = get_plugin_data( AL_PLUGIN_MAIN_FILE, true, false );
 		$plugin_version          = $plugin_data["Version"];
 		$database_plugin_version = get_option( 'post_type_x_ver', $plugin_version );
 		add_filter( 'ic_plugin_database_version', 'set_post_type_x_system_db_ver' );
@@ -208,7 +212,7 @@ function post_type_x_upgrade() {
  * @return type
  */
 function set_post_type_x_system_db_ver() {
-	$plugin_data    = get_plugin_data( AL_PLUGIN_MAIN_FILE );
+	$plugin_data    = get_plugin_data( AL_PLUGIN_MAIN_FILE, true, false );
 	$plugin_version = $plugin_data["Version"];
 
 	return get_option( 'post_type_x_ver', $plugin_version );

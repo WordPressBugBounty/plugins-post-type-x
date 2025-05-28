@@ -61,7 +61,7 @@ class ic_featured_products {
 			if ( empty( $arg ) ) {
 				continue;
 			}
-			$args_string .= ' ' . $name . '="' . $arg . '"';
+			$args_string .= ' ' . sanitize_title( $name ) . '="' . esc_html( $arg ) . '"';
 		}
 		$header = '';
 		if ( ! empty( $args['header'] ) ) {

@@ -783,17 +783,25 @@ function product_taxonomy_array() {
 if ( ! function_exists( 'array_to_url' ) ) {
 
 	function array_to_url( $array ) {
-		$url = urlencode( serialize( $array ) );
-
-		return $url;
+		return urlencode( json_encode( $array ) );
 	}
 
 }
 
 if ( ! function_exists( 'url_to_array' ) ) {
 
-	function url_to_array( $url ) {
-		return maybe_unserialize( stripslashes( urldecode( $url ) ) );
+	function url_to_array( $url, $maybe_serialized = true ) {
+		$data = stripslashes( urldecode( $url ) );
+		if ( $maybe_serialized && is_serialized( $data ) ) { // Don't attempt to unserialize data that wasn't serialized going in.
+			return @unserialize( trim( $data ), [ 'allowed_classes' => false ] );
+		} else {
+			$json_data = json_decode( trim( $data ), true );
+			if ( json_last_error() === JSON_ERROR_NONE ) {
+				return $json_data;
+			}
+		}
+
+		return $data;
 	}
 
 }
@@ -1856,4 +1864,38 @@ function ic_get_products_limit() {
 	}
 
 	return $limit;
+}
+
+if ( ! function_exists( 'ic_force_purge_cache' ) ) {
+	function ic_force_clear_cache() {
+		// LiteSpeed Cache
+		if ( defined( 'LSCWP_V' ) ) {
+			do_action( 'litespeed_purge_all', '3rd impleCode' );
+		}
+		// W3 Total Cache
+		if ( function_exists( 'w3tc_flush_all' ) ) {
+			w3tc_flush_all();
+		}
+		// WP Super Cache
+		if ( function_exists( 'wp_cache_clean_cache' ) ) {
+			global $file_prefix;
+			wp_cache_clean_cache( $file_prefix );
+		}
+		// FastCGI Cache
+		if ( function_exists( 'nginx_helper_purge_cache' ) ) {
+			do_action( 'nginx_helper_purge_all' );
+		}
+		// WP Rocket
+		if ( function_exists( 'rocket_clean_domain' ) ) {
+			rocket_clean_domain();
+		}
+		// Redis Cache
+		if ( function_exists( 'wp_cache_flush' ) ) {
+			wp_cache_flush();
+		}
+		// Autoptimize
+		if ( class_exists( 'autoptimizeCache' ) ) {
+			autoptimizeCache::clearall();
+		}
+	}
 }
