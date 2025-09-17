@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -15,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product_id = ic_get_product_id();
 $shortdesc  = apply_filters( 'product_short_description', get_product_short_description( $product_id ) );
 if ( ! empty( $shortdesc ) ) {
-	?>
+    ?>
 
     <div class="shortdesc">
-		<?php
-		echo $shortdesc;
-		?>
+        <?php
+        echo $shortdesc;
+        ?>
     </div>
-	<?php
+    <?php
 }

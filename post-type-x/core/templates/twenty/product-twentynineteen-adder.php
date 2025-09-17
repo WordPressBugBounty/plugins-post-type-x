@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /**
  * Template Name:  Product Template [NO SIDEBAR]
@@ -15,9 +15,9 @@ get_header();
     <section id="primary" class="content-area">
         <main id="main" class="site-main">
 
-			<?php
-			content_product_adder();
-			?>
+            <?php
+            content_product_adder();
+            ?>
 
         </main><!-- #main -->
     </section><!-- #primary -->

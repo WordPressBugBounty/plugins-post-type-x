@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -17,7 +17,7 @@ $archive_names = get_archive_names();
 ?>
 
     <header class="entry-header product-listing-header">
-		<?php do_action( 'product_listing_header', $post, $archive_names ); ?>
+        <?php do_action( 'product_listing_header', $post, $archive_names ); ?>
     </header>
 
 <?php

@@ -145,6 +145,9 @@ function get_sub_product_subcategories( $args, $parent_cat, $nest = true ) {
 	$args['taxonomy'] = 'al_product-cat';
 	$cats             = ic_get_terms( $args );
 	$return           = '';
+	if ( ! empty( $cat_shortcode_query['count'] ) ) {
+		$cat_shortcode_query['count'] += count( $cats );
+	}
 	foreach ( $cats as $cat ) {
 		$return .= get_product_category_template( $args['archive_template'], $cat );
 		$cat_shortcode_query['current'] ++;

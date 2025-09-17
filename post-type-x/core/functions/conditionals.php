@@ -1059,6 +1059,7 @@ function is_ic_product( $product_id ) {
 		}
 		$post_type = ic_get_post_type( $product_id );
 		if ( is_ic_catalog_post_type( $post_type ) ) {
+
 			return true;
 		}
 	}

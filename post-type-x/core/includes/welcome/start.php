@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /*
  *
@@ -10,21 +10,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  */
 if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
-	?>
+    ?>
     <div class="ic-select-mode-container">
         <div class="about__section is-feature has-subtle-background-color">
             <h2>
-				<?php printf( __( 'Choose your preferred %s configuration.', 'post-type-x' ), IC_CATALOG_PLUGIN_NAME ) ?>
+                <?php printf( __( 'Choose your preferred %s configuration.', 'post-type-x' ), IC_CATALOG_PLUGIN_NAME ) ?>
             </h2>
             <p>
-				<?php
-				_e( 'Use the buttons below to choose the catalog mode. Simple Catalog is enabled by default.', 'post-type-x' );
-				?>
+                <?php
+                _e( 'Use the buttons below to choose the catalog mode. Simple Catalog is enabled by default.', 'post-type-x' );
+                ?>
             </p>
             <p>
-				<?php
-				_e( 'You can make additional adjustments in the settings later.', 'post-type-x' );
-				?>
+                <?php
+                _e( 'You can make additional adjustments in the settings later.', 'post-type-x' );
+                ?>
             </p>
         </div>
 
@@ -38,7 +38,7 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
                 <p class="ic-select-mode-button-container">
                     <a class="button-primary"
                        href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'mode', 'store', admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ), 'ic_catalog_mode_selection' ) ) ?>">
-						<?php _e( 'Enable Web Store Mode', 'post-type-x' ) ?>
+                        <?php _e( 'Enable Web Store Mode', 'post-type-x' ) ?>
                     </a>
                 </p>
             </div>
@@ -49,7 +49,7 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
                 <p class="ic-select-mode-button-container">
                     <a class="button-primary"
                        href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'mode', 'inquiry', admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ), 'ic_catalog_mode_selection' ) ) ?>">
-						<?php _e( 'Enable Inquiry Catalog Mode', 'post-type-x' ) ?>
+                        <?php _e( 'Enable Inquiry Catalog Mode', 'post-type-x' ) ?>
                     </a>
                 </p>
             </div>
@@ -65,7 +65,7 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
                 <p class="ic-select-mode-button-container">
                     <a class="button-primary"
                        href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'mode', 'affiliate', admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ), 'ic_catalog_mode_selection' ) ) ?>">
-						<?php _e( 'Enable Affiliate Catalog Mode', 'post-type-x' ) ?>
+                        <?php _e( 'Enable Affiliate Catalog Mode', 'post-type-x' ) ?>
                     </a>
                 </p>
             </div>
@@ -75,7 +75,7 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
                 <p class="ic-select-mode-button-container">
                     <a class="button-primary"
                        href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'mode', 'simple', admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ), 'ic_catalog_mode_selection' ) ) ?>">
-						<?php _e( 'Enable Simple Catalog Mode', 'post-type-x' ) ?>
+                        <?php _e( 'Enable Simple Catalog Mode', 'post-type-x' ) ?>
                     </a>
                 </p>
             </div>
@@ -83,7 +83,7 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
 
         <hr/>
     </div>
-	<?php
+    <?php
 }
 ?>
     <div class="about__section has-subtle-background-color has-2-columns">
@@ -175,10 +175,10 @@ if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
         <div class="column">
             <h3><?php _e( 'Check the documentation for more!' ); ?></h3>
             <p>
-				<?php
-				printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
-					IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
-				?>
+                <?php
+                printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
+                        IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
+                ?>
             </p>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package        post-type-x/templates/template-parts/product-page
  * @author        impleCode
  */
+if ( ! function_exists( 'get_product_name' ) ) {
+    return;
+}
 ?>
 
     <h1 class="entry-title product-name"><?php echo get_product_name() ?></h1>

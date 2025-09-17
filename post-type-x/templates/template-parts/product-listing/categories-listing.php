@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -17,9 +17,9 @@ $product_categories = ic_get_global( 'current_product_categories' );
 $archive_template   = ic_get_global( 'current_product_archive_template' );
 ?>
     <div class="product-subcategories responsive <?php echo $archive_template . ' ' . product_list_class( $archive_template, 'category-list' ) ?>">
-		<?php
-		echo $product_categories;
-		?>
+        <?php
+        echo $product_categories;
+        ?>
     </div>
 <?php
 

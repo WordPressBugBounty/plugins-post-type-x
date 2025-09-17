@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /*
  *
@@ -11,47 +11,47 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 if ( ! function_exists( 'implecode_enable_wp_tooltips' ) ) {
-	add_action( 'admin_enqueue_scripts', 'implecode_enable_wp_tooltips' );
+    add_action( 'admin_enqueue_scripts', 'implecode_enable_wp_tooltips' );
 
-	function implecode_enable_wp_tooltips() {
-		if ( ! is_ic_admin_page() ) {
-			return;
-		}
-		wp_enqueue_style( 'wp-pointer' );
-		wp_enqueue_script( 'wp-pointer' );
-		//hook the pointer
-		add_action( 'admin_print_footer_scripts', 'implecode_show_wp_tooltips' );
-	}
+    function implecode_enable_wp_tooltips() {
+        if ( ! is_ic_admin_page() ) {
+            return;
+        }
+        wp_enqueue_style( 'wp-pointer' );
+        wp_enqueue_script( 'wp-pointer' );
+        //hook the pointer
+        add_action( 'admin_print_footer_scripts', 'implecode_show_wp_tooltips' );
+    }
 
 }
 
 if ( ! function_exists( 'implecode_show_wp_tooltips' ) ) {
 
-	function implecode_show_wp_tooltips() {
-		$tooltips = apply_filters( 'implecode_wp_tooltips', implecode_wp_tooltip_get() );
-		if ( empty( $tooltips ) || ! is_array( $tooltips ) ) {
-			return;
-		}
-		foreach ( $tooltips as $key => $tooltip ) {
-			foreach ( $tooltip as $key_t => $tool ) {
-				$tooltips[ $key ][ $key_t ] = htmlspecialchars( $tool );
-			}
-		}
-		$json_tooltips = json_encode( $tooltips, JSON_HEX_APOS | JSON_HEX_QUOT );
-		/*
-		  $tooltip_content = '';
-		  foreach ( $tooltips as $tooltip ) {
-		  $tooltip_content	 .= '<h3>' . $tooltip[ 'title' ] . '</h3>';
-		  $tooltip_content	 .= '<p>' . $tooltip[ 'text' ] . '</p>';
-		  $tooltip_selector	 = $tooltip[ 'selector' ];
-		  break;
-		  }
-		  if ( empty( $tooltip_selector ) ) {
-		  return;
-		  }
-		 *
-		 */
-		?>
+    function implecode_show_wp_tooltips() {
+        $tooltips = apply_filters( 'implecode_wp_tooltips', implecode_wp_tooltip_get() );
+        if ( empty( $tooltips ) || ! is_array( $tooltips ) ) {
+            return;
+        }
+        foreach ( $tooltips as $key => $tooltip ) {
+            foreach ( $tooltip as $key_t => $tool ) {
+                $tooltips[ $key ][ $key_t ] = htmlspecialchars( $tool );
+            }
+        }
+        $json_tooltips = json_encode( $tooltips, JSON_HEX_APOS | JSON_HEX_QUOT );
+        /*
+          $tooltip_content = '';
+          foreach ( $tooltips as $tooltip ) {
+          $tooltip_content	 .= '<h3>' . $tooltip[ 'title' ] . '</h3>';
+          $tooltip_content	 .= '<p>' . $tooltip[ 'text' ] . '</p>';
+          $tooltip_selector	 = $tooltip[ 'selector' ];
+          break;
+          }
+          if ( empty( $tooltip_selector ) ) {
+          return;
+          }
+         *
+         */
+        ?>
         <script type="text/javascript">
             jQuery(document).ready(function ($) {
                     if (jQuery(".ic_cat-activation-wizard").length > 0) {
@@ -203,172 +203,172 @@ if ( ! function_exists( 'implecode_show_wp_tooltips' ) ) {
                 }
             );
         </script>
-		<?php
-	}
+        <?php
+    }
 
 }
 if ( ! function_exists( 'implecode_wp_tooltip_hide' ) ) {
-	add_action( 'wp_ajax_implecode_wp_tooltip_hide', 'implecode_ajax_wp_tooltip_hide' );
+    add_action( 'wp_ajax_implecode_wp_tooltip_hide', 'implecode_ajax_wp_tooltip_hide' );
 
-	function implecode_ajax_wp_tooltip_hide() {
-		$selector = isset( $_POST['selector'] ) ? stripslashes( $_POST['selector'] ) : '';
-		implecode_wp_tooltip_hide( $selector );
-		$tooltips = implecode_wp_tooltip_get();
-		if ( is_array( $tooltips ) ) {
-			$tooltips[] = implecode_wp_tooltip_default();
-		} else {
-			$tooltips = array();
-		}
-		echo json_encode( $tooltips );
-		wp_die();
-	}
+    function implecode_ajax_wp_tooltip_hide() {
+        $selector = isset( $_POST['selector'] ) ? stripslashes( $_POST['selector'] ) : '';
+        implecode_wp_tooltip_hide( $selector );
+        $tooltips = implecode_wp_tooltip_get();
+        if ( is_array( $tooltips ) ) {
+            $tooltips[] = implecode_wp_tooltip_default();
+        } else {
+            $tooltips = array();
+        }
+        echo json_encode( $tooltips );
+        wp_die();
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_dismiss_all' ) ) {
-	add_action( 'wp_ajax_implecode_wp_tooltip_dismiss_all', 'implecode_wp_tooltip_dismiss_all' );
+    add_action( 'wp_ajax_implecode_wp_tooltip_dismiss_all', 'implecode_wp_tooltip_dismiss_all' );
 
-	function implecode_wp_tooltip_dismiss_all() {
-		update_option( 'implecode_wp_tooltips', 'disabled', false );
-		wp_die();
-	}
+    function implecode_wp_tooltip_dismiss_all() {
+        update_option( 'implecode_wp_tooltips', 'disabled', false );
+        wp_die();
+    }
 
 }
 if ( ! function_exists( 'implecode_wp_tooltip_hide' ) ) {
 
-	function implecode_wp_tooltip_hide( $selector ) {
-		if ( empty( $selector ) ) {
-			return;
-		}
-		$tooltips = implecode_wp_tooltip_get();
-		if ( ! is_array( $tooltips ) ) {
-			return;
-		}
-		foreach ( $tooltips as $key => $tooltip ) {
-			if ( $tooltip['selector'] === $selector ) {
-				unset( $tooltips[ $key ] );
-			}
-		}
-		update_option( 'implecode_wp_tooltips', $tooltips, false );
-		implecode_wp_tooltip_hidden_update( $selector );
-	}
+    function implecode_wp_tooltip_hide( $selector ) {
+        if ( empty( $selector ) ) {
+            return;
+        }
+        $tooltips = implecode_wp_tooltip_get();
+        if ( ! is_array( $tooltips ) ) {
+            return;
+        }
+        foreach ( $tooltips as $key => $tooltip ) {
+            if ( $tooltip['selector'] === $selector ) {
+                unset( $tooltips[ $key ] );
+            }
+        }
+        update_option( 'implecode_wp_tooltips', $tooltips, false );
+        implecode_wp_tooltip_hidden_update( $selector );
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_get' ) ) {
 
-	function implecode_wp_tooltip_get() {
-		$tooltips = get_option( 'implecode_wp_tooltips', array() );
-		if ( ! is_array( $tooltips ) && $tooltips !== 'disabled' ) {
-			$tooltips = array();
-		}
+    function implecode_wp_tooltip_get() {
+        $tooltips = get_option( 'implecode_wp_tooltips', array() );
+        if ( ! is_array( $tooltips ) && $tooltips !== 'disabled' ) {
+            $tooltips = array();
+        }
 
-		return $tooltips;
-	}
+        return $tooltips;
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_hidden_get' ) ) {
 
-	function implecode_wp_tooltip_hidden_get() {
-		$tooltips = get_option( 'implecode_wp_hidden_tooltips', array() );
+    function implecode_wp_tooltip_hidden_get() {
+        $tooltips = get_option( 'implecode_wp_hidden_tooltips', array() );
 
-		return $tooltips;
-	}
+        return $tooltips;
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_hidden_update' ) ) {
 
-	function implecode_wp_tooltip_hidden_update( $selector ) {
-		$hidden_tooltips   = implecode_wp_tooltip_hidden_get();
-		$hidden_tooltips[] = $selector;
-		update_option( 'implecode_wp_hidden_tooltips', $hidden_tooltips, false );
-	}
+    function implecode_wp_tooltip_hidden_update( $selector ) {
+        $hidden_tooltips   = implecode_wp_tooltip_hidden_get();
+        $hidden_tooltips[] = $selector;
+        update_option( 'implecode_wp_hidden_tooltips', $hidden_tooltips, false );
+    }
 
 }
 
 if ( ! function_exists( 'implecode_is_wp_tooltip_hidden' ) ) {
 
-	function implecode_is_wp_tooltip_hidden( $selector ) {
-		$tooltips = implecode_wp_tooltip_get();
-		if ( $tooltips === 'disabled' ) {
-			return true;
-		}
-		$hidden_tooltips = implecode_wp_tooltip_hidden_get();
-		if ( in_array( $selector, $hidden_tooltips ) ) {
-			return true;
-		}
+    function implecode_is_wp_tooltip_hidden( $selector ) {
+        $tooltips = implecode_wp_tooltip_get();
+        if ( $tooltips === 'disabled' ) {
+            return true;
+        }
+        $hidden_tooltips = implecode_wp_tooltip_hidden_get();
+        if ( in_array( $selector, $hidden_tooltips ) ) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_exists' ) ) {
 
-	function implecode_wp_tooltip_exists( $selector ) {
-		$tooltips = implecode_wp_tooltip_get();
-		if ( ! is_array( $tooltips ) ) {
-			return false;
-		}
-		foreach ( $tooltips as $tooltip ) {
-			if ( $tooltip['selector'] === $selector ) {
-				return true;
-			}
-		}
+    function implecode_wp_tooltip_exists( $selector ) {
+        $tooltips = implecode_wp_tooltip_get();
+        if ( ! is_array( $tooltips ) ) {
+            return false;
+        }
+        foreach ( $tooltips as $tooltip ) {
+            if ( $tooltip['selector'] === $selector ) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_add' ) ) {
 
-	function implecode_wp_tooltip_add( $title, $text, $selector, $on_top = false ) {
-		if ( empty( $title ) || empty( $text ) || empty( $selector ) ) {
-			return false;
-		}
-		if ( implecode_wp_tooltip_exists( $selector ) ) {
-			return false;
-		}
+    function implecode_wp_tooltip_add( $title, $text, $selector, $on_top = false ) {
+        if ( empty( $title ) || empty( $text ) || empty( $selector ) ) {
+            return false;
+        }
+        if ( implecode_wp_tooltip_exists( $selector ) ) {
+            return false;
+        }
 
-		if ( implecode_is_wp_tooltip_hidden( $selector ) ) {
-			return false;
-		}
+        if ( implecode_is_wp_tooltip_hidden( $selector ) ) {
+            return false;
+        }
 
-		$tooltips = implecode_wp_tooltip_get();
-		if ( ! is_array( $tooltips ) ) {
-			$tooltips = array();
-		}
-		$tooltip = array(
-			'title'    => $title,
-			'text'     => $text,
-			'selector' => $selector
-		);
-		if ( $on_top ) {
-			$tooltips = array_merge( array( $tooltip ), $tooltips );
-		} else {
-			$tooltips[] = $tooltip;
-		}
-		update_option( 'implecode_wp_tooltips', $tooltips, false );
+        $tooltips = implecode_wp_tooltip_get();
+        if ( ! is_array( $tooltips ) ) {
+            $tooltips = array();
+        }
+        $tooltip = array(
+                'title'    => $title,
+                'text'     => $text,
+                'selector' => $selector
+        );
+        if ( $on_top ) {
+            $tooltips = array_merge( array( $tooltip ), $tooltips );
+        } else {
+            $tooltips[] = $tooltip;
+        }
+        update_option( 'implecode_wp_tooltips', $tooltips, false );
 
-		return true;
-	}
+        return true;
+    }
 
 }
 
 if ( ! function_exists( 'implecode_wp_tooltip_default' ) ) {
 
-	function implecode_wp_tooltip_default() {
-		$tooltip = array(
-			'title'    => __( 'Screen Tutorial Complete', 'post-type-x' ),
-			'text'     => __( 'Congratulations! You finished the tutorial on this screen. Check all the options here and go to another screen to continue.', 'post-type-x' ) . '<br><br>' . sprintf( __( 'If you have any questions or issues, you can reach the developers on the %1$ssupport forum%2$s.', 'post-type-x' ), '<a href="https://wordpress.org/support/plugin/ecommerce-product-catalog/">', '</a>' ),
-			'selector' => ''
-		);
+    function implecode_wp_tooltip_default() {
+        $tooltip = array(
+                'title'    => __( 'Screen Tutorial Complete', 'post-type-x' ),
+                'text'     => __( 'Congratulations! You finished the tutorial on this screen. Check all the options here and go to another screen to continue.', 'post-type-x' ) . '<br><br>' . sprintf( __( 'If you have any questions or issues, you can reach the developers on the %1$ssupport forum%2$s.', 'post-type-x' ), '<a href="https://wordpress.org/support/plugin/ecommerce-product-catalog/">', '</a>' ),
+                'selector' => ''
+        );
 
-		return $tooltip;
-	}
+        return $tooltip;
+    }
 
 }
 

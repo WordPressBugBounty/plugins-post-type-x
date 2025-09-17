@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product_id = ic_get_product_id();
 $weight     = ic_get_product_weight( $product_id );
 if ( is_ic_attributes_weight_enabled() && ! empty( $weight ) ) {
-	?>
+    ?>
 
     <table class="weight-table">
         <tr>
@@ -24,5 +24,5 @@ if ( is_ic_attributes_weight_enabled() && ! empty( $weight ) ) {
         </tr>
     </table>
 
-	<?php
+    <?php
 }

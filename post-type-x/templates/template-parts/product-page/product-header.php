@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -18,9 +18,9 @@ ob_start();
 do_action( 'single_product_header', $post, $single_names );
 $header_content = ob_get_clean();
 if ( ! empty( $header_content ) ) {
-	?>
+    ?>
     <header class="entry-header product-page-header">
-		<?php echo $header_content ?>
+        <?php echo $header_content ?>
     </header>
-	<?php
+    <?php
 }

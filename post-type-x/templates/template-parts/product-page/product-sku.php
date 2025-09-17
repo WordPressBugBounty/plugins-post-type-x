@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -16,7 +16,7 @@ $product_id   = ic_get_product_id();
 $single_names = get_single_names();
 $sku_value    = get_product_sku( $product_id );
 if ( is_ic_sku_enabled() && ! empty( $sku_value ) ) {
-	?>
+    ?>
 
     <table class="sku-table">
         <tr>
@@ -25,5 +25,5 @@ if ( is_ic_sku_enabled() && ! empty( $sku_value ) ) {
         </tr>
     </table>
 
-	<?php
+    <?php
 }

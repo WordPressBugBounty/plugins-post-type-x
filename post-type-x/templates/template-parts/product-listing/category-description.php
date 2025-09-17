@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -15,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 $term_description = term_description();
 
 if ( ! empty( $term_description ) ) {
-	?>
+    ?>
 
     <div class="taxonomy-description"><?php echo apply_filters( 'ic_product_cat_desc', $term_description ) ?></div>
 
 
-	<?php
+    <?php
 }
 
 

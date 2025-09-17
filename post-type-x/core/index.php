@@ -88,7 +88,7 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 		 */
 		private function setup_constants() {
 			if ( ! defined( 'AL_BASE_PATH' ) ) {
-				define( 'AL_BASE_PATH', dirname( __FILE__ ) );
+				define( 'AL_BASE_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 			}
 			if ( ! defined( 'AL_PLUGIN_BASE_PATH' ) ) {
 				define( 'AL_PLUGIN_BASE_PATH', plugins_url( '/', __FILE__ ) );
@@ -97,7 +97,7 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 				define( 'AL_PLUGIN_MAIN_FILE', __FILE__ );
 			}
 			if ( ! defined( 'AL_BASE_TEMPLATES_PATH' ) ) {
-				define( 'AL_BASE_TEMPLATES_PATH', dirname( __FILE__ ) );
+				define( 'AL_BASE_TEMPLATES_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 			}
 			if ( ! defined( 'IC_EPC_VERSION' ) ) {
 				if ( function_exists( 'get_file_data' ) ) {
@@ -129,6 +129,7 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 		 * @since 2.4.7
 		 */
 		private function includes() {
+			require_once( AL_BASE_PATH . '/ic/index.php' );
 			require_once( AL_BASE_PATH . '/functions/activation.php' );
 
 			require_once( AL_BASE_PATH . '/templates.php' );
@@ -231,7 +232,9 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 				do_action( 'ic_catalog_localize_scripts' );
 			}
 			if ( function_exists( 'ic_maybe_engueue_all' ) && ic_maybe_engueue_all() ) {
-				ic_enqueue_main_catalog_js_css();
+				if ( function_exists( 'ic_enqueue_main_catalog_js_css' ) ) {
+					ic_enqueue_main_catalog_js_css();
+				}
 
 				if ( is_ic_integration_wizard_page() ) {
 					wp_enqueue_style( 'al_product_admin_styles' );
@@ -258,12 +261,14 @@ if ( ! class_exists( 'eCommerce_Product_Catalog' ) ) {
 			if ( ! is_network_admin() ) {
 				do_action( 'ecommerce-prodct-catalog-addons' );
 				do_action( 'ecommerce-product-catalog-addons-v3' );
+				do_action( 'implecode_addons' );
 			}
 		}
 
 	}
 
 } // End if class_exists check
+
 
 if ( ! function_exists( 'impleCode_EPC' ) ) {
 

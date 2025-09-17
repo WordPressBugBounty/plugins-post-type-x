@@ -140,13 +140,13 @@ jQuery(document).ready(function ($) {
             ic_close_icons_hidden_content();
         }
     });
-    jQuery('.ic-overlay-container').on('click', function (e) {
+    jQuery(document).on('click', '.ic-overlay-container', function (e) {
         if (e.target !== this && !jQuery(e.target).hasClass('ic-popup-cancel')) {
             return;
         }
         jQuery(this).hide();
     });
-    jQuery('.ic-overlay-container').on('click', '.ic-popup-never-show', function (e) {
+    jQuery(document).on('click', '.ic-popup-never-show', function (e) {
         const container = jQuery(this).closest('.ic-overlay-container');
         const hash = container.data('hash');
         const data = {
@@ -159,7 +159,16 @@ jQuery(document).ready(function ($) {
                 container.hide();
             }
         })
-    })
+    });
+    jQuery(document).on('click', '.ic-popup-continue', function (e) {
+        const container = jQuery(this).closest('.ic-overlay-container');
+        container.hide();
+        jQuery(this).closest('form').find(':submit').click();
+    });
+    jQuery(document).on('click', '.ic-popup-ok', function (e) {
+        const container = jQuery(this).closest('.ic-overlay-container');
+        container.hide();
+    });
 });
 
 function ic_adjust_responsive_filters_height() {

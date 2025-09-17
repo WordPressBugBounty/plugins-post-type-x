@@ -494,8 +494,8 @@ function get_filters_bar_reset_url() {
 	return '';
 }
 
-add_action( 'ic_catalog_wp', 'ic_set_catalog_query' );
-add_action( 'before_ajax_product_list', 'ic_set_catalog_query' );
+add_action( 'ic_catalog_wp', 'ic_set_catalog_query', 9 );
+add_action( 'before_ajax_product_list', 'ic_set_catalog_query', 9 );
 
 function ic_set_catalog_query() {
 	$catalog_query = ic_get_catalog_query();

@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -23,15 +23,15 @@ do_action( 'before_product_entry', $product, $single_names );
 ?>
     <div class="product-entry">
 
-		<?php
-		if ( post_password_required() ) {
-			the_content();
+        <?php
+        if ( post_password_required() ) {
+            the_content();
 
-			return;
-		} else {
-			do_action( 'product_page_inside', $product_id, $single_names, $taxonomy );
-		}
-		?>
+            return;
+        } else {
+            do_action( 'product_page_inside', $product_id, $single_names, $taxonomy );
+        }
+        ?>
     </div>
 <?php
 do_action( "single_product_very_end", $product, $single_names );

@@ -25,26 +25,7 @@ class IC_EPC_Cron {
 	 *
 	 */
 	public function __construct() {
-		add_filter( 'cron_schedules', array( $this, 'add_schedules' ) );
 		add_action( 'wp', array( $this, 'schedule_events' ) );
-	}
-
-	/**
-	 * Registers new cron schedules
-	 *
-	 *
-	 * @param array $schedules
-	 *
-	 * @return array
-	 */
-	public function add_schedules( $schedules = array() ) {
-		// Adds once weekly to the existing schedules.
-		$schedules['weekly'] = array(
-			'interval' => 604800,
-			'display'  => __( 'Once Weekly', 'post-type-x' )
-		);
-
-		return $schedules;
 	}
 
 	/**

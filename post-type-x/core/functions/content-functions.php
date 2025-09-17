@@ -137,57 +137,58 @@ function ic_localize_main_catalog_js() {
 	wp_localize_script( 'al_product_scripts', 'product_object', $localize );
 }
 
-/**
- * Renders a popup with customizable content, buttons, and classes.
- *
- * @param string $content The content to display in the popup.
- * @param string $class Optional. Additional CSS classes for the popup. Default is an empty string.
- * @param string|array|null $ok_url Optional. URL or array of buttons for the "OK" action. Default is null.
- * @param string $ok_label Optional. Label for the "OK" button. Default is an empty string.
- * @param string $cancel_label Optional. Label for the "Cancel" button. Default is an empty string.
- * @param string $ok_class Optional. CSS classes for the "OK" button. Default is 'ic-popup-ok'.
- * @param string $cancel_class Optional. CSS classes for the "Cancel" button. Default is 'ic-popup-cancel'.
- * @param array $additional_buttons Optional. Additional buttons to display in the popup. Default is an empty array.
- *
- * @return void
- */
-function ic_popup( $content, $class = '', $ok_url = null, $ok_label = '', $cancel_label = '', $ok_class = 'ic-popup-ok', $cancel_class = 'ic-popup-cancel', $additional_buttons = array(), $show_by_default = false ) {
-	$html = new ic_html_util;
-	if ( ! $show_by_default ) {
-		$class .= ' ic-hidden';
-	}
-	if ( ! empty( $ok_url ) && ! is_array( $ok_url ) ) {
-		if ( empty( $ok_label ) ) {
-			$ok_label = __( 'OK', 'post-type-x' );
+if ( ! function_exists( 'ic_popup' ) ) {
+	/**
+	 * Renders a popup with customizable content, buttons, and classes.
+	 *
+	 * @param string $content The content to display in the popup.
+	 * @param string $class Optional. Additional CSS classes for the popup. Default is an empty string.
+	 * @param string|array|null $ok_url Optional. URL or array of buttons for the "OK" action. Default is null.
+	 * @param string $ok_label Optional. Label for the "OK" button. Default is an empty string.
+	 * @param string $cancel_label Optional. Label for the "Cancel" button. Default is an empty string.
+	 * @param string $ok_class Optional. CSS classes for the "OK" button. Default is 'ic-popup-ok'.
+	 * @param string $cancel_class Optional. CSS classes for the "Cancel" button. Default is 'ic-popup-cancel'.
+	 * @param array $additional_buttons Optional. Additional buttons to display in the popup. Default is an empty array.
+	 *
+	 * @return void
+	 */
+	function ic_popup( $content, $class = '', $ok_url = null, $ok_label = '', $cancel_label = '', $ok_class = 'ic-popup-ok', $cancel_class = 'ic-popup-cancel', $additional_buttons = array(), $show_by_default = false ) {
+		$html = new ic_html_util;
+		if ( ! $show_by_default ) {
+			$class .= ' ic-hidden';
 		}
-		if ( empty( $cancel_label ) ) {
-			$cancel_label = __( 'Cancel', 'implecode-quote-cart' );
-		}
-		$buttons   = array_merge( array(
-			array(
-				'label' => $ok_label,
-				'class' => $ok_class,
-				'url'   => $ok_url
-			),
-		), $additional_buttons );
-		$buttons[] = array(
-			'label' => $cancel_label,
-			'class' => 'ic-secondary-button ' . $cancel_class,
-		);
-		if ( $show_by_default && is_user_logged_in() ) {
+		if ( ! empty( $ok_url ) && ! is_array( $ok_url ) ) {
+			if ( empty( $ok_label ) ) {
+				$ok_label = __( 'OK', 'post-type-x' );
+			}
+			if ( empty( $cancel_label ) ) {
+				$cancel_label = __( 'Cancel', 'implecode-quote-cart' );
+			}
+			$buttons   = array_merge( array(
+				array(
+					'label' => $ok_label,
+					'class' => $ok_class,
+					'url'   => $ok_url
+				),
+			), $additional_buttons );
 			$buttons[] = array(
-				'label' => __( 'Never show again', 'implecode-quote-cart' ),
-				'class' => 'ic-secondary-button ic-popup-never-show',
+				'label' => $cancel_label,
+				'class' => 'ic-secondary-button ' . $cancel_class,
 			);
+			if ( $show_by_default && is_user_logged_in() ) {
+				$buttons[] = array(
+					'label' => __( 'Never show again', 'implecode-quote-cart' ),
+					'class' => 'ic-secondary-button ic-popup-never-show',
+				);
+			}
+		} else if ( is_array( $ok_url ) ) {
+			$buttons = $ok_url;
+		} else {
+			$buttons = '';
 		}
-	} else if ( is_array( $ok_url ) ) {
-		$buttons = $ok_url;
-	} else {
-		$buttons = '';
+		echo $html->popup( $content, $buttons, $class );
 	}
-	echo $html->popup( $content, $buttons, $class );
 }
-
 if ( ! function_exists( 'create_ic_overlay' ) ) {
 
 	function create_ic_overlay() {

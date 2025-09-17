@@ -75,11 +75,12 @@ if ( ! function_exists( 'implecode_settings_dropdown' ) ) {
 		$option_label, $option_name, $option_value, $elements = array(), $echo = 1,
 		$attr = null, $tip = null
 	) {
+		$return = '';
 		if ( ! empty( $tip ) && ! is_array( $tip ) ) {
 			$tip_html = 'title="' . $tip . '"';
 		}
 		if ( ! empty( $option_label ) ) {
-			$return = '<tr>';
+			$return .= '<tr>';
 			$return .= '<td>';
 			if ( ! empty( $tip_html ) ) {
 				$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
@@ -137,17 +138,30 @@ if ( ! function_exists( 'implecode_settings_checkbox' ) ) {
 		if ( ! empty( $tip ) && ! is_array( $tip ) ) {
 			$tip_html = 'title="' . $tip . '" ';
 		}
-		$return = '<tr>';
-		$return .= '<td>';
+		$return = '';
+		if ( ! empty( $option_label ) ) {
+			$return .= '<tr>';
+			$return .= '<td>';
+		}
+
 		if ( ! empty( $tip_html ) ) {
 			$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
 		}
-		$return .= $option_label . ':</td>';
+		if ( ! empty( $option_label ) ) {
+			$return .= $option_label . ':</td>';
+		}
 		if ( ! empty( $class ) ) {
 			$class = 'class="' . $class . '" ';
 		}
-		$return .= '<td><input type="checkbox" ' . $class . 'name="' . $option_name . '" value="' . $value . '" ' . checked( $value, $option_enabled, 0 ) . '/></td>';
-		$return .= '</tr>';
+		if ( ! empty( $option_label ) ) {
+			$return .= '<td>';
+		}
+		$return .= '<input type="checkbox" ' . $class . 'name="' . $option_name . '" value="' . $value . '" ' . checked( $value, $option_enabled, 0 ) . '/>';
+		if ( ! empty( $option_label ) ) {
+			$return .= '</td>';
+			$return .= '</tr>';
+
+		}
 		ic_register_setting( $option_label, $option_name, $tip );
 
 		return echo_ic_setting( $return, $echo );
@@ -185,17 +199,21 @@ if ( ! function_exists( 'implecode_settings_text' ) ) {
 			$star          = '';
 		}
 		$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
-
-		$return = '<tr>';
+		$return   = '';
 		if ( $option_label != '' ) {
+			$return .= '<tr>';
 			$return .= '<td>';
 			if ( ! empty( $tip_html ) ) {
 				$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
 			}
 			$return .= $option_label . $star . ':</td>';
+			$return .= '<td>';
 		}
-		$return .= '<td><input ' . $attributes . ' ' . $regired_field . ' ' . $disabled . 'class="' . $class . '" type="' . $type . '" name="' . $option_name . '" value="' . esc_html( $option_value ) . '" /></td>';
-		$return .= '</tr>';
+		$return .= '<input ' . $attributes . ' ' . $regired_field . ' ' . $disabled . 'class="' . $class . '" type="' . $type . '" name="' . $option_name . '" value="' . esc_html( $option_value ) . '" />';
+		if ( $option_label != '' ) {
+			$return .= '</td>';
+			$return .= '</tr>';
+		}
 		ic_register_setting( $option_label, $option_name, $tip );
 
 		return echo_ic_setting( $return, $echo );
@@ -226,20 +244,25 @@ if ( ! function_exists( 'implecode_settings_number' ) ) {
 		if ( ! empty( $tr_class ) ) {
 			$tr_class = ' class="' . $tr_class . '"';
 		}
-		$return = '<tr' . $tr_class . '>';
-		$class  = 'number_box ' . $class;
+		$return = '';
 		if ( ! empty( $option_label ) ) {
-			$return   .= '<td>';
-			$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
-			if ( ! empty( $tip_html ) ) {
-				$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
-			}
+			$return .= '<tr' . $tr_class . '>';
+			$return .= '<td>';
+		}
+
+		$class    = 'number_box ' . $class;
+		$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
+		if ( ! empty( $tip_html ) ) {
+			$return .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
+		}
+		if ( ! empty( $option_label ) ) {
 			$return .= $option_label . ':</td>';
 		}
 		$min = isset( $min ) ? 'min="' . floatval( $min ) . '" ' : '';
 		$max = isset( $max ) ? 'max="' . floatval( $max ) . '" ' : '';
-
-		$return .= '<td>';
+		if ( ! empty( $option_label ) ) {
+			$return .= '<td>';
+		}
 		if ( ! empty( $attr ) ) {
 			$attr = ' ' . $attr;
 		}
@@ -248,8 +271,11 @@ if ( ! function_exists( 'implecode_settings_number' ) ) {
 		} else {
 			$option_value = '';
 		}
-		$return .= '<input type="number" step="' . $step . '" ' . $min . ' ' . $max . ' class="' . $class . '" name="' . $option_name . '" value="' . $option_value . '"' . $attr . ' />' . $unit . '</td>';
-		$return .= '</tr>';
+		$return .= '<input type="number" step="' . $step . '" ' . $min . ' ' . $max . ' class="' . $class . '" name="' . $option_name . '" value="' . $option_value . '"' . $attr . ' />' . $unit;
+		if ( ! empty( $option_label ) ) {
+			$return .= '</td>';
+			$return .= '</tr>';
+		}
 		ic_register_setting( $option_label, $option_name, $tip );
 
 		return echo_ic_setting( $return, $echo );
@@ -259,15 +285,25 @@ if ( ! function_exists( 'implecode_settings_number' ) ) {
 if ( ! function_exists( 'implecode_settings_textarea' ) ) {
 
 	function implecode_settings_textarea( $option_label, $option_name, $option_value, $echo = 1, $attr = null, $tip = null ) {
-		$return = '<tr>';
-		$return .= '<td>';
+		$return = '';
+		if ( ! empty( $option_label ) ) {
+			$return .= '<tr>';
+			$return .= '<td>';
+		}
+
 		if ( ! empty( $tip ) ) {
 			$tip_html = ! empty( $tip ) ? 'title="' . $tip . '" ' : '';
 			$return   .= '<span ' . $tip_html . ' class="dashicons dashicons-editor-help ic_tip"></span>';
 		}
-		$return .= $option_label . ':</td>';
-		$return .= '<td><textarea name="' . $option_name . '" ' . $attr . '>' . esc_textarea( $option_value ) . '</textarea></td>';
-		$return .= '</tr>';
+		if ( ! empty( $option_label ) ) {
+			$return .= $option_label . ':</td>';
+			$return .= '<td>';
+		}
+		$return .= '<textarea name="' . $option_name . '" ' . $attr . '>' . esc_textarea( $option_value ) . '</textarea>';
+		if ( ! empty( $option_label ) ) {
+			$return .= '</td>';
+			$return .= '</tr>';
+		}
 		ic_register_setting( $option_label, $option_name, $tip );
 
 		return echo_ic_setting( $return, $echo );
@@ -312,7 +348,6 @@ if ( ! function_exists( 'implecode_upload_image' ) ) {
 		$content = '<div class="custom-uploader ' . $class . '">';
 		$content .= '<input type="hidden" class="upload_type" id="upload_type" value="' . $upload_image_id . '" />';
 		$content .= '<input type="hidden" class="default" id="default" value="' . $default_image . '" />';
-
 		$content .= '<input type="hidden" name="' . $option_name . '" class="uploaded_image" id="' . $id . '" value="' . $option_value . '" />';
 //if ($image_src != '') {
 		$class = '';
@@ -395,7 +430,7 @@ if ( ! function_exists( 'implecode_info' ) ) {
 			$return .= $text;
 		}
 		if ( $dismisable && is_ic_admin() ) {
-			$return .= '<span class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></span>';
+			$return .= '<span class="notice-dismiss"><span class="screen-reader-text">' . __( 'Dismiss this notice.', 'post-type-x' ) . '</span></span>';
 		}
 		$hash = ic_message_hash( $return );
 		if ( ! ic_is_message_hidden( $return ) ) {
@@ -435,9 +470,21 @@ if ( ! function_exists( 'ic_is_message_hidden' ) ) {
 
 	function ic_is_message_hidden( $message ) {
 		$hidden = get_option( 'ic_hidden_boxes', array() );
-		$hash   = ic_message_hash( $message );
+		if ( ! is_array( $hidden ) ) {
+			$hidden = array();
+		}
+		$hash = ic_message_hash( $message );
 		if ( in_array( $hash, $hidden ) ) {
 			return true;
+		}
+		if ( get_current_user_id() ) {
+			$user_hidden = get_user_meta( get_current_user_id(), '_ic_hidden_boxes', true );
+			if ( ! is_array( $user_hidden ) ) {
+				$user_hidden = array();
+			}
+			if ( in_array( $hash, $user_hidden ) ) {
+				return true;
+			}
 		}
 
 		return false;
@@ -451,11 +498,22 @@ if ( ! function_exists( 'ic_ajax_hide_message' ) ) {
 	function ic_ajax_hide_message( $message ) {
 		if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) ) {
 			if ( ! empty( $_POST['hash'] ) ) {
-				$hash   = strval( $_POST['hash'] );
-				$hidden = get_option( 'ic_hidden_boxes', array() );
+				$hash = strval( $_POST['hash'] );
+				if ( get_current_user_id() ) {
+					$hidden = get_user_meta( get_current_user_id(), '_ic_hidden_boxes', true );
+				} else {
+					$hidden = get_option( 'ic_hidden_boxes', array() );
+				}
+				if ( ! is_array( $hidden ) ) {
+					$hidden = array();
+				}
 				if ( ! in_array( $hash, $hidden ) ) {
 					$hidden[] = $hash;
-					update_option( 'ic_hidden_boxes', $hidden, false );
+					if ( get_current_user_id() ) {
+						update_user_meta( get_current_user_id(), '_ic_hidden_boxes', $hidden );
+					} else {
+						update_option( 'ic_hidden_boxes', $hidden, false );
+					}
 				}
 			}
 		}
@@ -487,7 +545,7 @@ if ( ! function_exists( 'implecode_settings_text_color' ) ) {
 		$return = '<tr>';
 		$return .= '<td>' . $option_label . $star . ':</td>';
 		$return .= '<td><input ' . $regired_field . ' class="color-picker ' . $class . '" type="text" name="' . $option_name . '" value="' . $option_value . '" /></td>';
-		$return .= '<script>jQuery(document).ready(function() { jQuery("input[name=\'' . $option_name . '\']").wpColorPicker(' . $change . ');});</script>';
+		$return .= '<script>jQuery(document).ready(function() {jQuery("input[name=\'' . $option_name . '\']").wpColorPicker(' . $change . ');});</script>';
 		$return .= '</tr>';
 		ic_register_setting( $option_label, $option_name );
 

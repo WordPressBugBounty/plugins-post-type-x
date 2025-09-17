@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /**
  * The template to display main product listing or category page in Advanced Mode
@@ -19,12 +19,12 @@ $archive_names = get_archive_names();
 $listing_class = apply_filters( 'product_listing_classes', 'al_product responsive type-page' );
 ?>
     <article id="product_listing" <?php post_class( $listing_class ); ?>>
-		<?php do_action( 'before_product_listing_entry', $post, $archive_names ); ?>
+        <?php do_action( 'before_product_listing_entry', $post, $archive_names ); ?>
         <div class="entry-content">
-			<?php
-			$archive_template = get_product_listing_template();
-			do_action( 'product_listing_entry_inside', $archive_template, $multiple_settings );
-			?>
+            <?php
+            $archive_template = get_product_listing_template();
+            do_action( 'product_listing_entry_inside', $archive_template, $multiple_settings );
+            ?>
         </div>
     </article>
 <?php

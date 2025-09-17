@@ -114,15 +114,27 @@ class IC_EPC_Tracking {
 
 		$data['active_plugins']   = implode( ',', $active_plugins );
 		$data['inactive_plugins'] = implode( ',', $plugins );
-		$data['products']         = ic_products_count();
-		$names                    = get_catalog_names();
-		$data['product_label']    = $names['singular'];
-		$data['locale']           = ( $data['wp_version'] >= 4.7 ) ? get_user_locale() : get_locale();
+		if ( function_exists( 'ic_products_count' ) ) {
+			$data['products'] = ic_products_count();
+		} else {
+			$data['products'] = 'not set';
+		}
+		if ( function_exists( 'get_catalog_names' ) ) {
+			$names                 = get_catalog_names();
+			$data['product_label'] = $names['singular'];
+		} else {
+			$data['product_label'] = 'not set';
+		}
+
+		$data['locale'] = ( $data['wp_version'] >= 4.7 ) ? get_user_locale() : get_locale();
 
 		$this->data = $data;
 	}
 
 	public function get_integration_type() {
+		if ( ! function_exists( 'get_integration_type' ) ) {
+			return 'not set';
+		}
 		$integration_type = get_integration_type();
 		if ( is_advanced_mode_forced() ) {
 			$integration_type .= ' - forced';
@@ -460,7 +472,7 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 
 	function fatal() {
 		$error = error_get_last();
-		if ( $error !== null && ! empty( $error['file'] ) ) {
+		if ( ! empty( $error ) && ! empty( $error['file'] ) ) {
 			if ( $this->supported_slug( $error['file'] ) ) {
 				$message = '';
 				if ( ! empty( $error['type'] ) ) {
@@ -485,7 +497,7 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 	}
 
 	function supported_slug( $file ) {
-		if ( empty( $file ) ) {
+		if ( empty( $file ) || ! is_string( $file ) ) {
 			return false;
 		}
 		if ( defined( 'AL_BASE_PATH' ) && strpos( $file, AL_BASE_PATH ) !== false ) {

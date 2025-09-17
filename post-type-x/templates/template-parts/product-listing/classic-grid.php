@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -22,13 +22,13 @@ $classic_grid_settings = get_classic_grid_settings();
                 <div class="image"><?php echo $product->listing_image_html() ?></div>
             </div>
             <h3 class="product-name"><?php echo $product->name() ?></h3><?php echo $product->archive_price_html() ?>
-			<?php
-			do_action( 'classic_grid_product_listing_element_inside', $product->ID, $classic_grid_settings );
-			?>
+            <?php
+            do_action( 'classic_grid_product_listing_element_inside', $product->ID, $classic_grid_settings );
+            ?>
         </a>
-		<?php
-		do_action( 'classic_grid_product_listing_element', $product->ID, $classic_grid_settings );
-		?>
+        <?php
+        do_action( 'classic_grid_product_listing_element', $product->ID, $classic_grid_settings );
+        ?>
     </div>
 
 <?php

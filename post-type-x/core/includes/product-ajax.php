@@ -124,8 +124,8 @@ class ic_catalog_ajax {
 			}
 			$multiple_settings = get_multiple_settings();
 			remove_all_actions( 'before_product_list' );
-			do_action( 'before_ajax_product_list', $GLOBALS['wp_query'] );
 			ob_start();
+			do_action( 'before_ajax_product_list', $GLOBALS['wp_query'] );
 			ic_product_listing_products( $archive_template, $multiple_settings );
 			$return['product-listing'] = ob_get_clean();
 			$old_request_url           = $_SERVER['REQUEST_URI'];

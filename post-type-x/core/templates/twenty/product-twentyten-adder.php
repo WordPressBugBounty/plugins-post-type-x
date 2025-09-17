@@ -8,7 +8,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
 } // Exit if accessed directly
 
 get_header(); ?>
@@ -16,7 +16,7 @@ get_header(); ?>
 <div id="container">
     <div id="content" class="site-content">
 
-		<?php content_product_adder(); ?>
+        <?php content_product_adder(); ?>
 
 
     </div><!-- #content -->

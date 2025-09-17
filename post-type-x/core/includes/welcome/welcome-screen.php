@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /*
  *
@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $wp_version;
 ?>
     <div class="wrap about__container">
+        <div class="ic-welcome-trap" style="display: none">
+            <h2></h2>
+        </div>
         <style>
             .ic-select-mode-container,
             .branch-6 .ic-select-mode-container,
@@ -146,9 +149,9 @@ global $wp_version;
             }
         </style>
         <div class="about__header">
-			<?php if ( version_compare( $wp_version, 5.4 ) !== - 1 ) { ?>
+            <?php if ( version_compare( $wp_version, 5.4 ) !== - 1 ) { ?>
             <div class="ic-welcome-bg">
-				<?php } ?>
+                <?php } ?>
                 <div class="about__header-text">
                     <span>That's it. Enjoy sales and beauty!</span>&nbsp
                 </div>
@@ -159,21 +162,21 @@ global $wp_version;
                         <span><?php echo IC_CATALOG_VERSION ?></span></span>&nbsp
                     </p>
                 </div>
-				<?php if ( version_compare( $wp_version, 5.4 ) !== - 1 ) { ?>
+                <?php if ( version_compare( $wp_version, 5.4 ) !== - 1 ) { ?>
             </div>
-		<?php } ?>
+        <?php } ?>
 
             <nav class="about__header-navigation nav-tab-wrapper wp-clearfix"
                  aria-label="<?php esc_attr_e( 'Secondary menu' ); ?>">
-				<?php
-				$getting_started = '';
-				$whats_new       = '';
-				if ( empty( $_GET['tab'] ) ) {
-					$getting_started = ' nav-tab-active';
-				} elseif ( $_GET['tab'] === 'new' ) {
-					$whats_new = ' nav-tab-active';
-				}
-				?>
+                <?php
+                $getting_started = '';
+                $whats_new       = '';
+                if ( empty( $_GET['tab'] ) ) {
+                    $getting_started = ' nav-tab-active';
+                } elseif ( $_GET['tab'] === 'new' ) {
+                    $whats_new = ' nav-tab-active';
+                }
+                ?>
                 <a href="<?php echo admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ?>"
                    class="nav-tab<?php echo $getting_started ?>"
                    aria-current="page"><?php _e( 'Getting Started', 'post-type-x' ) ?></a>
@@ -188,17 +191,17 @@ global $wp_version;
             </nav>
         </div>
 
-		<?php
-		if ( ! empty( $getting_started ) ) {
-			if ( ! empty( $_GET['selected_mode'] ) ) {
-				require_once( AL_BASE_PATH . '/includes/welcome/mode-selected.php' );
-			} else {
-				require_once( AL_BASE_PATH . '/includes/welcome/start.php' );
-			}
-		} elseif ( ! empty( $whats_new ) ) {
-			require_once( AL_BASE_PATH . '/includes/welcome/new.php' );
-		}
-		?>
+        <?php
+        if ( ! empty( $getting_started ) ) {
+            if ( ! empty( $_GET['selected_mode'] ) ) {
+                require_once( AL_BASE_PATH . '/includes/welcome/mode-selected.php' );
+            } else {
+                require_once( AL_BASE_PATH . '/includes/welcome/start.php' );
+            }
+        } elseif ( ! empty( $whats_new ) ) {
+            require_once( AL_BASE_PATH . '/includes/welcome/new.php' );
+        }
+        ?>
         <hr/>
 
         <div class="return-to-dashboard">

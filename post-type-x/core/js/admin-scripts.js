@@ -102,16 +102,18 @@ jQuery(document).ready(function () {
      } );
      } );
      */
-
-    jQuery('.implecode-review').on('click', '.dashicons-no', function () {
-        var data = {
-            'action': 'hide_review_notice',
-            'nonce': ic_catalog.nonce
-        };
-        jQuery.post(ajaxurl, data, function () {
-            jQuery('.implecode-review').hide('slow');
+    /*
+        jQuery('.implecode-review').on('click', '.dashicons-no', function () {
+            var data = {
+                'action': 'hide_review_notice',
+                'nonce': ic_catalog.nonce
+            };
+            jQuery.post(ajaxurl, data, function () {
+                jQuery('.implecode-review').hide('slow');
+            });
         });
-    });
+
+     */
 
     jQuery('.implecode-translate').on('click', ' .dashicons-no', function () {
         var data = {
@@ -127,47 +129,34 @@ jQuery(document).ready(function () {
         jQuery(".implecode-review-thanks").hide("slow");
     });
 
-    jQuery('.implecode-review').on('click', 'a', function (e) {
-        if (jQuery(this).hasClass('button')) {
-            e.preventDefault();
+    jQuery('.implecode-review').on('click', 'a.ic-user-dismiss', function (e) {
+        jQuery('.implecode-review').hide('slow');
+        jQuery('.implecode-review-thanks').show('slow');
+    });
+    /*
+        jQuery('.implecode-review.is-dismissible').on('click', '.notice-dismiss', function (event) {
             var data = {
                 'action': 'hide_review_notice',
-                'forever': 'yes',
-                'nonce': ic_catalog.nonce
-            };
-            jQuery.post(ajaxurl, data, function () {
-                jQuery('.implecode-review').hide('slow');
-            });
-        } else {
-            var data = {
-                'action': 'hide_review_notice',
-                'forever': 'yes',
-                'nonce': ic_catalog.nonce
-            };
-            jQuery.post(ajaxurl, data, function () {
-                jQuery('.implecode-review').hide('slow');
-                jQuery('.implecode-review-thanks').show('slow');
-            });
-        }
-    });
-
-    jQuery('.implecode-review.is-dismissible').on('click', '.notice-dismiss', function (event) {
-        var data = {
-            'action': 'hide_review_notice',
-            'nonce': ic_catalog.nonce
-        };
-        jQuery.post(ajaxurl, data);
-    });
-
-    jQuery('.ic-notice.is-dismissible').on('click', '.notice-dismiss', function (event) {
-        var element = jQuery(this).closest(".is-dismissible").data("ic_dismissible");
-        if (element !== undefined) {
-            var data = {
-                'action': 'hide_ic_notice',
-                'element': element,
                 'nonce': ic_catalog.nonce
             };
             jQuery.post(ajaxurl, data);
+        });
+    */
+    jQuery('.ic-notice.is-dismissible').on('click', '.notice-dismiss, .ic-user-dismiss', function (event) {
+        var container = jQuery(this).closest(".is-dismissible");
+        var element = container.data("ic_dismissible");
+        if (element !== undefined) {
+            var type = 'global';
+            if (jQuery(this).hasClass('ic-user-dismiss')) {
+                type = 'user';
+                container.hide('slow');
+            } else {
+                type = container.data("ic_dismissible_type");
+            }
+            if (type === undefined) {
+                type = 'global';
+            }
+            implecode.hide_notice(element, type);
         }
     });
 
@@ -397,5 +386,18 @@ if (typeof implecode.disable_container === 'undefined') {
 if (typeof implecode.enable_container === 'undefined') {
     implecode.enable_container = function (container) {
         container.removeClass('ic-disabled-container');
+    };
+}
+
+if (typeof implecode.hide_notice === 'undefined') {
+    implecode.hide_notice = function (element, type) {
+        var data = {
+            'action': 'hide_ic_notice',
+            'element': element,
+            'type': type,
+            'nonce': ic_catalog.nonce
+        };
+        console.log(data);
+        jQuery.post(ajaxurl, data);
     };
 }

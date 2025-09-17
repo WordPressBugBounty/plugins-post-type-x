@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /*
  *
@@ -13,18 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <div class="about__section is-feature has-subtle-background-color">
         <h2>
-			<?php
-			printf(
-			/* translators: %s: The current EPC version number. */
-				__( 'Welcome to %s.' ),
-				IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION
-			);
-			?>
+            <?php
+            printf(
+            /* translators: %s: The current EPC version number. */
+                    __( 'Welcome to %s.' ),
+                    IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION
+            );
+            ?>
         </h2>
         <p>
-			<?php
-			_e( 'In this release cycle, your catalog gets more power in CTA, theme integration, speed and usability.' );
-			?>
+            <?php
+            _e( 'In this release cycle, your catalog gets more power in CTA, theme integration, speed and usability.' );
+            ?>
         </p>
     </div>
 
@@ -196,10 +196,10 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="column">
             <h3><?php _e( 'Check the documentation for more!' ); ?></h3>
             <p>
-				<?php
-				printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
-					IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
-				?>
+                <?php
+                printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
+                        IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
+                ?>
             </p>
         </div>
     </div>

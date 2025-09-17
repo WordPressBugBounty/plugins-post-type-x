@@ -40,6 +40,7 @@ function epc_activation_function() {
 			ic_set_filter_bar_default_widgets();
 			if ( empty( $first_activation ) ) {
 				update_option( 'ic_epc_first_activation', $current_time, false );
+				do_action( 'ic_EPC_first_activation' );
 			}
 		}
 		add_product_caps();

@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author        impleCode
  */
 $product_id = ic_get_product_id();
-$size       = ic_get_product_size( $product_id );
+$size       = ic_get_product_size( $product_id, true );
 if ( is_ic_attributes_size_enabled() && ! empty( $size ) ) {
-	?>
+    ?>
 
     <table class="size-table">
         <tr>
@@ -24,5 +24,5 @@ if ( is_ic_attributes_size_enabled() && ! empty( $size ) ) {
         </tr>
     </table>
 
-	<?php
+    <?php
 }

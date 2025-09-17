@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /*
  *
@@ -39,10 +39,10 @@ $additional_content = ob_get_clean();
         }
     </style>
     <div class="about__section is-feature ic-mode-selected-container">
-		<?php if ( empty( $_GET['ic_catalog_activation_choice'] ) ) { ?>
+        <?php if ( empty( $_GET['ic_catalog_activation_choice'] ) ) { ?>
             <h1><?php printf( __( '%s mode is active now!', 'ecommmerce-product-catalog' ), ic_ucfirst( $selected_mode ) ) ?></h1>
-		<?php } ?>
-		<?php echo $additional_content ?>
+        <?php } ?>
+        <?php echo $additional_content ?>
         <div class="column">
             <p style="text-align: center;"><a
                         href="<?php echo esc_url( admin_url( 'edit.php?post_type=al_product&page=implecode_welcome' ) ) ?>"><?php _e( 'GO BACK TO MODE SELECTION', 'post-type-x' ) ?></a>
@@ -58,7 +58,7 @@ $additional_content = ob_get_clean();
             <p><?php _e( 'You can select the main catalog page in the general settings screen. It will show categories and products according to the catalog settings.', 'post-type-x' ) ?></p>
             <p><?php _e( 'Apart from the main catalog page, you can display products and categories anywhere on the website.', 'post-type-x' ) ?></p>
         </header>
-		<?php if ( function_exists( 'register_block_type' ) ) { ?>
+        <?php if ( function_exists( 'register_block_type' ) ) { ?>
             <div class="column">
                 <h3><?php _e( 'Catalog Blocks', 'post-type-x' ) ?></h3>
                 <p><?php _e( 'You can use three different blocks to display catalog parts.', 'post-type-x' ) ?></p>
@@ -66,7 +66,7 @@ $additional_content = ob_get_clean();
                     <a href="https://implecode.com/docs/ecommerce-product-catalog/all-product-catalog-blocks/#cam=welcome&key=blocks"><?php _e( 'Blocks usage', 'post-type-x' ) ?></a>
                 </p>
             </div>
-		<?php } ?>
+        <?php } ?>
         <div class="column">
             <h3><?php _e( 'Catalog Shortcodes', 'post-type-x' ) ?></h3>
             <p><?php _e( 'You can use many different shortcodes to displays catalog parts.', 'post-type-x' ) ?></p>
@@ -142,10 +142,10 @@ $additional_content = ob_get_clean();
         <div class="column">
             <h3><?php _e( 'Check the documentation for more!' ); ?></h3>
             <p>
-				<?php
-				printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
-					IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
-				?>
+                <?php
+                printf( __( 'There’s a lot more for developers to love in %1$s. To discover more and learn how to make the catalog shine on your sites, themes, plugins and more, check the %2$sdocumentation.%3$s' ),
+                        IC_CATALOG_PLUGIN_NAME . ' ' . IC_CATALOG_VERSION, '<a href="https://implecode.com/docs/#cam=welcome&key=docs">', '</a>' );
+                ?>
             </p>
         </div>
     </div>

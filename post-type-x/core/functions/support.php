@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 /**
  * Manages support settings
@@ -13,19 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 if ( ! function_exists( 'implecode_support_menu' ) ):
 
-	function implecode_custom_support_menu() {
-		?>
+    function implecode_custom_support_menu() {
+        ?>
         <a id="support-settings" class="element"
            href="<?php echo admin_url( 'edit.php?post_type=al_product&page=product-settings.php&tab=product-settings&submenu=support' ) ?>"><?php _e( 'Support', 'post-type-x' ); ?></a>
-		<?php
-	}
+        <?php
+    }
 
-	add_action( 'general_submenu', 'implecode_custom_support_menu', 20 );
+    add_action( 'general_submenu', 'implecode_custom_support_menu', 20 );
 
-	function implecode_custom_support_settings_content() {
-		?>
-		<?php $submenu = isset( $_GET['submenu'] ) ? $_GET['submenu'] : ''; ?>
-		<?php if ( $submenu == 'support' ) { ?>
+    function implecode_custom_support_settings_content() {
+        ?>
+        <?php $submenu = isset( $_GET['submenu'] ) ? $_GET['submenu'] : ''; ?>
+        <?php if ( $submenu == 'support' ) { ?>
             <div class="setting-content submenu support-tab">
                 <script>
                     jQuery('.settings-submenu a').removeClass('current');
@@ -154,7 +154,7 @@ if ( ! function_exists( 'implecode_support_menu' ) ):
                 <p><?php echo sprintf( __( 'As you may already know some themes may need Theme Integration to support %s fully. We wrote this <a href="%s">theme integrations guide</a>, however, to make it even easier you will get <a href="%s">Advanced Theme Integration</a> service for free if you choose <a href="%s">Premium Support</a> service.', 'post-type-x' ), IC_CATALOG_PLUGIN_NAME, esc_url( 'https://implecode.com/wordpress/product-catalog/theme-integration-guide/#cam=catalog-support-tab&key=integration-link' ), esc_url( 'https://implecode.com/wordpress/plugins/advanced-theme-integration/#cam=catalog-support-tab&key=integration-service-link' ), esc_url( 'https://implecode.com/wordpress/plugins/premium-support/#cam=catalog-support-tab&key=support-link-2' ) ) ?></p>
                 <h2><?php echo sprintf( __( '%s documentation', 'post-type-x' ), IC_CATALOG_PLUGIN_NAME ) ?></h2>
                 <p><?php echo sprintf( __( '<b>%4$s</b> documentation is being developed <a href="%1$s">here</a>. For questions about %4$s please use <a href="%2$s">support forum</a> or <a href="%3$s">Premium Support service</a>.', 'post-type-x' ), esc_url( 'https://implecode.com/wordpress/product-catalog/#cam=catalog-support-tab&key=docs-link' ), esc_url( 'http://wordpress.org/support/plugin/ecommerce-product-catalog' ), esc_url( 'https://implecode.com/wordpress/plugins/premium-support/#cam=catalog-support-tab&key=support-link-3' ), IC_CATALOG_PLUGIN_NAME ) ?></p>
-				<?php /*
+                <?php /*
 				  <h2><?php _e('Plugin Extensions', 'ecommerce-product-catalog') ?></h2>
 				  <p><?php _e('For many users eCommerce Product Catalog standard features is more than enough. However for more specialized needs there are some extensions available. eCommerce Product Catalog extensions are divided into:', 'ecommerce-product-catalog') ?></p>
 				  <table class="wp-list-table widefat">
@@ -202,52 +202,52 @@ if ( ! function_exists( 'implecode_support_menu' ) ):
             </div>
             <div class="helpers">
             <div class="wrapper"><?php
-				main_helper();
-				did_know_helper( 'support', __( 'You can get instant premium support from plugin developers', 'post-type-x' ), 'https://implecode.com/wordpress/plugins/premium-support/' );
-				ic_bug_report();
-				review_helper();
-				?>
+                main_helper();
+                did_know_helper( 'support', __( 'You can get instant premium support from plugin developers', 'post-type-x' ), 'https://implecode.com/wordpress/plugins/premium-support/' );
+                ic_bug_report();
+                review_helper();
+                ?>
             </div></div><?php
-		}
-	}
+        }
+    }
 
-	add_action( 'product-settings', 'implecode_custom_support_settings_content' );
+    add_action( 'product-settings', 'implecode_custom_support_settings_content' );
 
-	add_action( 'admin_init', 'ic_disable_ic_updater', 4 );
+    add_action( 'admin_init', 'ic_disable_ic_updater', 4 );
 
-	/**
-	 * Disables premium updates and support on demand
-	 *
-	 */
-	function ic_disable_ic_updater() {
-		if ( get_option( 'ic_disable_license_message' ) == 1 ) {
-			add_action( 'admin_init', 'ic_disable_license_message', 6 );
-		}
-		if ( get_option( 'ic_disable_ic_updater' ) == 1 ) {
-			if ( ! function_exists( 'start_implecode_updater' ) ) {
+    /**
+     * Disables premium updates and support on demand
+     *
+     */
+    function ic_disable_ic_updater() {
+        if ( get_option( 'ic_disable_license_message' ) == 1 ) {
+            add_action( 'admin_init', 'ic_disable_license_message', 6 );
+        }
+        if ( get_option( 'ic_disable_ic_updater' ) == 1 ) {
+            if ( ! function_exists( 'start_implecode_updater' ) ) {
 
-				function start_implecode_updater() {
+                function start_implecode_updater() {
 
-				}
+                }
 
-			}
-			if ( ! function_exists( 'implecode_support_menu' ) ) {
+            }
+            if ( ! function_exists( 'implecode_support_menu' ) ) {
 
-				function implecode_support_menu() {
+                function implecode_support_menu() {
 
-				}
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	/**
-	 * Disables premium license check message
-	 *
-	 */
-	function ic_disable_license_message() {
-		remove_action( 'admin_init', 'check_if_license_exists', 99 );
-	}
+    /**
+     * Disables premium license check message
+     *
+     */
+    function ic_disable_license_message() {
+        remove_action( 'admin_init', 'check_if_license_exists', 99 );
+    }
 
 
 endif;

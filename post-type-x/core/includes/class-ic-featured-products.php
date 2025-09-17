@@ -65,7 +65,7 @@ class ic_featured_products {
 		}
 		$header = '';
 		if ( ! empty( $args['header'] ) ) {
-			$header = '<h2>' . $args['header'] . '</h2>';
+			$header = '<h2>' . esc_html( $args['header'] ) . '</h2>';
 		}
 		$content = do_shortcode( '[show_products ' . $args_string . ']' . $header . '[/show_products]' );
 

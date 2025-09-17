@@ -1490,6 +1490,24 @@ a.ic_cat-activation-choice:focus {
     .nav-tab-wrapper .page-title-action {
         display: none;
     }
+
+    #implecode_settings .nav-tab-wrapper {
+        position: relative;
+    }
+
+
+    #implecode_settings .nav-tab-wrapper .upgrade-now {
+        max-width: 70px;
+        text-align: center;
+        margin-right: 0;
+        position: absolute;
+        top: -50px;
+        right: 0;
+    }
+
+    .al_product_page_extensions #implecode_settings .nav-tab-wrapper .upgrade-now {
+        display: none;
+    }
 }
 
 @media (max-width: 1300px) {
@@ -1510,23 +1528,6 @@ a.ic_cat-activation-choice:focus {
     }
 
     #implecode_settings .nav-tab-wrapper #al_categories {
-        display: none;
-    }
-
-    #implecode_settings .nav-tab-wrapper {
-        position: relative;
-    }
-
-    #implecode_settings .nav-tab-wrapper .upgrade-now {
-        max-width: 70px;
-        text-align: center;
-        margin-right: 0;
-        position: absolute;
-        top: -50px;
-        right: 0;
-    }
-
-    .al_product_page_extensions #implecode_settings .nav-tab-wrapper .upgrade-now {
         display: none;
     }
 

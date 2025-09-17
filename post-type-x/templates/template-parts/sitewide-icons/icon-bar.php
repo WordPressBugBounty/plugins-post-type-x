@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
     <div id="ic-catalog-bar" class="<?php echo ic_sitewide_bar::container_class() ?>">
-		<?php
-		do_action( 'ic_catalog_bar_content' );
-		?>
+        <?php
+        do_action( 'ic_catalog_bar_content' );
+        ?>
     </div>
 
 <?php

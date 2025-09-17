@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -21,10 +21,10 @@ $product = ic_get_product_object();
             <div class="pseudo"></div><?php echo $product->listing_image_html() ?></div>
         <div class="product-name"><?php echo $product->name() ?></div>
         <div class="product-short-descr"><p><?php echo c_list_desc( $product->ID ) ?></p></div>
-		<?php
-		$classic_list_settings = get_classic_list_settings();
-		do_action( 'classic_list_entry_bottom', $product->ID, $classic_list_settings );
-		?>
+        <?php
+        $classic_list_settings = get_classic_list_settings();
+        do_action( 'classic_list_entry_bottom', $product->ID, $classic_list_settings );
+        ?>
     </div>
 
 <?php

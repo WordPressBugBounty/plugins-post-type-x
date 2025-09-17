@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+    exit; // Exit if accessed directly
 }
 
 /**
@@ -15,22 +15,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product_id    = ic_get_product_id();
 $product_image = get_product_image( $product_id );
 if ( ! empty( $product_image ) ) {
-	do_action( 'before_product_image', $product_id );
-	?>
+    do_action( 'before_product_image', $product_id );
+    ?>
     <div class="entry-thumbnail product-image">
-		<?php
-		do_action( 'above_product_image', $product_id );
-		if ( is_lightbox_enabled() && ! is_ic_default_image( $product_id ) ) {
-			?>
+        <?php
+        do_action( 'above_product_image', $product_id );
+        if ( is_lightbox_enabled() && ! is_ic_default_image( $product_id ) ) {
+            ?>
             <a class="a-product-image nofancybox nolightbox no-ajaxy"
                href="<?php echo get_product_image_url( $product_id ) ?>"><?php echo $product_image ?></a>
-			<?php
-		} else {
-			echo $product_image;
-		}
-		do_action( 'below_product_image', $product_id );
-		?>
+            <?php
+        } else {
+            echo $product_image;
+        }
+        do_action( 'below_product_image', $product_id );
+        ?>
     </div>
-	<?php
-	do_action( 'after_product_image', $product_id );
+    <?php
+    do_action( 'after_product_image', $product_id );
 }

@@ -19,7 +19,7 @@ class ic_extension_settings_info {
 		add_action( 'ic_simple_csv_bottom', array( $this, 'product_csv' ) );
 		add_action( 'general_submenu', array( $this, 'extensions_info' ), 99 );
 		add_filter( 'admin_product_details', array( $this, 'extensions_info_add' ), 99 );
-		add_action( 'ic_EPC_activation', array( $this, 'delay' ) );
+		add_action( 'ic_EPC_first_activation', array( $this, 'delay' ) );
 	}
 
 	function info_box( $content ) {

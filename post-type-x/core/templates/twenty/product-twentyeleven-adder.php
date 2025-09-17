@@ -7,7 +7,7 @@
  * @author        impleCode
  */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
 } // Exit if accessed directly
 
 get_header(); ?>
@@ -18,12 +18,12 @@ get_header(); ?>
         <style>.classic-grid.archive-listing {
                 max-width: 176px;
             }</style>
-		<?php content_product_adder(); ?>
+        <?php content_product_adder(); ?>
     </div>
 </div><!-- #content -->
 
 
 <?php if ( is_archive() ) {
-	get_sidebar();
+    get_sidebar();
 } ?>
 <?php get_footer(); ?>
