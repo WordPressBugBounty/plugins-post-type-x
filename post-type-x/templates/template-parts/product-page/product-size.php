@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author        impleCode
  */
 $product_id = ic_get_product_id();
-$size       = ic_get_product_size( $product_id, true );
-if ( is_ic_attributes_size_enabled() && ! empty( $size ) ) {
+$size       = ic_get_product_size( $product_id );
+if ( is_ic_attributes_size_enabled() && ! empty( $size ) && is_string( $size ) ) {
     ?>
 
     <table class="size-table">

@@ -290,7 +290,7 @@ class ic_catalog_notices extends ic_activation_wizard {
                 event.preventDefault();
                 var data = {
                     'action': 'ic_add_catalog_shortcode',
-                    'nonce': <?php echo wp_create_nonce( 'ic-ajax-nonce' ) ?>
+                    'nonce': '<?php echo wp_create_nonce( 'ic-ajax-nonce' ) ?>'
                 };
                 jQuery(this).prop("disabled", true);
                 jQuery.post(ajaxurl, data, function (response) {
