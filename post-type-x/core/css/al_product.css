@@ -1496,6 +1496,10 @@ div.setting-content table td.longer {
     background: transparent;
 }
 
+#integration_wizard .al-box :not(.login_button) a.button {
+    padding: 0 10px 1px;
+}
+
 div.fixed-box {
     position: fixed;
     top: 32px;

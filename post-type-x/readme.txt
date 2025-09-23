@@ -1,9 +1,9 @@
 === Product Catalog Simple ===
 Contributors: impleCode, ndre
-Tags: product catalog, product catalogue, catalog, catalogue, product, implecode, manage, plugin, display products, list products, items, products, wp catalog, blog catalog, product feed, product management, product portfolio, portfolio, directory, gallery, product gallery, widget, post, plugin, admin, posts, inventory, restaurant menu, responsive, wp catalogue, catalog of goods, collection, catalogs, digital goods, list, listing, products catalog, wp catalog, custom post type, custom post types
+Tags: product catalog, product gallery, catalog, catalogue, product
 Requires at least: 3.7
 Tested up to: 6.8
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -123,6 +123,10 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 If on the off-chance you do encounter issues with the plugin pages after an update you simply need to flush the permalinks by going to WordPress > Settings > Permalinks and hitting 'save'. That should return things to normal.
 
 == Changelog ==
+
+= 1.8.5 – 23/09/2025  =
+
+* Security – added nonce checks to various ajax requests
 
 = 1.8.4 – 18/09/2025  =
 

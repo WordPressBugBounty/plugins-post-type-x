@@ -49,7 +49,8 @@ jQuery(document).ready(function ($) {
     jQuery('.dismiss-empty-bar').on('click', function (e) {
         e.preventDefault();
         var data = {
-            'action': 'hide_empty_bar_message'
+            'action': 'hide_empty_bar_message',
+            'nonce': product_object.nonce
         };
         jQuery.post(product_object.ajaxurl, data, function () {
             jQuery('div.product-sort-bar').hide('slow');

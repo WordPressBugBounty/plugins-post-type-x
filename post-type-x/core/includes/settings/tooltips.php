@@ -138,7 +138,8 @@ if ( ! function_exists( 'implecode_show_wp_tooltips' ) ) {
                     function ic_hide_pointer(selector) {
                         var data = {
                             'action': 'implecode_wp_tooltip_hide',
-                            'selector': selector
+                            'selector': selector,
+                            'nonce': '<?php echo wp_create_nonce( 'ic-ajax-nonce' ) ?>'
                         };
                         jQuery.post(ajaxurl, data, function (response) {
                             if (response !== undefined) {
@@ -151,6 +152,7 @@ if ( ! function_exists( 'implecode_show_wp_tooltips' ) ) {
                     function ic_dismiss_all_pointers() {
                         var data = {
                             'action': 'implecode_wp_tooltip_dismiss_all',
+                            'nonce': '<?php echo wp_create_nonce( 'ic-ajax-nonce' ) ?>'
                         };
                         jQuery.post(ajaxurl, data);
                     }
@@ -211,15 +213,17 @@ if ( ! function_exists( 'implecode_wp_tooltip_hide' ) ) {
     add_action( 'wp_ajax_implecode_wp_tooltip_hide', 'implecode_ajax_wp_tooltip_hide' );
 
     function implecode_ajax_wp_tooltip_hide() {
-        $selector = isset( $_POST['selector'] ) ? stripslashes( $_POST['selector'] ) : '';
-        implecode_wp_tooltip_hide( $selector );
-        $tooltips = implecode_wp_tooltip_get();
-        if ( is_array( $tooltips ) ) {
-            $tooltips[] = implecode_wp_tooltip_default();
-        } else {
-            $tooltips = array();
+        if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) ) {
+            $selector = isset( $_POST['selector'] ) ? stripslashes( $_POST['selector'] ) : '';
+            implecode_wp_tooltip_hide( $selector );
+            $tooltips = implecode_wp_tooltip_get();
+            if ( is_array( $tooltips ) ) {
+                $tooltips[] = implecode_wp_tooltip_default();
+            } else {
+                $tooltips = array();
+            }
+            echo json_encode( $tooltips );
         }
-        echo json_encode( $tooltips );
         wp_die();
     }
 
@@ -229,7 +233,9 @@ if ( ! function_exists( 'implecode_wp_tooltip_dismiss_all' ) ) {
     add_action( 'wp_ajax_implecode_wp_tooltip_dismiss_all', 'implecode_wp_tooltip_dismiss_all' );
 
     function implecode_wp_tooltip_dismiss_all() {
-        update_option( 'implecode_wp_tooltips', 'disabled', false );
+        if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) ) {
+            update_option( 'implecode_wp_tooltips', 'disabled', false );
+        }
         wp_die();
     }
 

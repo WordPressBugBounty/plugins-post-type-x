@@ -441,7 +441,8 @@ function ic_system_status() {
                         }
                         data = {
                             action: "save_implecode_tools",
-                            field: checkbox.attr('name') + "|" + checked
+                            field: checkbox.attr('name') + "|" + checked,
+                            nonce: "<?php echo wp_create_nonce( 'ic-ajax-nonce' ) ?>"
                         };
                         jQuery.post("<?php echo admin_url( 'admin-ajax.php' ) ?>", data, function (response) {
                             checkbox.after("<span class='saved'>Saved!</span>");
@@ -460,7 +461,7 @@ function ic_system_status() {
 add_action( 'wp_ajax_save_implecode_tools', 'ajax_save_implecode_tools' );
 
 function ajax_save_implecode_tools() {
-    if ( current_user_can( 'manage_product_settings' ) ) {
+    if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) && current_user_can( 'manage_product_settings' ) ) {
         if ( isset( $_POST['field'] ) ) {
             $checked = strval( $_POST['field'] );
             if ( strpos( $checked, '|' ) !== false ) {

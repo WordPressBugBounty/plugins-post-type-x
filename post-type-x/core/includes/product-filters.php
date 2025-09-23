@@ -472,7 +472,9 @@ add_action( 'wp_ajax_hide_empty_bar_message', 'hide_empty_bar_message' );
  *
  */
 function hide_empty_bar_message() {
-	update_option( 'hide_empty_bar_message', 1, false );
+	if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) ) {
+		update_option( 'hide_empty_bar_message', 1, false );
+	}
 	wp_die();
 }
 

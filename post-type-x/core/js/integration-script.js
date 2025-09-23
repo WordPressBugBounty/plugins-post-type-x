@@ -181,7 +181,8 @@ jQuery(document).ready(function () {
             "disable_sku": sku,
             "disable_shipping": shipping,
             "disable_attributes": attributes,
-            "default_sidebar": default_sidebar
+            "default_sidebar": default_sidebar,
+            'nonce': product_object.nonce
         };
         jQuery(this).attr("disabled", true);
         jQuery(this).css("opacity", "0.5");

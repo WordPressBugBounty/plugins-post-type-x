@@ -214,9 +214,9 @@ function sample_product_button( $p = null, $text = null, $button_type = 'button-
 	if ( ! empty( $sample_url ) ) {
 		$text = isset( $text ) ? $text : __( 'Start Automatic Theme Integration', 'post-type-x' );
 		if ( ! isset( $p ) ) {
-			return '<a href="' . $sample_url . '" class="' . $button_type . '">' . $text . '</a>';
+			return '<a href="' . $sample_url . '" class="ic-advanced-mode-wizard-button ' . $button_type . '">' . $text . '</a>';
 		} else {
-			return '<p><a href="' . $sample_url . '" class="' . $button_type . '">' . $text . '</a></p>';
+			return '<p><a href="' . $sample_url . '" class="ic-advanced-mode-wizard-button ' . $button_type . '">' . $text . '</a></p>';
 		}
 	}
 }

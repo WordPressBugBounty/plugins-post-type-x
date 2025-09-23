@@ -361,7 +361,8 @@ var reason_desc = selected_reason.parent("p").next("p").find("textarea").val();
  var data = {
             "action": "ic_submit_deactivation_reason",
 			"reason": reason,
-			"reason_desc": reason_desc
+			"reason_desc": reason_desc,
+			"nonce": "' . wp_create_nonce( 'ic-ajax-nonce' ) . '"
         };
         jQuery.post( ajaxurl, data, function ( response ) {
             window.location = deactivate_link.attr("href");
@@ -441,7 +442,7 @@ jQuery(this).parent("p").next("p").find("textarea").show();
 	}
 
 	function submit_deactivation_reason() {
-		if ( ! empty( $_POST['reason'] ) ) {
+		if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) && ! empty( $_POST['reason'] ) ) {
 			$this->setup_data();
 			$data                        = $this->data;
 			$data['deactivation_reason'] = $_POST['reason'];

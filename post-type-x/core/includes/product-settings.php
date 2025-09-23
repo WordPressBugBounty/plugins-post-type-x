@@ -126,6 +126,9 @@ function product_settings() {
                 jQuery(document).on("submit", "form", function (event) {
                     window.onbeforeunload = null;
                 });
+                jQuery(document).on("click", ".ic-advanced-mode-wizard-button", function (event) {
+                    window.onbeforeunload = null;
+                });
             });
         </script>
     </div>

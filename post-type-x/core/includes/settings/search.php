@@ -184,7 +184,8 @@ class ic_settings_search {
         <script>
             var data = {
                 'action': 'ic_search_docs',
-                'term': "<?php echo $search_word ?>"
+                'term': "<?php echo $search_word ?>",
+                'nonce': ic_catalog.nonce
             };
             jQuery.post(ajaxurl, data, function (response) {
                 jQuery(".ic-docs-search-placeholder").replaceWith(response);
@@ -194,8 +195,15 @@ class ic_settings_search {
     }
 
     function ajax_search_docs() {
+        if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) ) {
+            wp_die();
+
+            return '';
+        }
         $search_word = isset( $_POST['term'] ) ? sanitize_text_field( $_POST['term'] ) : '';
         if ( empty( $search_word ) ) {
+            wp_die();
+
             return '';
         }
         $transient_name   = 'ic-cat-search-docs-' . sanitize_title( $search_word );

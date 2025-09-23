@@ -224,7 +224,7 @@ class ic_catalog_theme_integration {
 	 * Handles wizard avanced mode settings save
 	 */
 	static function save_wizard() {
-		if ( current_user_can( 'manage_product_settings' ) ) {
+		if ( ! empty( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'ic-ajax-nonce' ) && current_user_can( 'manage_product_settings' ) ) {
 			$archive_multiple_settings                                = get_multiple_settings();
 			$product_page_settings                                    = get_product_page_settings();
 			$theme                                                    = get_option( 'template' );

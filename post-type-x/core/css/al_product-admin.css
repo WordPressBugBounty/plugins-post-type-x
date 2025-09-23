@@ -1245,6 +1245,7 @@ span.ic_tip, input.ic_tip {
 .ic_deactivate_confirm {
     display: none;
     position: fixed;
+    z-index: 9999999;
 }
 
 .ic_deactivate_box {
@@ -1501,7 +1502,7 @@ a.ic_cat-activation-choice:focus {
         text-align: center;
         margin-right: 0;
         position: absolute;
-        top: -50px;
+        top: -60px;
         right: 0;
     }
 
