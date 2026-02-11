@@ -2,7 +2,7 @@
 Contributors: impleCode, ndre
 Tags: product catalog, product gallery, catalog, catalogue, product
 Requires at least: 3.7
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 1.8.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
