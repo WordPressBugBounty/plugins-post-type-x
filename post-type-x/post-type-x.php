@@ -3,20 +3,23 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
+
 /**
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.8.5
+ * Version: 1.8.6
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x
  * Domain Path: /lang/
  *
- * Copyright: 2025 impleCode.
+ * Copyright: 2026 impleCode.
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html */
-if ( ! ( is_admin() && isset( $_GET['action'] ) && $_GET['action'] == 'activate' && isset( $_GET['plugin'] ) && $_GET['plugin'] == 'post-type-x/post-type-x.php' ) ) {
+
+if ( ! ic_ptx_should_skip_bootstrap() ) {
 	add_action( 'plugins_loaded', 'start_post_type_x', - 1 );
 }
 
@@ -207,6 +210,76 @@ function post_type_x_upgrade() {
 }
 
 /**
+ * Checks if the current admin request is activating one of the provided plugins.
+ *
+ * @param array $plugin_files Plugin basenames.
+ *
+ * @return bool
+ */
+function ic_ptx_is_admin_plugin_activation_request( $plugin_files ) {
+	if ( ! is_admin() || empty( $_GET['action'] ) || 'activate' !== $_GET['action'] ) {
+		return false;
+	}
+
+	if ( empty( $_GET['plugin'] ) ) {
+		return false;
+	}
+
+	$plugin = sanitize_text_field( wp_unslash( $_GET['plugin'] ) );
+
+	return in_array( $plugin, $plugin_files, true );
+}
+
+/**
+ * Checks if the current WP-CLI request is activating one of the provided plugins.
+ *
+ * @param array $plugin_slugs Plugin directory slugs.
+ *
+ * @return bool
+ */
+function ic_ptx_is_wp_cli_plugin_activation_request( $plugin_slugs ) {
+	if ( ! defined( 'WP_CLI' ) || ! WP_CLI || empty( $_SERVER['argv'] ) || ! is_array( $_SERVER['argv'] ) ) {
+		return false;
+	}
+
+	$argv = array_values( array_filter( $_SERVER['argv'], 'is_string' ) );
+	if ( ! in_array( 'plugin', $argv, true ) || ! in_array( 'activate', $argv, true ) ) {
+		return false;
+	}
+
+	foreach ( $plugin_slugs as $plugin_slug ) {
+		if ( in_array( $plugin_slug, $argv, true ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Determines whether PTX should skip bootstrapping on the current request.
+ *
+ * @return bool
+ */
+function ic_ptx_should_skip_bootstrap() {
+	$activation_plugin_files = array(
+		'post-type-x/post-type-x.php',
+		'ecommerce-product-catalog/ecommerce-product-catalog.php',
+	);
+
+	if ( ic_ptx_is_admin_plugin_activation_request( $activation_plugin_files ) ) {
+		return true;
+	}
+
+	return ic_ptx_is_wp_cli_plugin_activation_request(
+		array(
+			'post-type-x',
+			'ecommerce-product-catalog',
+		)
+	);
+}
+
+/**
  * Returns Post Type X db version
  *
  * @return type
@@ -218,17 +291,13 @@ function set_post_type_x_system_db_ver() {
 	return get_option( 'post_type_x_ver', $plugin_version );
 }
 
-register_activation_hook( __FILE__, 'IC_EPC_install' );
+register_activation_hook( __FILE__, 'post_type_x_install' );
 
-if ( ! function_exists( 'IC_EPC_install' ) ) {
-
-	function IC_EPC_install() {
-		start_post_type_x();
-		eCommerce_Product_Catalog::instance();
-		update_option( 'IC_EPC_install', 1 );
-		if ( function_exists( 'epc_activation_function' ) ) {
-			epc_activation_function();
-		}
+function post_type_x_install() {
+	start_post_type_x();
+	eCommerce_Product_Catalog::instance();
+	update_option( 'IC_EPC_install', 1 );
+	if ( function_exists( 'epc_activation_function' ) ) {
+		epc_activation_function();
 	}
-
 }
