@@ -1,17 +1,18 @@
 <?php
+/**
+ * Defines catalog constants.
+ *
+ * Plugin parameters are defined and managed here.
+ *
+ * @version 1.0.0
+ * @package ecommerce-product-catalog/functions
+ * @author  impleCode
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
-/**
- * Manages plugin parameters
- *
- * Here plugin parameters are defined and managed.
- *
- * @version        1.0.0
- * @package        post-type-x/core/functions
- * @author        impleCode
- */
+
 define( 'DEF_SHIPPING_OPTIONS_NUMBER', '1' );
 define( 'DEF_ATTRIBUTES_OPTIONS_NUMBER', '3' );
 define( 'DEF_VALUE', '0' );
@@ -27,5 +28,5 @@ if ( ! defined( 'IC_CATALOG_PLUGIN_NAME' ) ) {
 }
 
 if ( ! defined( 'IC_CATALOG_PLUGIN_SLUG' ) ) {
-	define( 'IC_CATALOG_PLUGIN_SLUG', 'post-type-x' );
+	define( 'IC_CATALOG_PLUGIN_SLUG', 'ecommerce-product-catalog' );
 }

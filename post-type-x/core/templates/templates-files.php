@@ -1,17 +1,20 @@
 <?php
+/**
+ * Template file path helpers.
+ *
+ * @package ecommerce-product-catalog
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
- * WP Product template functions
+ * Gets the product adder template path.
  *
- * Here all plugin template functions are defined.
- *
- * @version        1.1.3
- * @package        post-type-x/core/
- * @author        impleCode
+ * @param bool $auto Whether to use the auto product adder file.
+ * @param bool $even_if_empty Whether to return the theme path even if missing.
+ * @return string
  */
 function get_product_adder_path( $auto = false, $even_if_empty = false ) {
 	if ( $auto ) {
@@ -31,30 +34,55 @@ function get_product_adder_path( $auto = false, $even_if_empty = false ) {
 
 if ( ! function_exists( 'get_custom_templates_folder' ) ) {
 
+	/**
+	 * Gets the custom templates folder path.
+	 *
+	 * @return string
+	 */
 	function get_custom_templates_folder() {
 		return get_stylesheet_directory() . '/implecode/';
 	}
 
 }
 
+/**
+ * Gets the custom product page template path.
+ *
+ * @return string
+ */
 function get_custom_product_page_path() {
 	$folder = get_custom_templates_folder();
 
 	return $folder . 'product-page.php';
 }
 
+/**
+ * Gets the custom inner product page template path.
+ *
+ * @return string
+ */
 function get_custom_product_page_inside_path() {
 	$folder = get_custom_templates_folder();
 
 	return $folder . 'product-page-inside.php';
 }
 
+/**
+ * Gets the custom product listing template path.
+ *
+ * @return string
+ */
 function get_custom_product_listing_path() {
 	$folder = get_custom_templates_folder();
 
 	return $folder . 'product-listing.php';
 }
 
+/**
+ * Gets the active page.php path.
+ *
+ * @return string
+ */
 function get_page_php_path() {
 	if ( file_exists( get_stylesheet_directory() . '/page.php' ) ) {
 		$path = get_stylesheet_directory() . '/page.php';
@@ -65,6 +93,11 @@ function get_page_php_path() {
 	return $path;
 }
 
+/**
+ * Gets the active index.php path.
+ *
+ * @return string
+ */
 function get_index_php_path() {
 	if ( file_exists( get_stylesheet_directory() . '/index.php' ) ) {
 		$path = get_stylesheet_directory() . '/index.php';
@@ -75,6 +108,12 @@ function get_index_php_path() {
 	return $path;
 }
 
+/**
+ * Gets the listing template path.
+ *
+ * @param string|null $template_name Template key.
+ * @return string|null
+ */
 function ic_get_listing_template_path( $template_name = null ) {
 	if ( empty( $template_name ) ) {
 		$template_name = get_product_listing_template();

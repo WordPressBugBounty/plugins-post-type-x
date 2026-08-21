@@ -1,7 +1,12 @@
 <?php
+/**
+ * Capability helpers for eCommerce Product Catalog.
+ *
+ * @package ecommerce-product-catalog
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,9 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Here all capabilities are defined and managed.
  *
- * @version        1.0.0
- * @package        post-type-x/core/includes
- * @author        impleCode
+ * @version 1.0.0
+ * @package ecommerce-product-catalog/includes
+ * @author  impleCode
+ *
+ * @param string $role Role name.
+ * @return string[]
  */
 function ic_catalog_caps( $role = 'administrator' ) {
 	$caps = array(
@@ -30,13 +38,20 @@ function ic_catalog_caps( $role = 'administrator' ) {
 		'delete_product_categories',
 		'assign_product_categories',
 	);
-	if ( $role === 'administrator' ) {
+	if ( 'administrator' === $role ) {
 		$caps[] = 'manage_product_settings';
 	}
 
 	return $caps;
 }
 
+/**
+ * Adds catalog capabilities to a role object.
+ *
+ * @param WP_Role     $role Role object.
+ * @param string|null $role_name Role name override.
+ * @return void
+ */
 function ic_catalog_add_caps( $role, $role_name = null ) {
 	if ( empty( $role->name ) ) {
 		return;
@@ -50,6 +65,12 @@ function ic_catalog_add_caps( $role, $role_name = null ) {
 	}
 }
 
+/**
+ * Checks whether the current user has all requested capabilities.
+ *
+ * @param string|string[] $caps Capability or list of capabilities.
+ * @return bool
+ */
 function ic_current_user_can( $caps ) {
 	if ( ! is_array( $caps ) ) {
 		$caps = array( $caps );
@@ -66,15 +87,24 @@ function ic_current_user_can( $caps ) {
 add_action( 'admin_init', 'ic_restore_product_caps' );
 
 /**
- * Restores product capabilities if admin doesn't have proper rights
+ * Restores product capabilities if admin doesn't have proper rights.
  *
+ * @return void
  */
 function ic_restore_product_caps() {
-	if ( current_user_can( 'administrator' ) && ! ic_current_user_can( ic_catalog_caps() ) ) {
+	$current_user = wp_get_current_user();
+
+	if ( in_array( 'administrator', (array) $current_user->roles, true ) && ! ic_current_user_can( ic_catalog_caps() ) ) {
 		add_product_caps( false );
 	}
 }
 
+/**
+ * Adds product capabilities to the administrator and privileged roles.
+ *
+ * @param bool $additional Whether to add capabilities to additional roles.
+ * @return void
+ */
 function add_product_caps( $additional = true ) {
 	if ( is_user_logged_in() && current_user_can( 'activate_plugins' ) ) {
 		$role = get_role( 'administrator' );
@@ -85,7 +115,7 @@ function add_product_caps( $additional = true ) {
 			$current_user = wp_get_current_user();
 			if ( ! empty( $current_user->roles ) && is_array( $current_user->roles ) ) {
 				foreach ( $current_user->roles as $current_role ) {
-					if ( $current_role == 'administrator' ) {
+					if ( 'administrator' === $current_role ) {
 						break;
 					}
 					$role         = get_role( $current_role );
@@ -100,6 +130,11 @@ function add_product_caps( $additional = true ) {
 	}
 }
 
+/**
+ * Registers the catalog manager role when it does not exist.
+ *
+ * @return void
+ */
 function ic_add_catalog_manager_role() {
 	$manager_role = get_role( 'catalog_manager' );
 	if ( ! empty( $manager_role ) ) {
@@ -115,12 +150,12 @@ function ic_add_catalog_manager_role() {
 	if ( is_object( $manager_role ) ) {
 		if ( empty( $capabilities ) ) {
 			$manager_role->add_cap( 'moderate_comments' );
-			//$manager_role->add_cap( 'manage_categories' );
+			// Intentionally do not grant category-management capability here.
 			$manager_role->add_cap( 'manage_links' );
 			$manager_role->add_cap( 'upload_files' );
 			$manager_role->add_cap( 'unfiltered_html' );
 			$manager_role->add_cap( 'edit_posts' );
-			//$manager_role->add_cap( 'edit_others_posts' );
+			// Intentionally do not grant the ability to edit others' posts.
 			$manager_role->add_cap( 'edit_published_posts' );
 			$manager_role->add_cap( 'publish_posts' );
 			$manager_role->add_cap( 'edit_pages' );
@@ -141,11 +176,20 @@ function ic_add_catalog_manager_role() {
 
 add_filter( 'map_meta_cap', 'ic_products_map_meta_cap', 10, 4 );
 
+/**
+ * Maps product meta capabilities to primitive capabilities.
+ *
+ * @param string[] $caps Primitive capabilities for meta capability checks.
+ * @param string   $cap Requested capability.
+ * @param int      $user_id Current user ID.
+ * @param array    $args Capability arguments.
+ * @return string[]
+ */
 function ic_products_map_meta_cap( $caps, $cap, $user_id, $args ) {
 	if ( empty( $args[0] ) || ! is_numeric( $args[0] ) ) {
 		return $caps;
 	}
-	if ( 'edit_product' == $cap || 'delete_product' == $cap || 'read_product' == $cap ) {
+	if ( 'edit_product' === $cap || 'delete_product' === $cap || 'read_product' === $cap ) {
 		$post = get_post( $args[0] );
 		if ( empty( $post ) ) {
 			return $caps;
@@ -155,35 +199,29 @@ function ic_products_map_meta_cap( $caps, $cap, $user_id, $args ) {
 			return $caps;
 		}
 		$caps = array();
-		if ( 'edit_product' == $cap ) {
-			if ( $user_id == $post->post_author ) {
+		if ( 'edit_product' === $cap ) {
+			if ( $user_id === $post->post_author ) {
 				if ( isset( $post_type->cap->edit_posts ) ) {
 					$caps[] = $post_type->cap->edit_posts;
 				}
-			} else {
-				if ( isset( $post_type->cap->edit_others_posts ) ) {
-					$caps[] = $post_type->cap->edit_others_posts;
-				}
+			} elseif ( isset( $post_type->cap->edit_others_posts ) ) {
+				$caps[] = $post_type->cap->edit_others_posts;
 			}
-		} elseif ( 'delete_product' == $cap ) {
-			if ( $user_id == $post->post_author ) {
+		} elseif ( 'delete_product' === $cap ) {
+			if ( $user_id === $post->post_author ) {
 				if ( isset( $post_type->cap->delete_posts ) ) {
 					$caps[] = $post_type->cap->delete_posts;
 				}
-			} else {
-				if ( isset( $post_type->cap->delete_others_posts ) ) {
-					$caps[] = $post_type->cap->delete_others_posts;
-				}
+			} elseif ( isset( $post_type->cap->delete_others_posts ) ) {
+				$caps[] = $post_type->cap->delete_others_posts;
 			}
-		} elseif ( 'read_product' == $cap ) {
-			if ( 'private' != $post->post_status ) {
+		} elseif ( 'read_product' === $cap ) {
+			if ( 'private' !== $post->post_status ) {
 				$caps[] = 'read';
-			} elseif ( $user_id == $post->post_author ) {
+			} elseif ( $user_id === $post->post_author ) {
 				$caps[] = 'read';
-			} else {
-				if ( isset( $post_type->cap->read_private_posts ) ) {
-					$caps[] = $post_type->cap->read_private_posts;
-				}
+			} elseif ( isset( $post_type->cap->read_private_posts ) ) {
+				$caps[] = $post_type->cap->read_private_posts;
 			}
 		}
 	}

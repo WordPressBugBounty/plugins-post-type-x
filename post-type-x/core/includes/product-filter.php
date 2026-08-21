@@ -1,100 +1,155 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName, Squiz.Commenting.FileComment.WrongStyle -- Legacy filename retained for backward compatibility.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-/*
+/**
+ * Legacy product catalog filter class.
  *
- *  @version       1.0.0
- *  @author        impleCode
- *
+ * @version 1.0.0
+ * @author  impleCode
  */
-
+// phpcs:ignore PEAR.NamingConventions.ValidClassName.StartWithCapital, PEAR.NamingConventions.ValidClassName.Invalid, Squiz.Commenting.ClassComment.WrongStyle, Squiz.Commenting.ClassComment.Missing -- Legacy class name retained for backward compatibility; the class docblock is directly above.
 class ic_catalog_filter {
 	/**
+	 * Filter name.
+	 *
 	 * @var string
 	 */
 	public $name;
 
 	/**
+	 * Sanitization callback.
+	 *
 	 * @var string Sanitization function
 	 */
 	public $sanitization;
 
 	/**
+	 * Taxonomy name.
+	 *
 	 * @var string
 	 */
 	public $taxonomy_name;
 
 	/**
+	 * Meta field names.
+	 *
 	 * @var string|array
 	 */
 	public $meta_name;
 
 	/**
+	 * Meta comparison operators.
+	 *
 	 * @var string|array Possible values are ‘=’, ‘!=’, ‘>’, ‘>=’, ‘<‘, ‘<=’, ‘LIKE’, ‘NOT LIKE’, ‘IN’, ‘NOT IN’, ‘BETWEEN’, ‘NOT BETWEEN’, ‘EXISTS’, ‘NOT EXISTS’, ‘REGEXP’, ‘NOT REGEXP’, ‘RLIKE’
 	 */
 	public $meta_compare;
 
 	/**
+	 * Meta comparison values.
+	 *
 	 * @var string|array
 	 */
 	public $meta_compare_value;
 
 	/**
+	 * Whether the filter is enabled by default.
+	 *
 	 * @var bool
 	 */
 	public $enable_by_default;
 
 	/**
+	 * Query relation.
+	 *
 	 * @var string AND, OR
 	 */
 	public $relation;
 
 	/**
+	 * Whether the filter is permanent.
+	 *
 	 * @var bool
 	 */
 	public $permanent;
 
 	/**
+	 * Value that activates the filter.
+	 *
 	 * @var int|string|null
 	 */
 	public $apply_value;
 
 	/**
+	 * Value that disables the filter.
+	 *
 	 * @var int|string
 	 */
 	public $disable_value;
 
 	/**
+	 * Applied taxonomy query.
+	 *
 	 * @var array|void
 	 */
 	public $applied_tax_query;
 
 	/**
+	 * Applied meta query.
+	 *
 	 * @var array|void
 	 */
 	public $applied_meta_query;
 
 	/**
+	 * Query state before shortcode filters.
+	 *
 	 * @var WP_Query
 	 */
 	public $pre_shortcode_query;
 
 	/**
+	 * Query state before filters.
+	 *
 	 * @var WP_Query
 	 */
 	public $pre_query;
 
+	/**
+	 * Date query configuration.
+	 *
+	 * @var array|string|void
+	 */
 	public $date_query;
+
+	/**
+	 * Applied date query.
+	 *
+	 * @var array|string|void
+	 */
 	public $applied_date_query;
 
-
-	function __construct( $name, $sanitization = 'intval', $taxonomy_name = '', $meta_name = '', $meta_compare = '=', $meta_compare_value = '1', $relation = 'AND', $enable_by_default = false, $permanent = false, $apply_value = null, $disable_value = 'all' ) {
+	/**
+	 * Initializes the filter.
+	 *
+	 * @param string          $name              Filter name.
+	 * @param string          $sanitization      Sanitization callback.
+	 * @param string          $taxonomy_name     Taxonomy name.
+	 * @param string|array    $meta_name         Meta field names.
+	 * @param string|array    $meta_compare      Meta comparison operators.
+	 * @param string|array    $meta_compare_value Meta comparison values.
+	 * @param string          $relation          Query relation.
+	 * @param bool            $enable_by_default Whether enabled by default.
+	 * @param bool            $permanent         Whether filter is permanent.
+	 * @param int|string|null $apply_value       Value that activates the filter.
+	 * @param int|string      $disable_value     Value that disables the filter.
+	 */
+	public function __construct( $name, $sanitization = 'intval', $taxonomy_name = '', $meta_name = '', $meta_compare = '=', $meta_compare_value = '1', $relation = 'AND', $enable_by_default = false, $permanent = false, $apply_value = null, $disable_value = 'all' ) {
 		$this->name          = $name;
 		$this->sanitization  = $sanitization;
 		$this->taxonomy_name = apply_filters( 'ic_filter_taxonomy_name', $taxonomy_name );
-		if ( $meta_name === 'date_query' ) {
+		if ( 'date_query' === $meta_name ) {
 			$this->date_query = $meta_compare_value;
 		} else {
 			$this->meta_name = apply_filters( 'ic_filter_meta_name', is_array( $meta_name ) ? $meta_name : array( $meta_name ) );
@@ -113,7 +168,6 @@ class ic_catalog_filter {
 			add_filter( 'init', array( $this, 'register_taxonomy' ), 50 );
 			add_filter( 'ic_filter_taxonomies', array( $this, 'set_filter_taxonomy' ) );
 
-			//add_filter( 'product_meta_save', array( $this, 'taxonomy_save' ), 10, 2 );
 			add_action( 'product_meta_save_update', array( $this, 'taxonomy_save' ), 10, 2 );
 			add_filter( 'ic_product_ajax_query_vars', array( $this, 'ajax_query_vars_remove' ) );
 		}
@@ -122,20 +176,32 @@ class ic_catalog_filter {
 		do_action( 'ic_catalog_filter_construct', $this );
 	}
 
-	function set_filter_taxonomy( $taxonomies ) {
+	/**
+	 * Registers the filter taxonomy label.
+	 *
+	 * @param array $taxonomies Registered filter taxonomies.
+	 * @return array
+	 */
+	public function set_filter_taxonomy( $taxonomies ) {
 		$taxonomies[ $this->taxonomy_name ] = $this->name;
 
 		return $taxonomies;
 	}
 
-	function ajax_query_vars_remove( $query_vars ) {
+	/**
+	 * Removes this filter from AJAX query vars.
+	 *
+	 * @param array $query_vars Query vars.
+	 * @return array
+	 */
+	public function ajax_query_vars_remove( $query_vars ) {
 		if ( empty( $query_vars['tax_query'] ) ) {
 			return $query_vars;
 		}
 		$tax_query = $this->tax_query();
 		if ( ! empty( $tax_query ) ) {
-			$remove_key = array_search( $tax_query, $query_vars['tax_query'] );
-			if ( $remove_key !== false ) {
+			$remove_key = array_search( $tax_query, $query_vars['tax_query'], true );
+			if ( false !== $remove_key ) {
 				unset( $query_vars['tax_query'][ $remove_key ] );
 			}
 		}
@@ -143,48 +209,56 @@ class ic_catalog_filter {
 		return $query_vars;
 	}
 
-	function applied( $query ) {
-		//remove_action( 'apply_product_filters', array( $this, 'applied' ), 52 );
-		//remove_filter( 'apply_shortcode_product_filters', array( $this, 'applied' ), 52 );
+	/**
+	 * Returns the applied filter query.
+	 *
+	 * @param mixed $query Query value.
+	 * @return mixed
+	 */
+	public function applied( $query ) {
 		if ( ! empty( $this->applied_tax_query ) ) {
-
 			return apply_filters( 'ic_catalog_filter_applied_tax_query', $query, $this->applied_tax_query, $this->name );
-		} else {
-
-			return apply_filters( 'ic_catalog_filter_not_applied_tax_query', $query, $this );
 		}
+
+		return apply_filters( 'ic_catalog_filter_not_applied_tax_query', $query, $this );
 	}
 
-	function apply( $query ) {
+	/**
+	 * Applies this filter to the main query.
+	 *
+	 * @param WP_Query $query Query object.
+	 * @return void
+	 */
+	public function apply( $query ) {
 		if ( $query->get( 'ic_filter_applied_' . $this->name ) ) {
 			return;
 		}
 		$filter_tax_query = $this->tax_query();
-		if ( $filter_tax_query === array() ) {
+		if ( array() === $filter_tax_query ) {
 			$this->reset();
 
 			return;
 		}
 		$this->pre_query = clone $query;
 		if ( ! empty( $filter_tax_query ) ) {
-			if ( empty( $query->query['ic_exclude_tax'] ) || ( ! empty( $query->query['ic_exclude_tax'] ) && ! in_array( $this->taxonomy_name, $query->query['ic_exclude_tax'] ) ) ) {
+			if ( empty( $query->query['ic_exclude_tax'] ) || ( ! empty( $query->query['ic_exclude_tax'] ) && ! in_array( $this->taxonomy_name, $query->query['ic_exclude_tax'], true ) ) ) {
 				$tax_query = $query->get( 'tax_query' );
 				if ( empty( $tax_query ) ) {
 					$tax_query = array();
 				}
-				if ( ! in_array( $filter_tax_query, $tax_query ) ) {
+				if ( ! in_array( $filter_tax_query, $tax_query, true ) ) {
 					$tax_query[] = $filter_tax_query;
 					$query->set( 'tax_query', $tax_query );
 				}
 				$this->applied_tax_query = $filter_tax_query;
 			}
-		} else if ( ! empty( $this->date_query ) ) {
-			if ( empty( $query->query['ic_exclude'] ) || ( ! empty( $query->query['ic_exclude'] ) && ! in_array( 'date_query', $query->query['ic_exclude'] ) ) ) {
+		} elseif ( ! empty( $this->date_query ) ) {
+			if ( empty( $query->query['ic_exclude'] ) || ( ! empty( $query->query['ic_exclude'] ) && ! in_array( 'date_query', $query->query['ic_exclude'], true ) ) ) {
 				$date_query = $query->get( 'date_query' );
 				if ( empty( $date_query ) ) {
 					$date_query = array();
 				}
-				if ( ! in_array( $this->date_query, $date_query ) ) {
+				if ( ! in_array( $this->date_query, $date_query, true ) ) {
 					$date_query[] = $this->date_query;
 					$query->set( 'date_query', $date_query );
 				}
@@ -197,7 +271,7 @@ class ic_catalog_filter {
 				if ( empty( $meta_query ) ) {
 					$meta_query = array();
 				}
-				if ( ! in_array( $filter_meta_query, $meta_query ) ) {
+				if ( ! in_array( $filter_meta_query, $meta_query, true ) ) {
 					$meta_query[] = $filter_meta_query;
 					$query->set( 'meta_query', $meta_query );
 				}
@@ -209,17 +283,21 @@ class ic_catalog_filter {
 		$query->set( 'ic_filter_applied_' . $this->name, '1' );
 	}
 
-	function check_if_empty( $query ) {
+	/**
+	 * Resets the filter if the query becomes empty.
+	 *
+	 * @param WP_Query $query Query object.
+	 * @return void
+	 */
+	public function check_if_empty( $query ) {
 		if ( $query->get( 'ic_filter_' . $this->name . 'checked_if_empty' ) ) {
 			return;
 		}
 
-		if ( ! empty( $this->applied_tax_query ) && ! empty( $this->pre_query ) /* && ! is_product_filters_active( array( $this->name ) )*/ ) {
+		// The pre-query is used to restore results when the applied filter empties the set.
+		if ( ! empty( $this->applied_tax_query ) && ! empty( $this->pre_query ) ) {
 			$removed = remove_action( 'apply_product_filters', array( $this, 'check_if_empty' ), 51 );
-			//global $wp_filter;
 			global $wp_query;
-			//$prev_filters = $wp_filter['pre_get_posts'];
-			//unset( $wp_filter['pre_get_posts'] );
 			if ( ! empty( $wp_query->request ) ) {
 				$posts = $wp_query->posts;
 			} else {
@@ -235,20 +313,22 @@ class ic_catalog_filter {
 				$query->set( 'tax_query', $pre_tax_query );
 				$this->reset();
 			}
-			$query->set( 'ic_filter_' . $this->name . 'checked_if_empty', '1' );
-
-			//$wp_filter['pre_get_posts'] = $prev_filters;
+				$query->set( 'ic_filter_' . $this->name . 'checked_if_empty', '1' );
 			if ( $removed ) {
 				add_action( 'apply_product_filters', array( $this, 'check_if_empty' ), 51 );
 			}
-
 		}
-
 	}
 
-	function apply_shortcode( $shortcode_query ) {
+	/**
+	 * Applies this filter to shortcode query arguments.
+	 *
+	 * @param array $shortcode_query Shortcode query args.
+	 * @return array
+	 */
+	public function apply_shortcode( $shortcode_query ) {
 		$filter_tax_query = $this->tax_query();
-		if ( $filter_tax_query === array() ) {
+		if ( array() === $filter_tax_query ) {
 			$this->reset();
 
 			return $shortcode_query;
@@ -256,26 +336,28 @@ class ic_catalog_filter {
 		$this->pre_shortcode_query = $shortcode_query;
 		if ( ! empty( $filter_tax_query ) ) {
 			if ( empty( $shortcode_query['tax_query'] ) ) {
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- This sets WP_Query arguments for catalog filtering.
 				$shortcode_query['tax_query'] = array();
 			}
-			if ( ! in_array( $filter_tax_query, $shortcode_query['tax_query'] ) ) {
+			if ( ! in_array( $filter_tax_query, $shortcode_query['tax_query'], true ) ) {
 				$shortcode_query['tax_query'][] = $filter_tax_query;
 			}
 			$this->applied_tax_query = $filter_tax_query;
-		} else if ( ! empty( $this->date_query ) ) {
+		} elseif ( ! empty( $this->date_query ) ) {
 			if ( empty( $shortcode_query['date_query'] ) ) {
 				$shortcode_query['date_query'] = array();
 			}
-			if ( ! in_array( $this->date_query, $shortcode_query['date_query'] ) ) {
+			if ( ! in_array( $this->date_query, $shortcode_query['date_query'], true ) ) {
 				$shortcode_query['date_query'][] = $this->date_query;
 			}
 		} else {
 			$filter_meta_query = $this->meta_query();
 			if ( ! empty( $filter_meta_query ) ) {
 				if ( empty( $shortcode_query['meta_query'] ) ) {
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- This sets WP_Query arguments for catalog filtering.
 					$shortcode_query['meta_query'] = array();
 				}
-				if ( ! in_array( $filter_meta_query, $shortcode_query['meta_query'] ) ) {
+				if ( ! in_array( $filter_meta_query, $shortcode_query['meta_query'], true ) ) {
 					$shortcode_query['meta_query'][] = $filter_meta_query;
 				}
 			}
@@ -284,29 +366,36 @@ class ic_catalog_filter {
 		return $shortcode_query;
 	}
 
-	function check_if_empty_shortcode( $shortcode_query ) {
+	/**
+	 * Resets shortcode filters if the result becomes empty.
+	 *
+	 * @param array $shortcode_query Shortcode query args.
+	 * @return array
+	 */
+	public function check_if_empty_shortcode( $shortcode_query ) {
 		if ( ! empty( $this->applied_tax_query ) && ! empty( $this->pre_shortcode_query ) && ! is_product_filters_active( array( $this->name ) ) ) {
 			$archive_multiple_settings = get_multiple_settings();
 			$per_page                  = isset( $shortcode_query['posts_per_page'] ) ? $shortcode_query['posts_per_page'] : $archive_multiple_settings['archive_products_limit'];
-			//global $wp_filter;
-			//$prev_filters = $wp_filter['pre_get_posts'];
-			//unset( $wp_filter['pre_get_posts'] );
-			$query           = ic_wp_query( $shortcode_query );
-			$posts           = $query->posts;
-			$pre_query       = ic_wp_query( array_merge( $this->pre_shortcode_query, array( 'posts_per_page' => $per_page ) ) );
-			$pre_query_posts = $pre_query->posts;
+			$query                     = ic_wp_query( $shortcode_query );
+			$posts                     = $query->posts;
+			$pre_query                 = ic_wp_query( array_merge( $this->pre_shortcode_query, array( 'posts_per_page' => $per_page ) ) );
+			$pre_query_posts           = $pre_query->posts;
 
 			if ( empty( $posts ) || count( $pre_query_posts ) < $per_page ) {
 				$shortcode_query = $this->pre_shortcode_query;
 				$this->reset();
 			}
-			//$wp_filter['pre_get_posts'] = $prev_filters;
 		}
 
 		return $shortcode_query;
 	}
 
-	function tax_query() {
+	/**
+	 * Builds the taxonomy query.
+	 *
+	 * @return array|void
+	 */
+	public function tax_query() {
 		if ( empty( $this->taxonomy_name ) ) {
 			return;
 		}
@@ -318,13 +407,18 @@ class ic_catalog_filter {
 		$tax_query = array(
 			'taxonomy' => $this->taxonomy_name,
 			'field'    => 'term_taxonomy_id',
-			'terms'    => $term_ids
+			'terms'    => $term_ids,
 		);
 
 		return apply_filters( 'ic_catalog_filter_tax_query', $tax_query, $this->name, $this->taxonomy_name, $terms );
 	}
 
-	function meta_query() {
+	/**
+	 * Builds the meta query.
+	 *
+	 * @return array|void
+	 */
+	public function meta_query() {
 		if ( empty( $this->meta_name ) ) {
 			return;
 		}
@@ -346,33 +440,53 @@ class ic_catalog_filter {
 		return apply_filters( 'ic_catalog_filter_meta_query', $meta_query, $this->name, $this->meta_name );
 	}
 
-	function date_query() {
-		if ( empty( $this->meta_name ) || $this->meta_name !== 'after' ) {
+	/**
+	 * Builds the date query.
+	 *
+	 * @return array|void
+	 */
+	public function date_query() {
+		if ( empty( $this->meta_name ) || 'after' !== $this->meta_name ) {
 			return;
 		}
 
 		return array(
-			$this->meta_compare_value
+			$this->meta_compare_value,
 		);
 	}
 
-	function enable( $filters ) {
+	/**
+	 * Adds this filter to the active list.
+	 *
+	 * @param array $filters Active filters.
+	 * @return array
+	 */
+	public function enable( $filters ) {
 		$filters[] = $this->name;
 
 		return $filters;
 	}
 
-	function set() {
+	/**
+	 * Loads and applies request values for this filter.
+	 *
+	 * @return void
+	 */
+	public function set() {
 		if ( empty( $this->name ) ) {
 			return;
 		}
 		$session        = get_product_catalog_session();
 		$check_if_empty = false;
 		$permanent      = $this->permanent;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public, bookmarkable catalog filter parameter that only affects the current visitor's own catalog session.
 		if ( isset( $_GET[ $this->name ] ) || ( $this->enable_by_default && ! isset( $session['filters'][ $this->name ] ) ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public, bookmarkable catalog filter parameter that only affects the current visitor's own catalog session.
 			if ( isset( $_GET[ $this->name ] ) ) {
-				$filter_value = is_array( $_GET[ $this->name ] ) ? array_map( $this->sanitization, $_GET[ $this->name ] ) : call_user_func( $this->sanitization, $_GET[ $this->name ] );
-			} else if ( $this->enable_by_default ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Public, bookmarkable catalog filter parameter affecting only the current visitor's session; the raw value is sanitized by the configured callback on the next line.
+				$raw_filter_value = wp_unslash( $_GET[ $this->name ] );
+				$filter_value     = is_array( $raw_filter_value ) ? array_map( $this->sanitization, $raw_filter_value ) : call_user_func( $this->sanitization, $raw_filter_value );
+			} elseif ( $this->enable_by_default ) {
 				$filter_value   = 1;
 				$check_if_empty = true;
 				$permanent      = false;
@@ -386,15 +500,16 @@ class ic_catalog_filter {
 				if ( ! isset( $session['permanent-filters'] ) ) {
 					$session['permanent-filters'] = array();
 				}
-				if ( $permanent && ! in_array( $this->name, $session['permanent-filters'] ) ) {
+				if ( $permanent && ! in_array( $this->name, $session['permanent-filters'], true ) ) {
 					$session['permanent-filters'][] = $this->name;
 				}
 
 				$session['filters'][ $this->name ] = $filter_value;
-			} else if ( isset( $session['filters'][ $this->name ] ) ) {
+			} elseif ( isset( $session['filters'][ $this->name ] ) ) {
 				unset( $session['filters'][ $this->name ] );
 			}
-		} else if ( ! isset( $_GET[ $this->name ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public, bookmarkable catalog filter parameter that only affects the current visitor's own catalog session.
+		} elseif ( ! isset( $_GET[ $this->name ] ) ) {
 			if ( ! $this->enable_by_default && isset( $session['filters'][ $this->name ] ) ) {
 				unset( $session['filters'][ $this->name ] );
 			}
@@ -413,19 +528,31 @@ class ic_catalog_filter {
 		}
 	}
 
-	function reset() {
+	/**
+	 * Resets the applied taxonomy query.
+	 *
+	 * @return void
+	 */
+	public function reset() {
 		$_GET[ $this->name ]     = $this->disable_value;
 		$this->applied_tax_query = '';
 	}
 
-	function taxonomy_save( $product_meta, $post ) {
+	/**
+	 * Saves taxonomy terms for the current filter.
+	 *
+	 * @param array   $product_meta Product meta.
+	 * @param WP_Post $post         Product post.
+	 * @return array
+	 */
+	public function taxonomy_save( $product_meta, $post ) {
 		foreach ( $this->meta_name as $key => $meta_name ) {
 			$filtered_meta_value = apply_filters( 'ic_catalog_filter_compare_meta_value', false, $meta_name, $product_meta, $this->taxonomy_name );
-			if ( $filtered_meta_value === 'false' || ( $filtered_meta_value === false && ! isset( $product_meta[ $meta_name ] ) ) ) {
+			if ( 'false' === $filtered_meta_value || ( false === $filtered_meta_value && ! isset( $product_meta[ $meta_name ] ) ) ) {
 				$this->save_term( $meta_name . $key, $post->ID, true );
 				continue;
 			}
-			if ( $filtered_meta_value !== false ) {
+			if ( false !== $filtered_meta_value ) {
 				$compare_value = $filtered_meta_value;
 			} else {
 				$compare_value = $product_meta[ $meta_name ];
@@ -442,7 +569,7 @@ class ic_catalog_filter {
 					$different_than_value = '';
 				}
 				$different_than = apply_filters( 'ic_catalog_filter_compare_different_than_meta', $different_than_value, $different_than, $product_meta, $this->taxonomy_name );
-				if ( $different_than === 'false' || empty( $different_than ) ) {
+				if ( 'false' === $different_than || empty( $different_than ) ) {
 					$this->save_term( $meta_name . $key, $post->ID, true );
 					continue;
 				}
@@ -457,7 +584,15 @@ class ic_catalog_filter {
 		return $product_meta;
 	}
 
-	function save_term( $name, $product_id, $remove = false ) {
+	/**
+	 * Saves or removes a term on the product.
+	 *
+	 * @param string $name       Term name.
+	 * @param int    $product_id Product ID.
+	 * @param bool   $remove     Whether to remove the term.
+	 * @return void
+	 */
+	public function save_term( $name, $product_id, $remove = false ) {
 		$term = get_term_by( 'name', $name, $this->taxonomy_name );
 		if ( is_wp_error( $term ) ) {
 			return;
@@ -485,7 +620,12 @@ class ic_catalog_filter {
 		do_action( 'ic_catalog_filter_term_saved', $this->name, $product_id, $remove, $term_ids );
 	}
 
-	function register_taxonomy() {
+	/**
+	 * Registers the internal taxonomy used by this filter.
+	 *
+	 * @return void
+	 */
+	public function register_taxonomy() {
 		if ( empty( $this->taxonomy_name ) ) {
 			return;
 		}
@@ -503,19 +643,27 @@ class ic_catalog_filter {
 		register_taxonomy( $this->taxonomy_name, $post_types, $args );
 	}
 
-	function compare( $var1, $var2, $op ) {
+	/**
+	 * Compares two values using a legacy operator.
+	 *
+	 * @param mixed  $var1 First value.
+	 * @param mixed  $var2 Second value.
+	 * @param string $op   Comparison operator.
+	 * @return bool
+	 */
+	public function compare( $var1, $var2, $op ) {
 		switch ( $op ) {
-			case "=":
-				return strval( $var1 ) == strval( $var2 );
-			case "!=":
-				return strval( $var1 ) != strval( $var2 );
-			case ">=":
+			case '=':
+				return (string) $var1 === (string) $var2;
+			case '!=':
+				return (string) $var1 !== (string) $var2;
+			case '>=':
 				return $var1 >= $var2;
-			case "<=":
+			case '<=':
 				return $var1 <= $var2;
-			case ">":
+			case '>':
 				return $var1 > $var2;
-			case "<":
+			case '<':
 				return $var1 < $var2;
 			default:
 				return false;

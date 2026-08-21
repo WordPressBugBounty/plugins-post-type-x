@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Product Catalog Simple
  * Plugin URI: https://implecode.com/wordpress/product-catalog/#cam=in-plugin-urls&key=plugin-url
  * Description: A minimalistic, modular catalog tool which comes with fully customizable, responsive front-end design, search and categories.
- * Version: 1.8.6
+ * Version: 1.8.7
  * Author: impleCode
  * Author URI: https://implecode.com/#cam=in-plugin-urls&key=author-url
  * Text Domain: post-type-x
@@ -25,8 +25,10 @@ if ( ! ic_ptx_should_skip_bootstrap() ) {
 
 function start_post_type_x() {
 	if ( ! defined( 'AL_BASE_PATH' ) ) {
+		define( 'AL_BASE_PATH', plugin_dir_path( __FILE__ ) . 'core/' );
+		define( 'AL_PLUGIN_BASE_PATH', plugin_dir_url( __FILE__ ) . 'core/' );
 		if ( ! defined( 'AL_BASE_TEMPLATES_PATH' ) ) {
-			define( 'AL_BASE_TEMPLATES_PATH', dirname( __FILE__ ) );
+			define( 'AL_BASE_TEMPLATES_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 		}
 		if ( ! defined( 'IC_CATALOG_PLUGIN_NAME' ) ) {
 			define( 'IC_CATALOG_PLUGIN_NAME', 'Product Catalog Simple' );
@@ -38,7 +40,7 @@ function start_post_type_x() {
 			define( 'AL_PLUGIN_MAIN_FILE', __FILE__ );
 		}
 		if ( ! defined( 'IC_EPC_VERSION' ) ) {
-			define( 'IC_EPC_VERSION', '3.3.11' );
+			define( 'IC_EPC_VERSION', '3.5.11' );
 		}
 		if ( ! defined( 'IC_CATALOG_VERSION' ) ) {
 			if ( function_exists( 'get_file_data' ) ) {
@@ -47,23 +49,33 @@ function start_post_type_x() {
 				);
 				$plugin_data     = get_file_data( AL_PLUGIN_MAIN_FILE, $default_headers, 'plugin' );
 			}
-			if ( ! empty( $plugin_data["Version"] ) ) {
-				define( 'IC_CATALOG_VERSION', $plugin_data["Version"] );
+			if ( ! empty( $plugin_data['Version'] ) ) {
+				define( 'IC_CATALOG_VERSION', $plugin_data['Version'] );
 			} else {
-				define( 'IC_CATALOG_VERSION', '1.6.11' );
+				define( 'IC_CATALOG_VERSION', '1.8.7' );
 			}
 		}
-		require_once( dirname( __FILE__ ) . '/core/index.php' );
+		require_once __DIR__ . '/core/index.php';
 		remove_action( 'plugins_loaded', 'impleCode_EPC', - 2 );
 		$ic_epc_instance = impleCode_EPC();
 		remove_action( 'init', array( $ic_epc_instance, 'load_textdomain' ) );
 		add_action( 'admin_init', 'post_type_x_upgrade' );
-		//add_filter( 'ic_extensions_remote_url', 'ic_post_type_x_extensions' );
-		//add_action( 'ic_before_extensions_list', 'type_x_free_extensions' );
+		// add_filter( 'ic_extensions_remote_url', 'ic_post_type_x_extensions' );
+		// add_action( 'ic_before_extensions_list', 'type_x_free_extensions' );
 		add_filter( 'ic_cat_extensions', 'type_x_free_extensions' );
 		add_action( 'after_setup_theme', 'ic_post_type_x_addons', - 2 );
+		add_action( 'ecommerce_product_catalog_addons_v3', 'ic_post_type_x_legacy_v3_addons_hook' );
 		add_action( 'init', 'ic_post_type_x_constants' );
 	}
+}
+
+/**
+ * Emits the historical hyphenated v3 add-on hook.
+ *
+ * @return void
+ */
+function ic_post_type_x_legacy_v3_addons_hook() {
+	do_action( 'ecommerce-product-catalog-addons-v3' );
 }
 
 function ic_post_type_x_constants() {
@@ -84,7 +96,6 @@ function ic_post_type_x_addons() {
 
 /**
  * Generates extension param for Post Type X
- *
  */
 function ic_post_type_x_extensions( $param ) {
 	$param .= '&extensions_ptx=1';
@@ -94,7 +105,6 @@ function ic_post_type_x_extensions( $param ) {
 
 /**
  * Shows Post Type X free extensions
- *
  */
 function type_x_free_extensions( $existing_extensions = null ) {
 	if ( false === ( $extensions = get_site_transient( 'implecode_free_extensions_data' ) ) ) {
@@ -110,18 +120,18 @@ function type_x_free_extensions( $existing_extensions = null ) {
 	}
 
 	/*
-	  $all_ic_plugins = '';
-	  if ( function_exists( 'get_free_implecode_active_plugins' ) ) {
-	  $all_ic_plugins = get_free_implecode_active_plugins();
-	  }
-	  $not_active_ic_plugins = get_implecode_free_not_active_plugins();
-	  echo '<div class="free-extensions">';
+		$all_ic_plugins = '';
+		if ( function_exists( 'get_free_implecode_active_plugins' ) ) {
+		$all_ic_plugins = get_free_implecode_active_plugins();
+		}
+		$not_active_ic_plugins = get_implecode_free_not_active_plugins();
+		echo '<div class="free-extensions">';
 
-	  foreach ( $extensions as $extension ) {
-	  $extension[ 'type' ] = isset( $extension[ 'type' ] ) ? $extension[ 'type' ] : 'premium';
-	  //echo extension_box( $extension[ 'name' ], $extension[ 'url' ], $extension[ 'desc' ], $extension[ 'comp' ], $extension[ 'slug' ], $all_ic_plugins, $not_active_ic_plugins, $extension[ 'type' ] );
-	  }
-	  echo '</div>';
+		foreach ( $extensions as $extension ) {
+		$extension[ 'type' ] = isset( $extension[ 'type' ] ) ? $extension[ 'type' ] : 'premium';
+		//echo extension_box( $extension[ 'name' ], $extension[ 'url' ], $extension[ 'desc' ], $extension[ 'comp' ], $extension[ 'slug' ], $all_ic_plugins, $not_active_ic_plugins, $extension[ 'type' ] );
+		}
+		echo '</div>';
 	 *
 	 */
 
@@ -136,7 +146,7 @@ function implecode_x_free_extensions() {
 			'desc' => 'Adds price support for Product Catalog Simple items. Use it for all your priced products and services.',
 			'comp' => 'simple',
 			'slug' => 'price-field',
-			'type' => 'free'
+			'type' => 'free',
 		),
 		'attributes-table' => array(
 			'url'  => 'attributes-table',
@@ -144,7 +154,7 @@ function implecode_x_free_extensions() {
 			'desc' => 'Adds attributes support for Product Catalog Simple items. Attributes will let you display some additional data about the item in a convienient way.',
 			'comp' => 'simple',
 			'slug' => 'attributes-table',
-			'type' => 'free'
+			'type' => 'free',
 		),
 		'shipping-options' => array(
 			'url'  => 'shipping-options',
@@ -152,7 +162,7 @@ function implecode_x_free_extensions() {
 			'desc' => 'Add shipping support for your Product Catalog Simple items. Use it for your physical products.',
 			'comp' => 'simple',
 			'slug' => 'shipping-options',
-			'type' => 'free'
+			'type' => 'free',
 		),
 	);
 
@@ -161,12 +171,11 @@ function implecode_x_free_extensions() {
 
 /**
  * Applies Post Type X upgrade functions
- *
  */
 function post_type_x_upgrade() {
 	if ( is_admin() ) {
 		$plugin_data             = get_plugin_data( AL_PLUGIN_MAIN_FILE, true, false );
-		$plugin_version          = $plugin_data["Version"];
+		$plugin_version          = $plugin_data['Version'];
 		$database_plugin_version = get_option( 'post_type_x_ver', $plugin_version );
 		add_filter( 'ic_plugin_database_version', 'set_post_type_x_system_db_ver' );
 		if ( $database_plugin_version != $plugin_version ) {
@@ -186,7 +195,7 @@ function post_type_x_upgrade() {
 				$single_options             = get_product_page_settings();
 				$single_options['template'] = 'plain';
 				update_option( 'multi_single_options', $single_options );
-			} else if ( version_compare( $database_plugin_version, '1.7.7' ) < 0 ) {
+			} elseif ( version_compare( $database_plugin_version, '1.7.7' ) < 0 ) {
 				$csv_temp   = wp_upload_dir( null, false );
 				$csv_folder = $csv_temp['basedir'];
 				if ( file_exists( $csv_folder . '/simple-products.csv' ) ) {
@@ -202,8 +211,8 @@ function post_type_x_upgrade() {
 					}
 				}
 			}
-			//flush_rewrite_rules();
-		} else if ( ! get_option( 'post_type_x_ver' ) ) {
+			// flush_rewrite_rules();
+		} elseif ( ! get_option( 'post_type_x_ver' ) ) {
 			update_option( 'post_type_x_ver', $plugin_version, false );
 		}
 	}
@@ -286,7 +295,7 @@ function ic_ptx_should_skip_bootstrap() {
  */
 function set_post_type_x_system_db_ver() {
 	$plugin_data    = get_plugin_data( AL_PLUGIN_MAIN_FILE, true, false );
-	$plugin_version = $plugin_data["Version"];
+	$plugin_version = $plugin_data['Version'];
 
 	return get_option( 'post_type_x_ver', $plugin_version );
 }

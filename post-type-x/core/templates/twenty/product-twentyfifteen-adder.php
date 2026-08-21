@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * The template for displaying pages
  *
@@ -10,6 +13,7 @@
  * @subpackage Twenty_Fifteen
  * @since Twenty Fifteen 1.0
  */
+
 get_header();
 ?>
 <style>article#product_listing {width: auto; margin: 0 8.3333%}</style>

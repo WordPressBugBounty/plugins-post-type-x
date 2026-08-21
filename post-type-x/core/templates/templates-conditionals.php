@@ -1,17 +1,18 @@
 <?php
+/**
+ * Template conditional helpers.
+ *
+ * @package ecommerce-product-catalog
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
- * WP Product template functions
+ * Checks whether integration mode is selected.
  *
- * Here all plugin template functions are defined.
- *
- * @version        1.1.3
- * @package        post-type-x/core/
- * @author        impleCode
+ * @return bool
  */
 function is_integration_mode_selected() {
 	$return                    = false;
@@ -25,13 +26,19 @@ function is_integration_mode_selected() {
 		$archive_multiple_settings['integration_type'] = array();
 	}
 	$archive_multiple_settings['integration_type'][ $theme ] = isset( $archive_multiple_settings['integration_type'][ $theme ] ) ? $archive_multiple_settings['integration_type'][ $theme ] : $prev_type;
-	if ( $archive_multiple_settings['integration_type'][ $theme ] != '' || is_integraton_file_active() ) {
+	if ( '' !== $archive_multiple_settings['integration_type'][ $theme ] || is_integraton_file_active() ) {
 		$return = true;
 	}
 
 	return $return;
 }
 
+/**
+ * Checks whether the integration template file is active.
+ *
+ * @param bool $auto Whether to check the auto template.
+ * @return bool
+ */
 function is_integraton_file_active( $auto = false ) {
 	if ( file_exists( get_product_adder_path( $auto ) ) ) {
 		return true;
@@ -40,8 +47,13 @@ function is_integraton_file_active( $auto = false ) {
 	}
 }
 
+/**
+ * Checks whether advanced mode is forced.
+ *
+ * @param bool $true_when_shortcode Whether shortcode integration should force true.
+ * @return bool
+ */
 function is_advanced_mode_forced( $true_when_shortcode = true ) {
-//    $template = get_option('template');
 	$return = false;
 	if ( $true_when_shortcode ) {
 		if ( function_exists( 'is_ic_shortcode_integration' ) && is_ic_shortcode_integration() ) {
@@ -55,16 +67,26 @@ function is_advanced_mode_forced( $true_when_shortcode = true ) {
 	return $return;
 }
 
+/**
+ * Checks whether the active theme is directly supported.
+ *
+ * @return bool
+ */
 function is_theme_implecode_supported() {
 	$template = get_option( 'template' );
 	$return   = false;
-	if ( in_array( $template, implecode_supported_themes() ) || current_theme_supports( 'ecommerce-product-catalog' ) /* || ic_is_woo_template_available() */ ) {
+	if ( in_array( $template, implecode_supported_themes(), true ) || current_theme_supports( 'ecommerce-product-catalog' ) ) {
 		$return = true;
 	}
 
 	return $return;
 }
 
+/**
+ * Returns the list of directly supported themes.
+ *
+ * @return string[]
+ */
 function implecode_supported_themes() {
 	return array(
 		'twentythirteen',
@@ -77,6 +99,6 @@ function implecode_supported_themes() {
 		'twentyseventeen',
 		'twentynineteen',
 		'pub/minileven',
-		'storefront'
+		'storefront',
 	);
 }

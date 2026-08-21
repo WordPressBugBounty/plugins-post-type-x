@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "ic-epc/active-filters",
-  "textdomain": "ecommerce-product-catalog",
+  "textdomain": "post-type-x",
   "title": "Active Filters",
   "icon": "filter",
   "category": "ic-epc-block-cat",

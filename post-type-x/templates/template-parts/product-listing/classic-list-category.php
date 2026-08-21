@@ -1,6 +1,12 @@
 <?php
+/**
+ * Classic list category template part.
+ *
+ * @package ecommerce-product-catalog
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,30 +15,40 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Copy it to your theme implecode folder to edit the output: your-theme-folder-name/implecode/classic-list-category.php
  *
  * @version        1.1.2
- * @package        post-type-x/templates/template-parts/product-listing
+ * @package        ecommerce-product-catalog/templates/template-parts/product-listing
  * @author        impleCode
  */
 $product_cat = ic_get_global( 'ic_current_product_cat' );
 if ( empty( $product_cat ) ) {
-    return;
+	return;
 }
 
-if ( $product_cat->parent == 0 ) {
-    $class = 'top-category';
+if ( 0 === (int) $product_cat->parent ) {
+	$class = 'top-category';
 } else {
-    $class = 'child-category';
+	$class = 'child-category';
 }
 ?>
 
 
-    <div class="archive-listing category-<?php echo $product_cat->term_id ?> list <?php echo $class ?>">
-        <a href="<?php echo ic_get_category_url( $product_cat->term_id ) ?>"><span class="div-link"></span></a>
-        <div class="classic-list-image-wrapper">
-            <div class="pseudo"></div><?php echo ic_get_category_listing_image_html( $product_cat->term_id ) ?></div>
-        <div class="product-name"><?php echo $product_cat->name ?></div>
-        <div class="product-short-descr">
-            <p><?php echo c_list_desc( null, $product_cat->description ) ?></p>
-        </div>
-    </div>
+	<div class="archive-listing category-<?php echo esc_attr( $product_cat->term_id ); ?> list <?php echo esc_attr( $class ); ?>">
+		<a href="<?php echo esc_url( ic_get_category_url( $product_cat->term_id ) ); ?>"><span class="div-link"></span></a>
+		<div class="classic-list-image-wrapper">
+			<div class="pseudo"></div>
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Prepared markup, not text: built by ic_get_category_listing_image_html().
+			echo ic_get_category_listing_image_html( $product_cat->term_id );
+			?>
+			</div>
+		<div class="product-name"><?php echo esc_html( $product_cat->name ); ?></div>
+		<div class="product-short-descr">
+			<p>
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Prepared markup, not text: built by c_list_desc().
+			echo c_list_desc( null, $product_cat->description );
+			?>
+			</p>
+		</div>
+	</div>
 
 <?php

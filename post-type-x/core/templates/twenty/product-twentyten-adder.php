@@ -2,26 +2,26 @@
 /**
  * Template Name:  Product Template
  *
- * @version        1.1.2
- * @package        post-type-x/core/templates
- * @author        impleCode
+ * @version     1.1.2
+ * @package     ecommerce-product-catalog/templates
+ * @author      impleCode
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-} // Exit if accessed directly
+	exit; // Exit if accessed directly.
+}
 
 get_header(); ?>
 
-<div id="container">
-    <div id="content" class="site-content">
+	<div id="container">
+		<div id="content" class="site-content">
+			 
+			<?php content_product_adder(); ?>
+				
 
-        <?php content_product_adder(); ?>
-
-
-    </div><!-- #content -->
-</div>
-
+		</div><!-- #content -->
+	</div>
+ 
 <?php get_sidebar(); ?>
 
 <?php get_footer(); ?>

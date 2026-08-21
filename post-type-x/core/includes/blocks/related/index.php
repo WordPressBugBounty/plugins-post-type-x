@@ -1,2 +1,6 @@
 <?php
-//Nothing
+/**
+ * Silence is golden.
+ *
+ * @package ecommerce-product-catalog
+ */

@@ -1,26 +1,32 @@
 <?php
+/**
+ * Twenty Nineteen product template.
+ *
+ * @package ecommerce-product-catalog
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 /**
  * Template Name:  Product Template [NO SIDEBAR]
  *
- * @version        1.0.0
- * @package        post-type-x/core/templates
- * @author        impleCode
+ * @version     1.0.0
+ * @package     ecommerce-product-catalog/templates
+ * @author      impleCode
  */
 get_header();
 ?>
 
-    <section id="primary" class="content-area">
-        <main id="main" class="site-main">
+<section id="primary" class="content-area">
+	<main id="main" class="site-main">
 
-            <?php
-            content_product_adder();
-            ?>
+		<?php
+		content_product_adder();
+		?>
 
-        </main><!-- #main -->
-    </section><!-- #primary -->
+	</main><!-- #main -->
+</section><!-- #primary -->
 
 <?php
 get_footer();

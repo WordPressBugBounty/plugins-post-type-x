@@ -1,6 +1,12 @@
 <?php
+/**
+ * Listing title template part.
+ *
+ * @package ecommerce-product-catalog
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -8,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Copy it to your theme implecode folder to edit the output: your-theme-folder-name/implecode/product-title.php
  *
- * @version        1.1.2
- * @package        post-type-x/templates/template-parts/product-listing
- * @author        impleCode
+ * @version     1.1.2
+ * @package     ecommerce-product-catalog/templates/template-parts/product-listing
+ * @author      impleCode
  */
 ?>
 
-    <h1 class="entry-title product-listing-name"><?php echo get_product_catalog_page_title() ?></h1>
+<h1 class="entry-title product-listing-name"><?php echo esc_html( get_product_catalog_page_title() ); ?></h1>
 
 <?php

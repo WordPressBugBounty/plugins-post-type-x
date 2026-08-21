@@ -1,15 +1,12 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-/*
+/**
+ * Product Catalog Simple shared IC bridge.
  *
- *  @version       1.0.0
- *  @author        impleCode
- *
+ * @package post-type-x
  */
 
-if ( ! function_exists( 'ic_html_util' ) ) {
-	require_once( dirname( __FILE__ ) . '/html.php' );
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
+
+require_once dirname( __DIR__, 2 ) . '/ic/index.php';

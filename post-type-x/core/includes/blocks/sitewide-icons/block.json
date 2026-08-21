@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "ic-epc/sitewide-icons",
-  "textdomain": "ecommerce-product-catalog",
+  "textdomain": "post-type-x",
   "title": "Catalog Icons",
   "icon": "editor-kitchensink",
   "category": "ic-epc-block-cat",

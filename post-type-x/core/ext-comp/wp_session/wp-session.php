@@ -1,5 +1,13 @@
 <?php
+/**
+ * WP Session bootstrap compatibility layer.
+ *
+ * @package Ecommerce_Product_Catalog
+ */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * WordPress session managment.
  *
@@ -23,7 +31,7 @@ function wp_session_cache_expire() {
 }
 
 /**
- * Alias of wp_session_write_close()
+ * Alias of wp_session_write_close().
  */
 function wp_session_commit() {
 	wp_session_write_close();
@@ -32,7 +40,9 @@ function wp_session_commit() {
 /**
  * Load a JSON-encoded string into the current session.
  *
- * @param string $data
+ * @param string $data JSON-encoded session payload.
+ *
+ * @return bool
  */
 function wp_session_decode( $data ) {
 	$wp_session = WP_Session::get_instance();
@@ -54,7 +64,7 @@ function wp_session_encode() {
 /**
  * Regenerate the session ID.
  *
- * @param bool $delete_old_session
+ * @param bool $delete_old_session Whether to delete the old session data.
  *
  * @return bool
  */
@@ -107,7 +117,7 @@ function wp_session_unset() {
 }
 
 /**
- * Write session data and end session
+ * Write session data and end session.
  */
 function wp_session_write_close() {
 	$wp_session = WP_Session::get_instance();

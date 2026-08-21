@@ -1,9 +1,10 @@
 === Product Catalog Simple ===
 Contributors: impleCode, ndre
 Tags: product catalog, product gallery, catalog, catalogue, product
-Requires at least: 3.7
-Tested up to: 7.0
-Stable tag: 1.8.6
+Requires at least: 5.9
+Requires PHP: 7.4
+Tested up to: 7.1
+Stable tag: 1.8.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -11,7 +12,7 @@ Catalog plugin with fully customizable responsive design, search and categories.
 
 == Description ==
 
-Product Catalog Simple is a free WordPress plugin that helps you to manage and display your X catalog. Replace the X with whatever you need to catalog e.g. flowers, houses, boats, mixed products, services, portfolio. 
+Product Catalog Simple is a free WordPress plugin that helps you to manage and display your X catalog. Replace the X with whatever you need to catalog e.g. flowers, houses, boats, mixed products, services, portfolio.
 
 __[Live Demo](http://demo.implecode.com?cam=wordpress-org-catalog-page&key=x-demo-link)__
 
@@ -42,7 +43,7 @@ Product Catalog Simple lets you name your catalog to give the admin a personaliz
 
 Use the shortcode to show items whenever needed on the website. Just paste on any page: [show_products] and watch all items in place of the shortcode.
 
-To show items from just one category, use: [show_products category="2"] where 2 is category ID (it's possible to display several categories by inserting comma separated IDs). 
+To show items from just one category, use: [show_products category="2"] where 2 is category ID (it's possible to display several categories by inserting comma separated IDs).
 
 To display items by IDs, use: [show_products product="5"], where 5 is item ID.
 
@@ -52,7 +53,7 @@ You can use [show_categories] shortcode to show the item categories on home page
 
 = Smart Widgets =
 
-Product Catalog Simple comes with two widgets: 
+Product Catalog Simple comes with two widgets:
 
 __1. Item Categories__ - show all item categories in CSS customisable list. The widget has also several customisation settings.
 
@@ -98,8 +99,8 @@ The screenshots below show the example usage of Product Catalog Simple as a prod
 
 = Minimum Requirements =
 
-* WordPress 3.5 or greater
-* PHP version 5.2.4 or greater
+* WordPress 5.9 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
 = Automatic installation =
@@ -123,6 +124,11 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 If on the off-chance you do encounter issues with the plugin pages after an update you simply need to flush the permalinks by going to WordPress > Settings > Permalinks and hitting 'save'. That should return things to normal.
 
 == Changelog ==
+
+= 1.8.7 – 21/08/2026 =
+
+* Code refactoring and preparation for v1.9
+* Added the exact shared settings runtime required by Product Catalog Simple.
 
 = 1.8.6 – 23/04/2026 =
 
@@ -433,7 +439,7 @@ Security: escape empty show_products block parameter
 * product catalog icons in main menu or on the top of the screen on mobile – icons for catalog and search – the icons are optional and customizable – catalog icons can be enabled in Catalog Settings > Catalog Design > Design Schemes or inside theme customizer
 * individual product pages structured data is now optional
 * structured data is fully customizable with the template file from templates/template-parts/product-page/structured-data.php
- 
+
 
 = 1.5.0 - 17/05/2019 =
 
@@ -462,7 +468,7 @@ Security: escape empty show_products block parameter
 * Price styling fixed on product listing
 
 = 1.4.0 - 12/09/2018 =
- 
+
 * Feature - optional magnifier on main product image - when you point the mouse cursor over the main product image on product catalog individual product page it will show the magnified portion of the image on the left or right side depending of the product page template enabled
 * The currency switcher in the catalog settings and the configuration wizard now shows the currency code first for better usability
 * Ability to edit each individual product catalog listing element, also classic grid, modern grid and classic list with template files placed in child theme folder

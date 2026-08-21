@@ -1,6 +1,12 @@
 <?php
+/**
+ * Structured data template part.
+ *
+ * @package ecommerce-product-catalog
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 /**
  * The template to display structured data on single product page. You can enable it in the catalog general settings.
@@ -21,31 +27,31 @@ if ( empty( $price ) ) {
 	return;
 }
 ?>
-    <script type="application/ld+json">
+	<script type="application/ld+json">
 	{
 	"@context": "https://schema.org/",
 	"@type": "Product",
-	"@id": "<?php echo get_permalink() ?>#product",
-	"name": "<?php echo get_product_name() ?>",
-	"image": "<?php echo get_product_image_url( $this_product_id ) ?>",
-	"description": "<?php echo wp_strip_all_tags( get_product_short_description( $this_product_id ) ) ?>",
-	<?php do_action( 'ic_structured_data', $this_product_id ) ?>
+	"@id": <?php echo wp_json_encode( get_permalink() . '#product' ); ?>,
+	"name": <?php echo wp_json_encode( get_product_name() ); ?>,
+	"image": <?php echo wp_json_encode( get_product_image_url( $this_product_id ) ); ?>,
+	"description": <?php echo wp_json_encode( wp_strip_all_tags( get_product_short_description( $this_product_id ) ) ); ?>,
+	<?php do_action( 'ic_structured_data', $this_product_id ); ?>
 	"offers": {
 	"@type": "Offer",
-	"url": "<?php echo get_permalink() ?>",
-	"priceCurrency": "<?php echo get_product_currency_code() ?>",
-	"price": "<?php echo product_price( $this_product_id ) ?>",
-	"priceValidUntil": "<?php echo date( 'Y-m-d', strtotime( date( "Y-m-d", time() ) . " + 365 day" ) ); ?>",
+	"url": <?php echo wp_json_encode( get_permalink() ); ?>,
+	"priceCurrency": <?php echo wp_json_encode( get_product_currency_code() ); ?>,
+	"price": <?php echo wp_json_encode( product_price( $this_product_id ) ); ?>,
+	"priceValidUntil": <?php echo wp_json_encode( gmdate( 'Y-m-d', strtotime( '+365 day' ) ) ); ?>,
 	"itemCondition": "https://schema.org/NewCondition",
 	"availability": "https://schema.org/InStock",
-	<?php do_action( 'ic_structured_data_offers', $this_product_id ) ?>
+	<?php do_action( 'ic_structured_data_offers', $this_product_id ); ?>
 	"seller": {
 	"@type": "Organization",
-	"name": "<?php echo get_bloginfo( 'name' ) ?>"
-	<?php do_action( 'ic_structured_data_seller', $this_product_id ) ?>
+	"name": <?php echo wp_json_encode( get_bloginfo( 'name' ) ); ?>
+	<?php do_action( 'ic_structured_data_seller', $this_product_id ); ?>
 	}
 	}
 	}
 
-    </script>
+	</script>
 <?php

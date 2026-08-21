@@ -1,5 +1,5 @@
 /*!
- * 
+ *
  * https://impleCode.com
  *
  * Copyright 2021 impleCode
@@ -12,9 +12,9 @@
  */
 
 .wp-block-ic-epc-image-gallery {
-    display: table;
+	display: table;
 }
 
 .wp-block-ic-epc-image-gallery.alignfull, .wp-block-ic-epc-image-gallery.alignwide {
-    display: block;
+	display: block;
 }

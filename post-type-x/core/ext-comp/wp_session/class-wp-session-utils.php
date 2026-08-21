@@ -1,9 +1,16 @@
 <?php
+/**
+ * WP session utility helpers.
+ *
+ * @package ecommerce-product-catalog
+ */
 
 /**
- * Utility class for sesion utilities
+ * Utility methods for WP session storage.
  *
- * THIS CLASS SHOULD NEVER BE INSTANTIATED
+ * This class should never be instantiated.
+ *
+ * @package ecommerce-product-catalog
  */
 class WP_Session_Utils {
 	/**
@@ -16,16 +23,17 @@ class WP_Session_Utils {
 	public static function count_sessions() {
 		global $wpdb;
 
-		$query = "SELECT COUNT(*) FROM $wpdb->options WHERE option_name LIKE '_wp_session_expires_%'";
+		$query = "SELECT COUNT(*) FROM $wpdb->options WHERE option_name LIKE %s";
 
 		/**
 		 * Filter the query in case tables are non-standard.
 		 *
-		 * @param string $query Database count query
+		 * @param string $query Database count query.
 		 */
 		$query = apply_filters( 'wp_session_count_query', $query );
 
-		$sessions = $wpdb->get_var( $query );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- The filtered query contract retains a value placeholder and is prepared immediately here; this bounded count is intentionally direct.
+		$sessions = $wpdb->get_var( $wpdb->prepare( $query, '_wp_session_expires_%' ) );
 
 		return absint( $sessions );
 	}
@@ -33,33 +41,33 @@ class WP_Session_Utils {
 	/**
 	 * Create a new, random session in the database.
 	 *
-	 * @param null|string $date
+	 * @param null|string $date Optional expiration date string.
 	 */
 	public static function create_dummy_session( $date = null ) {
-		// Generate our date
+		// Generate our date.
 		if ( null !== $date ) {
 			$time = strtotime( $date );
 
 			if ( false === $time ) {
 				$date = null;
 			} else {
-				$expires = date( 'U', strtotime( $date ) );
+				$expires = (int) gmdate( 'U', $time );
 			}
 		}
 
-		// If null was passed, or if the string parsing failed, fall back on a default
+		// If null was passed, or if the string parsing failed, fall back on a default.
 		if ( null === $date ) {
 			/**
-			 * Filter the expiration of the session in the database
+			 * Filter the expiration of the session in the database.
 			 *
-			 * @param int
+			 * @param int $expiration Session expiration in seconds.
 			 */
 			$expires = time() + (int) apply_filters( 'wp_session_expiration', 30 * 60 );
 		}
 
 		$session_id = self::generate_id();
 
-		// Store the session
+		// Store the session.
 		add_option( "_wp_session_{$session_id}", array(), '', 'no' );
 		add_option( "_wp_session_expires_{$session_id}", $expires, '', 'no' );
 	}
@@ -77,33 +85,42 @@ class WP_Session_Utils {
 		global $wpdb;
 
 		$limit = absint( $limit );
-		$keys = $wpdb->get_results( "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE '_wp_session_expires_%' ORDER BY option_value ASC LIMIT 0, {$limit}" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded session cleanup reads WordPress options and deletes the selected rows immediately.
+		$keys  = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE %s ORDER BY option_value ASC LIMIT 0, %d",
+				'_wp_session_expires_%',
+				$limit
+			)
+		);
 
-		$now = time();
+		$now     = time();
 		$expired = array();
-		$count = 0;
+		$count   = 0;
 
-		foreach( $keys as $expiration ) {
-			$key = $expiration->option_name;
+		foreach ( $keys as $expiration ) {
+			$key     = $expiration->option_name;
 			$expires = $expiration->option_value;
 
 			if ( $now > $expires ) {
-				$session_id = preg_replace("/[^A-Za-z0-9_]/", '', substr( $key, 20 ) );
+				$session_id = preg_replace( '/[^A-Za-z0-9_]/', '', substr( $key, 20 ) );
 
 				$expired[] = $key;
 				$expired[] = "_wp_session_{$session_id}";
 
-				$count += 1;
+				++$count;
 			}
 		}
 
-		// Delete expired sessions
+		// Delete expired sessions.
 		if ( ! empty( $expired ) ) {
-		    $placeholders = array_fill( 0, count( $expired ), '%s' );
-		    $format = implode( ', ', $placeholders );
-		    $query = "DELETE FROM $wpdb->options WHERE option_name IN ($format)";
+			$placeholders = array_fill( 0, count( $expired ), '%s' );
+			$format       = implode( ', ', $placeholders );
+			$query        = "DELETE FROM $wpdb->options WHERE option_name IN ($format)";
 
-		    $prepared = $wpdb->prepare( $query, $expired );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- The dynamic placeholder list is prepared immediately before execution.
+			$prepared = $wpdb->prepare( $query, $expired );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- The statement above is prepared and performs bounded session cleanup.
 			$wpdb->query( $prepared );
 		}
 
@@ -120,7 +137,13 @@ class WP_Session_Utils {
 	public static function delete_all_sessions() {
 		global $wpdb;
 
-		$count = $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_wp_session_%'" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Explicit session cleanup must remove all matching option pairs immediately.
+		$count = $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM $wpdb->options WHERE option_name LIKE %s",
+				'_wp_session_%'
+			)
+		);
 
 		return (int) ( $count / 2 );
 	}
@@ -131,9 +154,9 @@ class WP_Session_Utils {
 	 * @return string
 	 */
 	public static function generate_id() {
-		require_once( ABSPATH . 'wp-includes/class-phpass.php' );
+		require_once ABSPATH . 'wp-includes/class-phpass.php';
 		$hash = new PasswordHash( 8, false );
 
 		return md5( $hash->get_random_bytes( 32 ) );
 	}
-} 
+}

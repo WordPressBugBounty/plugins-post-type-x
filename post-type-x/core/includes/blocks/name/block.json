@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "ic-epc/name",
-  "textdomain": "ecommerce-product-catalog",
+  "textdomain": "post-type-x",
   "title": "Product Name",
   "icon": "heading",
   "category": "ic-epc-block-cat",

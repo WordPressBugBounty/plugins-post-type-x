@@ -1,5 +1,5 @@
 /*!
- * 
+ *
  * https://impleCode.com
  *
  * Copyright 2021 impleCode
@@ -12,42 +12,42 @@
  */
 
 #ic-catalog-bar {
-    display: none;
+	display: none;
 }
 
 #ic-catalog-bar .ic-bar-icon {
-    position: relative;
+	position: relative;
 }
 
 #ic-catalog-bar.device-all .ic-icon-hidden-content {
-    display: none;
+	display: none;
 }
 
 #ic-catalog-menu-bar .ic-icon-url, #ic-catalog-bar .ic-icon-url {
-    padding: 10px;
-    border-radius: 50%;
-    color: #fff;
-    display: block;
-    transition: all .2s linear;
-    line-height: 1;
-    min-width: 0;
-    width: auto;
-    height: auto;
-    position: initial;
-    transform: none;
-    border: none;
-    box-shadow: none;
+	padding: 10px;
+	border-radius: 50%;
+	color: #fff;
+	display: block;
+	transition: all .2s linear;
+	line-height: 1;
+	min-width: 0;
+	width: auto;
+	height: auto;
+	position: initial;
+	transform: none;
+	border: none;
+	box-shadow: none;
 }
 
 #ic-catalog-menu-bar .ic-icon-url:before, #ic-catalog-bar .ic-icon-url:before, #ic-catalog-menu-bar .ic-icon-url:after, #ic-catalog-bar .ic-icon-url:after {
-    display: none;
+	display: none;
 }
 
 #ic-catalog-menu-bar .ic-icon-url:hover, #ic-catalog-menu-bar .ic-icon-url:focus, #ic-catalog-bar .ic-icon-url:hover, #ic-catalog-bar .ic-icon-url:focus {
-    color: #fff;
-    padding: 15px;
-    margin-left: -5px;
-    margin-right: -5px;
-    margin-top: -5px;
-    margin-bottom: -5px;
+	color: #fff;
+	padding: 15px;
+	margin-left: -5px;
+	margin-right: -5px;
+	margin-top: -5px;
+	margin-bottom: -5px;
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * WordPress session managment.
  *
@@ -50,8 +49,6 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Retrieve the current session instance.
 	 *
-	 * @param bool $session_id Session ID from which to populate data.
-	 *
 	 * @return bool|WP_Session
 	 */
 	public static function get_instance() {
@@ -64,16 +61,15 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 
 	/**
 	 * Default constructor.
-	 * Will rebuild the session collection from the given session ID if it exists. Otherwise, will
-	 * create a new session with that ID.
 	 *
-	 * @param $session_id
+	 * Will rebuild the session collection from the given session ID if it exists. Otherwise, it will
+	 * create a new session with that ID.
 	 *
 	 * @uses apply_filters Calls `wp_session_expiration` to determine how long until sessions expire.
 	 */
 	private function __construct() {
 		if ( isset( $_COOKIE[ WP_SESSION_COOKIE ] ) ) {
-			$this->session_id = stripslashes( $_COOKIE[ WP_SESSION_COOKIE ] );
+			$this->session_id = sanitize_text_field( wp_unslash( $_COOKIE[ WP_SESSION_COOKIE ] ) );
 		} else {
 			$this->session_id = $this->generate_id();
 		}
@@ -114,15 +110,20 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 
 	/**
 	 * Write the data from the current session to the data storage system.
+	 *
+	 * @return void
 	 */
 	public function write_data() {
-		$session_list = get_option( '_wp_session_list', array() );
-
 		$this->touch_session();
 
 		update_option( "_wp_session_{$this->session_id}", $this->container );
 	}
 
+	/**
+	 * Refresh session expiration metadata and remove expired sessions.
+	 *
+	 * @return void
+	 */
 	private function touch_session() {
 		$session_list = get_option( '_wp_session_list', array() );
 
@@ -132,7 +133,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 			if ( time() > $expires ) {
 				delete_option( "_wp_session_{$id}" );
 				unset( $session_list[ $id ] );
-				$i ++;
+				++$i;
 			}
 			if ( $i > 300 ) {
 				break;
@@ -148,13 +149,13 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * @return string
 	 */
 	public function json_out() {
-		return json_encode( $this->container );
+		return wp_json_encode( $this->container );
 	}
 
 	/**
 	 * Decodes a JSON string and, if the object is an array, overwrites the session container with its contents.
 	 *
-	 * @param string $data
+	 * @param string $data JSON-encoded session payload.
 	 *
 	 * @return bool
 	 */
@@ -195,7 +196,7 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	 * @return bool
 	 */
 	public function session_started() {
-		return ! ! self::$instance;
+		return (bool) self::$instance;
 	}
 
 	/**
@@ -214,9 +215,11 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 		$this->container = array();
 	}
 
-	/*	 * ************************************************************** */
-	/*                   ArrayAccess Implementation                  */
-	/*	 * ************************************************************** */
+
+	/*
+	 * ArrayAccess implementation.
+	 */
+
 
 	/**
 	 * Whether a offset exists
@@ -279,9 +282,11 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 		unset( $this->container[ $offset ] );
 	}
 
-	/*	 * ************************************************************** */
-	/*                     Iterator Implementation                   */
-	/*	 * ************************************************************** */
+
+	/*
+	 * Iterator implementation.
+	 */
+
 
 	/**
 	 * Current position of the array.
@@ -343,9 +348,11 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 		return $this->offsetExists( $this->key() );
 	}
 
-	/*	 * ************************************************************** */
-	/*                    Countable Implementation                   */
-	/*	 * ************************************************************** */
+
+	/*
+	 * Countable implementation.
+	 */
+
 
 	/**
 	 * Get the count of elements in the container array.
@@ -358,5 +365,4 @@ class WP_Session implements ArrayAccess, Iterator, Countable {
 	public function count() {
 		return count( $this->container );
 	}
-
 }
