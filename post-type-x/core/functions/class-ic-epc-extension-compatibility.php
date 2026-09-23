@@ -61,9 +61,9 @@ class IC_EPC_Extension_Compatibility {
 	 * @return void
 	 */
 	public static function reset_runtime_state() {
-		self::$blocked_extensions      = array();
-		self::$compatibility_checked   = false;
-		self::$plugin_header_cache     = array();
+		self::$blocked_extensions        = array();
+		self::$compatibility_checked     = false;
+		self::$plugin_header_cache       = array();
 		self::$plugins_screen_extensions = array();
 	}
 
@@ -89,7 +89,7 @@ class IC_EPC_Extension_Compatibility {
 			return;
 		}
 
-		foreach ( self::addon_hook_names() as $hook ) {
+		foreach ( self::quarantine_hook_names() as $hook ) {
 			self::block_incompatible_hook_callbacks( $hook, $active_plugins );
 		}
 	}
@@ -222,6 +222,25 @@ class IC_EPC_Extension_Compatibility {
 			'ecommerce-prodct-catalog-addons',
 			'ecommerce_product_catalog_addons_v3',
 			'implecode_addons',
+		);
+	}
+
+	/**
+	 * Returns the EPC hooks quarantined for incompatible extensions.
+	 *
+	 * @return string[]
+	 */
+	private static function quarantine_hook_names() {
+		return array(
+			'ecommerce-prodct-catalog-addons',
+			'ecommerce_product_catalog_addons_v3',
+			'implecode_addons',
+			'register_catalog_styles',
+			'enqueue_catalog_scripts',
+			'enqueue_main_catalog_scripts',
+			'register_catalog_admin_styles',
+			'enqueue_catalog_admin_scripts',
+			'ic_maybe_engueue_all',
 		);
 	}
 
@@ -390,7 +409,19 @@ class IC_EPC_Extension_Compatibility {
 	 */
 	private static function legacy_extension_compatibility_map() {
 		$fallbacks = array(
-			'catalog-users-manager/catalog-users-manager.php'     => array(
+			'product-page-customizer/product-page-customizer.php' => array(
+				'minimum_version' => '1.19.2',
+				'note'            => 'Product Page Customizer 1.19.2 or newer is required for the current EPC version.',
+			),
+			'inventory-manager/inventory-manager.php' => array(
+				'minimum_version' => '1.6.8',
+				'note'            => 'Inventory Manager 1.6.8 or newer is required for the current EPC version.',
+			),
+			'smart-multiple-catalogs/smart-multiple-catalogs.php' => array(
+				'minimum_version' => '1.7.1',
+				'note'            => 'Smart Multiple Catalogs 1.7.1 or newer is required for the current EPC version.',
+			),
+			'catalog-users-manager/catalog-users-manager.php' => array(
 				'minimum_version' => '1.1.9',
 				'note'            => 'Catalog Users Manager 1.1.9 or newer is required for the current EPC version.',
 			),
@@ -398,7 +429,7 @@ class IC_EPC_Extension_Compatibility {
 				'minimum_version' => '2.12.28',
 				'note'            => 'Shopping Cart PRO 2.12.28 or newer is required for the current EPC version.',
 			),
-			'implecode-quote-cart/implecode-quote-cart.php'       => array(
+			'implecode-quote-cart/implecode-quote-cart.php' => array(
 				'minimum_version' => '2.6.6',
 				'note'            => 'Quote Cart PRO 2.6.6 or newer is required for the current EPC version.',
 			),

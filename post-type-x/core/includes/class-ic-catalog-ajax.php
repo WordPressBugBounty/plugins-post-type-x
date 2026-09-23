@@ -50,19 +50,27 @@ class IC_Catalog_Ajax {
 	/**
 	 * Maps serialized admin self-submit data onto the request query vars.
 	 *
-	 * This replaces the whole `$_GET` superglobal for the rest of the request, so it is limited to
-	 * logged-in users presenting a valid `ic_ajax` nonce, exactly like `ajax_self_submit()`.
-	 * `is_admin()` alone is not a guard: it is true on `admin-ajax.php` for `nopriv` actions too.
+	 * This replaces the whole `$_GET` superglobal for the rest of the request. Logged-in users must
+	 * present a valid `ic_ajax` nonce. Public requests are additionally limited to the
+	 * `ic_self_submit` action and its `ic_catalog_self_submit` nonce. `is_admin()` alone is not a
+	 * guard: it is true on `admin-ajax.php` for `nopriv` actions too.
 	 *
 	 * @return void
 	 */
 	public function ajax_get() {
-		if ( ! is_admin() || ! is_user_logged_in() ) {
+		if ( ! is_admin() ) {
 			return;
 		}
 		$security = isset( $_POST['security'] ) ? sanitize_text_field( wp_unslash( $_POST['security'] ) ) : '';
 		if ( empty( $security ) || ! wp_verify_nonce( $security, 'ic_ajax' ) ) {
 			return;
+		}
+		if ( ! is_user_logged_in() ) {
+			$action   = isset( $_POST['action'] ) ? sanitize_text_field( wp_unslash( $_POST['action'] ) ) : '';
+			$ic_nonce = isset( $_POST['ic_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['ic_nonce'] ) ) : '';
+			if ( 'ic_self_submit' !== $action || empty( $ic_nonce ) || ! wp_verify_nonce( $ic_nonce, 'ic_catalog_self_submit' ) ) {
+				return;
+			}
 		}
 		if ( ! empty( $_POST['self_submit_data'] ) ) {
 			$params = array();

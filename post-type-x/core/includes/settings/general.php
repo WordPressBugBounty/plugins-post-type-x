@@ -243,6 +243,40 @@ function ic_epc_general_settings_page_sections() {
 	);
 
 	if ( file_exists( AL_BASE_PATH . '/modules/cart/index.php' ) ) {
+		$catalog_mode_options = array(
+			'store'     => __( 'Web Store', 'post-type-x' ),
+			'inquiry'   => __( 'Inquiry Catalog', 'post-type-x' ),
+			'affiliate' => __( 'Affiliate Catalog', 'post-type-x' ),
+			'simple'    => __( 'Simple Catalog', 'post-type-x' ),
+		);
+		// The control shows the STORED mode, never the effective one. Reading
+		// the filtered value here would persist a cart plugin's override into
+		// the option on the next save of this page, whatever it was saved for.
+		$stored_catalog_mode = function_exists( 'ic_get_stored_catalog_mode' ) ? ic_get_stored_catalog_mode() : $archive_multiple_settings['catalog_mode'];
+		$catalog_mode_row    = array(
+			'type'    => 'radio',
+			'label'   => __( 'Catalog Mode', 'post-type-x' ),
+			'name'    => 'archive_multiple_settings[catalog_mode]',
+			'value'   => $stored_catalog_mode,
+			'options' => $catalog_mode_options,
+			'tip'     => __( 'Choose your usage scenario.', 'post-type-x' ),
+		);
+
+		$effective_catalog_mode = ic_get_catalog_mode();
+		if ( $effective_catalog_mode !== $stored_catalog_mode ) {
+			$catalog_mode_source          = function_exists( 'ic_get_catalog_mode_source' ) ? ic_get_catalog_mode_source() : '';
+			$effective_catalog_mode_label = isset( $catalog_mode_options[ $effective_catalog_mode ] ) ? $catalog_mode_options[ $effective_catalog_mode ] : $effective_catalog_mode;
+			$stored_catalog_mode_label    = isset( $catalog_mode_options[ $stored_catalog_mode ] ) ? $catalog_mode_options[ $stored_catalog_mode ] : $stored_catalog_mode;
+			$catalog_mode_row['notice']   = array(
+				'type'    => 'info',
+				'message' => '' !== $catalog_mode_source
+					/* translators: 1: plugin name, 2: effective catalog mode name, 3: saved catalog mode name. */
+					? sprintf( __( '%1$s is running this catalog as %2$s. Your saved choice is %3$s and applies again as soon as that plugin is deactivated. Selecting any mode other than Simple Catalog here overrides the plugin immediately.', 'post-type-x' ), $catalog_mode_source, $effective_catalog_mode_label, $stored_catalog_mode_label )
+					/* translators: 1: effective catalog mode name, 2: saved catalog mode name. */
+					: sprintf( __( 'Another active plugin is running this catalog as %1$s. Your saved choice is %2$s and applies again as soon as that plugin is deactivated. Selecting any mode other than Simple Catalog here overrides the plugin immediately.', 'post-type-x' ), $effective_catalog_mode_label, $stored_catalog_mode_label ),
+			);
+		}
+
 		array_splice(
 			$sections,
 			1,
@@ -252,21 +286,7 @@ function ic_epc_general_settings_page_sections() {
 					'title'       => __( 'Catalog Mode', 'post-type-x' ),
 					'table_class' => 'IC_Settings_Standard_Table',
 					'settings'    => array(
-						'rows' => array(
-							array(
-								'type'    => 'radio',
-								'label'   => __( 'Catalog Mode', 'post-type-x' ),
-								'name'    => 'archive_multiple_settings[catalog_mode]',
-								'value'   => $archive_multiple_settings['catalog_mode'],
-								'options' => array(
-									'store'     => __( 'Web Store', 'post-type-x' ),
-									'inquiry'   => __( 'Inquiry Catalog', 'post-type-x' ),
-									'affiliate' => __( 'Affiliate Catalog', 'post-type-x' ),
-									'simple'    => __( 'Simple Catalog', 'post-type-x' ),
-								),
-								'tip'     => __( 'Choose your usage scenario.', 'post-type-x' ),
-							),
-						),
+						'rows' => array( $catalog_mode_row ),
 					),
 				),
 			)

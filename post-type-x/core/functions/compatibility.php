@@ -244,8 +244,9 @@ function ic_product_search_fix( $query ) {
  */
 function ic_get_terms( $def_params = array(), $exact_taxonomy = false ) {
 	if ( is_ic_admin() ) {
+		$admin_terms = ic_get_terms_simple( $def_params );
 
-		return ic_get_terms_simple( $def_params );
+		return is_wp_error( $admin_terms ) ? array() : $admin_terms;
 	}
 	$params = apply_filters( 'ic_get_terms_params', $def_params );
 	if ( ! isset( $params['update_term_meta_cache'] ) ) {

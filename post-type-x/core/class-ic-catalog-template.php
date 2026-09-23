@@ -40,7 +40,7 @@ class IC_Catalog_Template {
 		add_action( 'ic_catalog_wp', array( $this, 'load_templates' ) );
 
 		add_filter( 'template_include', array( 'ic_catalog_template', 'home_product_listing_redirect' ), 5 );
-		add_filter( 'redirect_canonical', array( 'ic_catalog_template', 'disable_redirect_canonical' ) );
+		add_filter( 'redirect_canonical', array( 'ic_catalog_template', 'disable_redirect_canonical' ), 10, 2 );
 	}
 
 	/**
@@ -235,17 +235,93 @@ class IC_Catalog_Template {
 	}
 
 	/**
-	 * Disables the wrong canonical redirect for home catalog pagination.
+	 * Disables invalid canonical redirects on catalog pagination.
 	 *
 	 * @param string|false $redirect_url Redirect URL.
+	 * @param string       $requested_url Requested URL.
 	 * @return string|false
 	 */
-	public static function disable_redirect_canonical( $redirect_url ) {
+	public static function disable_redirect_canonical( $redirect_url, $requested_url = '' ) {
 		if ( is_paged() && is_front_page() && is_ic_permalink_product_catalog() && is_product_listing_home_set() ) {
-			$redirect_url = false;
+			return false;
+		}
+
+		if ( ! is_paged() || ! is_ic_catalog_page() || ! is_string( $redirect_url ) || '' === $redirect_url || '' === $requested_url ) {
+			return $redirect_url;
+		}
+
+		$redirect_parts  = wp_parse_url( $redirect_url );
+		$requested_parts = wp_parse_url( $requested_url );
+
+		if ( ! self::is_complete_canonical_url( $redirect_parts ) || ! self::is_complete_canonical_url( $requested_parts ) ) {
+			return $redirect_url;
+		}
+
+		$requested_query = array();
+		$redirect_query  = array();
+		wp_parse_str( isset( $requested_parts['query'] ) ? $requested_parts['query'] : '', $requested_query );
+		wp_parse_str( isset( $redirect_parts['query'] ) ? $redirect_parts['query'] : '', $redirect_query );
+
+		if ( ! self::contains_registered_filter( $requested_query ) ) {
+			return $redirect_url;
+		}
+
+		$same_location = strtolower( $requested_parts['scheme'] ) === strtolower( $redirect_parts['scheme'] )
+			&& strtolower( $requested_parts['host'] ) === strtolower( $redirect_parts['host'] )
+			&& self::canonical_url_port( $requested_parts ) === self::canonical_url_port( $redirect_parts )
+			&& $requested_parts['path'] === $redirect_parts['path'];
+
+		if ( $same_location && $requested_query == $redirect_query ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual -- Parsed query arrays are compared semantically so key order does not affect equivalence.
+			return false;
 		}
 
 		return $redirect_url;
+	}
+
+	/**
+	 * Checks whether parsed URL parts identify a complete HTTP location.
+	 *
+	 * @param array|false $parts Parsed URL parts.
+	 * @return bool
+	 */
+	private static function is_complete_canonical_url( $parts ) {
+		return is_array( $parts )
+			&& isset( $parts['scheme'], $parts['host'], $parts['path'] )
+			&& in_array( strtolower( $parts['scheme'] ), array( 'http', 'https' ), true )
+			&& '' !== $parts['host']
+			&& '' !== $parts['path'];
+	}
+
+	/**
+	 * Returns the explicit or scheme-default URL port.
+	 *
+	 * @param array $parts Parsed URL parts.
+	 * @return int
+	 */
+	private static function canonical_url_port( $parts ) {
+		if ( isset( $parts['port'] ) ) {
+			return (int) $parts['port'];
+		}
+
+		return 'https' === strtolower( $parts['scheme'] ) ? 443 : 80;
+	}
+
+	/**
+	 * Checks whether a parsed query uses a registered catalog filter.
+	 *
+	 * @param array $query Parsed query data.
+	 * @return bool
+	 */
+	private static function contains_registered_filter( $query ) {
+		$registered_filters = get_active_product_filters();
+
+		foreach ( array_keys( $query ) as $query_key ) {
+			if ( in_array( $query_key, $registered_filters, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

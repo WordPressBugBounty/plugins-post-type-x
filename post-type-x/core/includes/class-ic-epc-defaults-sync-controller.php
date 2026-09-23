@@ -12,6 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles queued defaults sync lifecycle for admin overwrite boxes.
  */
+if ( class_exists( 'IC_EPC_Defaults_Sync_Controller', false ) ) {
+	return;
+}
+
+/**
+ * Synchronizes EPC defaults through the catalog batch updater.
+ */
 class IC_EPC_Defaults_Sync_Controller {
 	/**
 	 * Controller configuration.

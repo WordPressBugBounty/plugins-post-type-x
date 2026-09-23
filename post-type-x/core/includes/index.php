@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once AL_BASE_PATH . '/includes/tracking.php';
 require_once AL_BASE_PATH . '/includes/util/index.php';
-require_once AL_BASE_PATH . '/includes/class-ic-epc-defaults-sync-controller.php';
 require_once AL_BASE_PATH . '/includes/class-ic-activation-wizard.php';
 require_once AL_BASE_PATH . '/includes/activation-config.php';
 require_once AL_BASE_PATH . '/includes/class-ic-catalog-hooks.php';
@@ -23,6 +22,9 @@ require_once AL_BASE_PATH . '/includes/settings/index.php';
 require_once AL_BASE_PATH . '/includes/widgets/index.php';
 require_once AL_BASE_PATH . '/includes/class-ic-register-product.php';
 require_once AL_BASE_PATH . '/includes/class-ic-product.php';
+
+require_once AL_BASE_PATH . '/includes/class-ic-product-details.php';
+$ic_product_details = new IC_Product_Details();
 
 require_once AL_BASE_PATH . '/includes/product-columns.php';
 require_once AL_BASE_PATH . '/includes/product-category-columns.php';

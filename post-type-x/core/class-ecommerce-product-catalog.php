@@ -305,6 +305,7 @@ final class eCommerce_Product_Catalog {
 	 */
 	public function implecode_addons() {
 		if ( ! is_network_admin() ) {
+			IC_EPC_Extension_Compatibility::maybe_block_incompatible_addons();
 			do_action( 'ecommerce-prodct-catalog-addons' );
 			do_action( 'ecommerce_product_catalog_addons_v3' );
 			do_action( 'implecode_addons' );

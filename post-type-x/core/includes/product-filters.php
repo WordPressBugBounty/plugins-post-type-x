@@ -60,10 +60,52 @@ if ( ! function_exists( 'get_product_catalog_session' ) ) {
 				$session = array();
 			}
 
-			return $session;
+			return ic_normalize_catalog_session_arrays( $session );
 		}
 
 		return array();
+	}
+
+	/**
+	 * Normalizes the array-shaped catalog session sub-keys.
+	 *
+	 * Corrupted session storage can leave a scalar where the catalog expects an
+	 * array. Reading such a value is silent, but the first write to a sub-offset
+	 * throws "Cannot access offset of type string on string", so the sub-keys are
+	 * reset here for every caller instead of at each write site.
+	 *
+	 * @param array $session Catalog session data.
+	 *
+	 * @return array
+	 */
+	function ic_normalize_catalog_session_arrays( $session ) {
+		if ( ! is_array( $session ) ) {
+			return array();
+		}
+		$array_keys = array( 'filters', 'formbuilder_fields' );
+		foreach ( $array_keys as $array_key ) {
+			if ( isset( $session[ $array_key ] ) && ! is_array( $session[ $array_key ] ) ) {
+				$session[ $array_key ] = array();
+			}
+		}
+		// formbuilder_fields carries a fixed two-level shape, [ pre_name ] => [ field_name => value ],
+		// so a scalar one level down is corruption as well and breaks the very same write in
+		// ic_formbuilder_save_field(), which tests it with empty() and lets a non-empty string
+		// through. The sibling filters bucket must NEVER be recursed the same way: it is flat, no
+		// write site indexes it two levels deep, and its values may legitimately be either a scalar
+		// or an array - ic_catalog_filter::set() stores
+		// array_map( $this->sanitization, $raw_filter_value ) for a multi-value $_GET parameter
+		// (includes/product-filter.php), so resetting non-array values there would destroy every
+		// multi-value filter.
+		if ( isset( $session['formbuilder_fields'] ) && is_array( $session['formbuilder_fields'] ) ) {
+			foreach ( $session['formbuilder_fields'] as $pre_name => $saved_fields ) {
+				if ( ! is_array( $saved_fields ) ) {
+					$session['formbuilder_fields'][ $pre_name ] = array();
+				}
+			}
+		}
+
+		return $session;
 	}
 
 	/**

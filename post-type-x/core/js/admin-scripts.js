@@ -363,67 +363,68 @@ jQuery( document ).ready(
 
 			var fields_hide_simple = new Array( 'input[name="archive_multiple_settings\[category_archive_url\]"]', 'input[name="archive_multiple_settings\[seo_title\]"]', 'input[name="archive_multiple_settings\[seo_title_sep\]"]', 'input[name="archive_multiple_settings\[breadcrumbs_title\]"]', 'input[name="archive_multiple_settings\[enable_product_breadcrumbs\]"]', 'input[name="archive_multiple_settings\[product_listing_cats\]"]', 'input[name="archive_multiple_settings\[category_top_cats\]"]', 'input[name="archive_multiple_settings\[cat_template\]"]' );
 			var fields_hide_theme  = new Array( 'input[name="archive_multiple_settings\[product_listing_cats\]"]', 'input[name="archive_multiple_settings\[category_top_cats\]"]', 'input[name="archive_multiple_settings\[cat_template\]"]', 'input[name="archive_multiple_settings\[cat_image_disabled\]"]' );
+		var updateIntegrationModeVisibility = function () {
+			var disable    = false;
+			var is_checked = jQuery( this ).is( ':checked' );
+			var val        = jQuery( this ).val();
+			if (is_checked && val === 'simple') {
+				disable = 'simple';
+			} else if (is_checked && val === 'theme') {
+				disable = 'theme';
+			}
+			if (is_checked) {
+				if ( ! disable) {
+					jQuery( '.simple_mode_settings' ).hide( 'slow' );
+					jQuery( '.theme_mode_settings' ).hide( 'slow' );
+					jQuery( '.advanced_mode_settings' ).show();
+					jQuery( '.advanced_mode_settings_inline' ).show();
+					jQuery.each(
+						fields_hide_simple,
+						function (index, element) {
+								// jQuery( element ).prop( "disabled", disable ).
+							jQuery( element ).closest( 'tr' ).show();
+						}
+					);
+				} else if (disable === 'simple') {
+					jQuery( '.advanced_mode_settings' ).hide();
+						// jQuery( ".advanced_mode_settings_inline" ).hide().
+					jQuery( '.theme_mode_settings' ).hide( 'slow' );
+					jQuery( '.simple_mode_settings' ).show( 'slow' );
+					jQuery.each(
+						fields_hide_simple,
+						function (index, element) {
+								// jQuery( element ).prop( "disabled", disable ).
+								// jQuery( element ).closest( "tr" ).hide().
+						}
+					);
+				} else if (disable === 'theme') {
+					jQuery( '.advanced_mode_settings' ).hide();
+					jQuery( '.simple_mode_settings' ).hide( 'slow' );
+					jQuery( '.theme_mode_settings' ).show( 'slow' );
+					jQuery( '.advanced_mode_settings_inline' ).show();
+					jQuery.each(
+						fields_hide_simple,
+						function (index, element) {
+								// jQuery( element ).prop( "disabled", disable ).
+							jQuery( element ).closest( 'tr' ).show();
+						}
+					);
+					jQuery.each(
+						fields_hide_theme,
+						function (index, element) {
+								// jQuery( element ).prop( "disabled", disable ).
+							jQuery( element ).closest( 'tr' ).hide();
+						}
+					);
+				}
+			}
+		};
 		jQuery( '.ic_radio_td' ).on(
 			'change',
 			' .integration-mode-selection',
-			function () {
-				var disable    = false;
-				var is_checked = jQuery( this ).is( ':checked' );
-				var val        = jQuery( this ).val();
-				if (is_checked && val === 'simple') {
-					disable = 'simple';
-				} else if (is_checked && val === 'theme') {
-					disable = 'theme';
-				}
-				if (is_checked) {
-					if ( ! disable) {
-						jQuery( '.simple_mode_settings' ).hide( 'slow' );
-						jQuery( '.theme_mode_settings' ).hide( 'slow' );
-						jQuery( '.advanced_mode_settings' ).show();
-						jQuery( '.advanced_mode_settings_inline' ).show();
-						jQuery.each(
-							fields_hide_simple,
-							function (index, element) {
-									// jQuery( element ).prop( "disabled", disable ).
-								jQuery( element ).closest( 'tr' ).show();
-							}
-						);
-					} else if (disable === 'simple') {
-						jQuery( '.advanced_mode_settings' ).hide();
-							// jQuery( ".advanced_mode_settings_inline" ).hide().
-						jQuery( '.theme_mode_settings' ).hide( 'slow' );
-						jQuery( '.simple_mode_settings' ).show( 'slow' );
-						jQuery.each(
-							fields_hide_simple,
-							function (index, element) {
-									// jQuery( element ).prop( "disabled", disable ).
-									// jQuery( element ).closest( "tr" ).hide().
-							}
-						);
-					} else if (disable === 'theme') {
-						jQuery( '.advanced_mode_settings' ).hide();
-						jQuery( '.simple_mode_settings' ).hide( 'slow' );
-						jQuery( '.theme_mode_settings' ).show( 'slow' );
-						jQuery( '.advanced_mode_settings_inline' ).show();
-						jQuery.each(
-							fields_hide_simple,
-							function (index, element) {
-									// jQuery( element ).prop( "disabled", disable ).
-								jQuery( element ).closest( 'tr' ).show();
-							}
-						);
-						jQuery.each(
-							fields_hide_theme,
-							function (index, element) {
-									// jQuery( element ).prop( "disabled", disable ).
-								jQuery( element ).closest( 'tr' ).hide();
-							}
-						);
-					}
-				}
-			}
+			updateIntegrationModeVisibility
 		);
-		jQuery( '.integration-mode-selection' ).trigger( 'change' );
+		jQuery( '.integration-mode-selection:checked' ).each( updateIntegrationModeVisibility );
 		/*
 		jQuery( ".overall-product-settings .submit .button-primary" ).click( function () {
 		jQuery.each( fields, function ( index, element ) {

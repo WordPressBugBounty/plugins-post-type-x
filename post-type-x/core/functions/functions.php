@@ -239,10 +239,43 @@ if ( ! function_exists( 'ic_select_product' ) ) {
 			}
 			$select_box .= '</select>';
 		} else {
-			if ( is_array( $selected_value ) ) {
-				$selected_value = implode( ',', $selected_value );
+			/*
+			 * Above the cut-off this used to degrade to a bare "Set Product ID"
+			 * text box: on a 55k catalog the operator had to know the numeric ID
+			 * by heart. The shared selector searches on demand instead. The
+			 * source is resolved per user because the same helper serves the
+			 * order editor (`edit_digital_orders`) and the catalog screens
+			 * (`manage_product_settings`); a caller reachable by someone with
+			 * neither -- a front-end comparison form, say -- gets no source back
+			 * and keeps the text box, so nothing is exposed that the search
+			 * endpoint would refuse.
+			 */
+			$source_key = apply_filters( 'ic_select_product_selector_source', function_exists( 'ic_selector_first_allowed_source' ) ? ic_selector_first_allowed_source( array( 'ic_order_products', 'ic_products' ) ) : '' );
+			// `exclude` has no equivalent on the source, so a caller that filters
+			// the list keeps the legacy control rather than silently losing it.
+			if ( ! empty( $source_key ) && empty( $exclude ) && function_exists( 'ic_selector_field' ) && ic_selector_registry()->has( $source_key ) ) {
+				$field_number = filter_var( $select_name, FILTER_SANITIZE_NUMBER_INT );
+				$select_box   = ic_selector_field(
+					array(
+						'source'       => $source_key,
+						'name'         => $select_name,
+						'id'           => str_replace( array( '[', ']' ), '', $select_name ),
+						'value'        => $selected_value,
+						'multiple'     => is_array( $selected_value ) || ( is_string( $attr ) && false !== strpos( $attr, 'multiple' ) ),
+						// `ic_chosen` is dropped on purpose: the selector replaces Chosen on
+						// this field, and leaving the class on would have both scripts
+						// enhance the same `<select>`.
+						'class'        => trim( 'all-products-dropdown ' . str_replace( 'ic_chosen', '', (string) $css_class ) ),
+						'first_option' => $first_option,
+						'attributes'   => array( 'custom' => $field_number ),
+					)
+				);
+			} else {
+				if ( is_array( $selected_value ) ) {
+					$selected_value = implode( ',', $selected_value );
+				}
+				$select_box = '<input type="text" name="' . esc_attr( $select_name ) . '" placeholder="' . esc_attr__( 'Set Product ID', 'post-type-x' ) . '" value="' . esc_attr( $selected_value ) . '"/>';
 			}
-			$select_box = '<input type="text" name="' . esc_attr( $select_name ) . '" placeholder="' . esc_attr__( 'Set Product ID', 'post-type-x' ) . '" value="' . esc_attr( $selected_value ) . '"/>';
 		}
 
 		return echo_ic_setting( $select_box, $should_echo );
@@ -2238,6 +2271,38 @@ function ic_get_catalog_mode() {
 	$settings['catalog_mode'] = ! empty( $settings['catalog_mode'] ) ? $settings['catalog_mode'] : 'simple';
 
 	return $settings['catalog_mode'];
+}
+
+/**
+ * Returns the catalog mode the administrator actually saved.
+ *
+ * `ic_get_catalog_mode()` reads `get_multiple_settings()`, which ends in
+ * `apply_filters( 'catalog_multiple_settings', ... )`, so a cart plugin forcing
+ * the mode is included in its answer. The General settings screen must not
+ * populate its control from that value: saving the page for any unrelated
+ * reason would then write the forced mode into the option and leave it behind
+ * when the cart is deactivated. This reads the raw option instead.
+ *
+ * @return string Stored catalog mode key, `simple` when nothing was ever saved.
+ */
+function ic_get_stored_catalog_mode() {
+	$settings = get_option( 'archive_multiple_settings', array() );
+	$mode     = ( is_array( $settings ) && ! empty( $settings['catalog_mode'] ) && is_scalar( $settings['catalog_mode'] ) ) ? sanitize_key( (string) $settings['catalog_mode'] ) : '';
+
+	return '' !== $mode ? $mode : 'simple';
+}
+
+/**
+ * Returns the name of the plugin currently forcing the catalog mode.
+ *
+ * A plugin that hooks `catalog_multiple_settings` to force a mode is expected
+ * to also answer here, so the settings screen can say who changed the value
+ * instead of leaving the administrator to guess.
+ *
+ * @return string Plugin name, or an empty string when nothing is forcing it.
+ */
+function ic_get_catalog_mode_source() {
+	return sanitize_text_field( (string) apply_filters( 'ic_catalog_mode_source', '', ic_get_catalog_mode(), ic_get_stored_catalog_mode() ) );
 }
 
 /**

@@ -19,3 +19,5 @@ if ( ! defined( 'IC_FRAMEWORK_BOOTSTRAPPED' ) ) {
 ic_framework_require_once( __DIR__ . '/conditionals.php' );
 ic_framework_require_once( __DIR__ . '/class-ic-html-util.php' );
 ic_framework_require_once( __DIR__ . '/settings/index.php' );
+ic_framework_require_once( __DIR__ . '/style-scripts.php' );
+ic_framework_require_once( __DIR__ . '/ai/index.php' );

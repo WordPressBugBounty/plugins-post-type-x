@@ -159,7 +159,7 @@ function ic_ajax_update_product_listing(form_data, url_replace, change_only, scr
 		'is_search': ic_ajax.is_search,
 		'ic_nonce': ic_ajax.ic_nonce,
 		// Keep the legacy field for older EPC mirrors while the action-specific nonce is canonical.
-		'security': ic_ajax.ic_nonce
+		'security': ic_ajax.nonce
 	};
 
 	jQuery.ic.doAction( 'ic_self_submit_before' );

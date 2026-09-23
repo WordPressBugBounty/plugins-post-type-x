@@ -483,7 +483,7 @@ input[name="_price"], input[name="_sku"], input[name="_mpn"], #al_product_price.
 	border: none;
 }
 
-th.title {
+.product-settings-table th.title, .sort-settings th.title, table.variations th.title {
 	max-width: 100px;
 	text-align: center;
 }
@@ -1247,6 +1247,8 @@ input.error {
 
 span.ic_tip, input.ic_tip {
 	cursor: help;
+    top: 0;
+    left: 0;
 }
 
 .ic_deactivate_confirm {

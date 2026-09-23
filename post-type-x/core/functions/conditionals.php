@@ -394,8 +394,9 @@ function is_ic_product_search( $query = null ) {
 	}
 	$post_type = null;
 	if ( isset( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only conditional check.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only conditional check.
-		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Read-only conditional check; sanitized per shape below.
+		$raw_post_type = wp_unslash( $_GET['post_type'] );
+		$post_type     = is_array( $raw_post_type ) ? array_map( 'sanitize_key', $raw_post_type ) : sanitize_key( $raw_post_type );
 	}
 	if ( ( ( empty( $query ) && is_search() ) || ( ! empty( $query ) && is_object( $query ) && $query->is_search() ) ) && null !== $post_type && is_ic_valid_post_type( $post_type ) ) {
 		return true;
@@ -1240,11 +1241,15 @@ if ( ! function_exists( 'ic_is_session_started' ) ) {
 /**
  * Checks if provided ID is a product
  *
- * @param int $product_id Product ID.
+ * @param mixed $product_id Product ID. Non-scalar input is never a product.
  *
  * @return bool
  */
 function is_ic_product( $product_id ) {
+	if ( ! is_scalar( $product_id ) ) {
+
+		return apply_filters( 'is_ic_product', false, $product_id );
+	}
 	if ( intval( $product_id ) ) {
 		if ( function_exists( 'get_product_listing_id' ) ) {
 			$listing_id = get_product_listing_id();
