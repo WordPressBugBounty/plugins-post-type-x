@@ -1246,6 +1246,35 @@
 		return icAIAdmin.listScreen && typeof icAIAdmin.listScreen === 'object' ? icAIAdmin.listScreen : null;
 	}
 
+	function syncListScreenVisibility(config) {
+		var $columnToggle = $('#ic_ai_enhance-hide.hide-column-tog');
+		var visible = $columnToggle.length ? $columnToggle.prop('checked') : config.columnVisible !== false;
+		var action = String(config.bulkAction || '');
+		var label = String(config.bulkActionLabel || '');
+
+		$('.ic-ai-list-panel, .ic-ai-status-filter').prop('hidden', !visible);
+		$('#bulk-action-selector-top, #bulk-action-selector-bottom').each(function () {
+			var $selector = $(this);
+			var $options = $selector.find('option').filter(function () {
+				return String($(this).val()) === action;
+			});
+
+			if (!visible) {
+				if (String($selector.val()) === action) {
+					$selector.val('-1');
+				}
+				$options.remove();
+				return;
+			}
+
+			if (!$options.length && action) {
+				$('<option></option>').val(action).text(label).appendTo($selector);
+			} else if ($options.length > 1) {
+				$options.slice(1).remove();
+			}
+		});
+	}
+
 	function reviewScreen() {
 		return icAIAdmin.reviewScreen && typeof icAIAdmin.reviewScreen === 'object' ? icAIAdmin.reviewScreen : null;
 	}
@@ -2083,6 +2112,7 @@
 			return;
 		}
 
+		syncListScreenVisibility(config);
 		updatePrimaryListButton();
 		if (activeTask && activeTask.id && !isTaskTerminal(activeTask)) {
 			startTaskWordRotation(activeTask);
@@ -2092,6 +2122,9 @@
 
 		$(document).on('change', 'tbody .check-column input[type="checkbox"], #cb-select-all-1, #cb-select-all-2', function () {
 			window.setTimeout(updatePrimaryListButton, 0);
+		});
+		$(document).on('change', '#ic_ai_enhance-hide.hide-column-tog', function () {
+			syncListScreenVisibility(config);
 		});
 
 		$(document).on('click', '.ic-ai-list-start', function (event) {

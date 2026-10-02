@@ -343,7 +343,7 @@ class IC_Session {
 			$session_value = maybe_serialize( $this->_data );
 			$existing      = $this->get_existing_session_row( $this->_customer_id );
 
-			if ( ! empty( $existing ) && $session_value === $existing['session_value'] ) {
+			if ( is_array( $existing ) && isset( $existing['session_value'], $existing['session_expiry'] ) && $session_value === $existing['session_value'] ) {
 				if ( intval( $existing['session_expiry'] ) !== intval( $this->_session_expiration ) ) {
 					$this->update_session_timestamp( $this->_customer_id, $this->_session_expiration );
 					wp_cache_set( $this->get_cache_prefix() . $this->_customer_id, $this->_data, $this->_cache_group, $this->_session_expiration - time() );

@@ -4,7 +4,7 @@ Tags: product catalog, product gallery, catalog, catalogue, product
 Requires at least: 5.9
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -125,7 +125,12 @@ If on the off-chance you do encounter issues with the plugin pages after an upda
 
 == Changelog ==
 
-= 1.9 – 22/09/2026 =
+= 1.9.1 – 02/10/2026 =
+
+* Improves AI settings controls.
+* Improves customer sessions and product edit screen reliability.
+
+= 1.9.0 – 22/09/2026 =
 
 * Added impleCode AI tools for product and category content.
 

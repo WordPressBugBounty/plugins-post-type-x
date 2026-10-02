@@ -1272,9 +1272,9 @@ class IC_AI_Settings {
 				'hidden_fields'           => array(
 					'action'     => 'ic_ai_save_settings',
 					'post_type'  => $post_type,
-					'target_key' => $this->current_target_for_integration( $integration )->key(),
+					'target_key' => $page_settings['target_key'],
 				),
-				'nonce_action'            => 'ic_ai_settings_' . $this->current_target_for_integration( $integration )->key(),
+				'nonce_action'            => 'ic_ai_settings_' . $page_settings['target_key'],
 				'submit_label'            => __( 'Save AI Settings', 'post-type-x' ),
 			)
 		);

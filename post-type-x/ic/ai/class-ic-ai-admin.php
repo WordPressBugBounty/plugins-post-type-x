@@ -612,14 +612,15 @@ class IC_AI_Admin {
 		$settings_url  = $this->manager->settings()->settings_url( $integration, $asset_target );
 
 		if ( 'list' === $mode ) {
-			$list_target       = ! empty( $context['target'] ) && $context['target'] instanceof IC_AI_Target ? $context['target'] : $integration->target( 'post' );
-			$list_is_taxonomy  = $list_target && 'taxonomy' === $list_target->kind();
-			$list_scope_count  = $this->display_scope_count( $integration, $list_is_taxonomy ? $list_target : null );
-			$list_scope_label  = $list_is_taxonomy ? $list_target->label() : $this->plural_label( $integration );
-			$list_item_labels  = $this->item_labels( $integration, $list_is_taxonomy ? $list_target : null );
-			$list_row_limit    = $this->selectable_row_limit( $list_scope_count, $list_is_taxonomy ? $list_target : null );
-			$list_review_count = $this->saved_preview_count( $list_target );
-			$list_config       = array(
+			$list_target        = ! empty( $context['target'] ) && $context['target'] instanceof IC_AI_Target ? $context['target'] : $integration->target( 'post' );
+			$list_is_taxonomy   = $list_target && 'taxonomy' === $list_target->kind();
+			$list_column_hidden = $this->is_ai_list_ui_hidden( $screen );
+			$list_scope_count   = $this->display_scope_count( $integration, $list_is_taxonomy ? $list_target : null );
+			$list_scope_label   = $list_is_taxonomy ? $list_target->label() : $this->plural_label( $integration );
+			$list_item_labels   = $this->item_labels( $integration, $list_is_taxonomy ? $list_target : null );
+			$list_row_limit     = $this->selectable_row_limit( $list_scope_count, $list_is_taxonomy ? $list_target : null );
+			$list_review_count  = $this->saved_preview_count( $list_target );
+			$list_config        = array(
 				'postType'          => $integration->post_type(),
 				'targetKey'         => $list_target ? $list_target->key() : '',
 				'targetKind'        => $list_target ? $list_target->kind() : 'post',
@@ -635,6 +636,8 @@ class IC_AI_Admin {
 				'reviewUrl'         => $this->review_page_url( $integration, $list_target ),
 				'queryString'       => $this->current_list_query_string(),
 				'bulkAction'        => self::BULK_ACTION,
+				'bulkActionLabel'   => __( 'Enhance', 'post-type-x' ),
+				'columnVisible'     => ! $list_column_hidden,
 				'activeTask'        => $this->active_task_summary( $integration, $list_target ),
 			);
 		} elseif ( 'review' === $mode ) {
@@ -957,6 +960,31 @@ class IC_AI_Admin {
 	}
 
 	/**
+	 * Checks whether the current list screen hides the shared AI column.
+	 *
+	 * Missing screen or core column helpers fail open so direct calls retain the
+	 * existing visible behavior.
+	 *
+	 * @param mixed $screen Current screen.
+	 *
+	 * @return bool
+	 */
+	private function is_ai_list_ui_hidden( $screen = null ) {
+		if ( null === $screen && function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+		}
+		if ( ! is_object( $screen ) || ! function_exists( 'get_hidden_columns' ) ) {
+			return false;
+		}
+		$context = $this->screen_context( $screen );
+		if ( 'list' !== ( $context['mode'] ?? '' ) ) {
+			return false;
+		}
+
+		return in_array( 'ic_ai_enhance', (array) get_hidden_columns( $screen ), true );
+	}
+
+	/**
 	 * Returns the list-aware field JS config for one integration.
 	 *
 	 * @param IC_AI_Integration $integration Integration.
@@ -1097,7 +1125,8 @@ class IC_AI_Admin {
 		$locked       = $this->task_blocks_target_review( $target );
 		$review_attrs = $locked ? ' disabled aria-disabled="true" tabindex="-1"' : '';
 		$review_class = ( $review_count ? '' : ' disabled' ) . ( $locked ? ' disabled' : '' );
-		$html         = sprintf( '<div class="ic-ai-list-panel" data-target-key="%1$s" data-selection-selector="delete_tags[]"><span class="ic-ai-list-panel-label">%2$s</span><span class="ic-ai-list-actions" data-post-type="%3$s" data-target-key="%1$s" data-scope-count="%4$d" data-scope-label="%5$s" data-review-count="%6$d"><a href="#" class="button button-primary ic-ai-list-start">%7$s</a> %12$s <a href="%8$s" class="button button-secondary ic-ai-review-link%9$s"%10$s>%11$s</a><span class="ic-ai-list-progress" aria-live="polite"></span></span></div>', esc_attr( $target->key() ), esc_html__( 'impleCode AI', 'post-type-x' ), esc_attr( $target->post_type() ), $count, esc_attr( $target->label() ), $review_count, esc_html( $this->build_primary_action_label( $count, $this->item_labels( $target->integration(), $target ) ) ), esc_url( $review_url ), $review_class, $review_attrs, esc_html( $this->build_review_action_label( $review_count ) ), $this->credit_usage_indicator( $count ) );
+		$hidden_attr  = $this->is_ai_list_ui_hidden( $screen ) ? ' hidden' : '';
+		$html         = sprintf( '<div class="ic-ai-list-panel"%13$s data-target-key="%1$s" data-selection-selector="delete_tags[]"><span class="ic-ai-list-panel-label">%2$s</span><span class="ic-ai-list-actions" data-post-type="%3$s" data-target-key="%1$s" data-scope-count="%4$d" data-scope-label="%5$s" data-review-count="%6$d"><a href="#" class="button button-primary ic-ai-list-start">%7$s</a> %12$s <a href="%8$s" class="button button-secondary ic-ai-review-link%9$s"%10$s>%11$s</a><span class="ic-ai-list-progress" aria-live="polite"></span></span></div>', esc_attr( $target->key() ), esc_html__( 'impleCode AI', 'post-type-x' ), esc_attr( $target->post_type() ), $count, esc_attr( $target->label() ), $review_count, esc_html( $this->build_primary_action_label( $count, $this->item_labels( $target->integration(), $target ) ) ), esc_url( $review_url ), $review_class, $review_attrs, esc_html( $this->build_review_action_label( $review_count ) ), $this->credit_usage_indicator( $count ), $hidden_attr );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped while built.
 		echo $html;
 	}
@@ -1224,9 +1253,10 @@ class IC_AI_Admin {
 		$locked       = $target instanceof IC_AI_Target && $this->task_blocks_target_review( $target );
 		$review_attrs = $locked ? ' disabled aria-disabled="true" tabindex="-1"' : '';
 		$review_class = ( $review_count ? '' : ' disabled' ) . ( $locked ? ' disabled' : '' );
+		$hidden_attr  = $this->is_ai_list_ui_hidden() ? ' hidden' : '';
 
 		return sprintf(
-			'<div class="ic-ai-list-panel" data-target-key="%2$s"><span class="ic-ai-list-panel-label">%1$s</span><span class="ic-ai-list-actions" data-post-type="%3$s" data-target-key="%2$s" data-scope-count="%4$d" data-scope-label="%5$s" data-review-count="%6$d"><a href="#" class="button button-primary ic-ai-list-start">%7$s</a> %12$s <a href="%8$s" class="button button-secondary ic-ai-review-link%9$s"%10$s>%11$s</a> <span class="ic-ai-list-progress" aria-live="polite"></span></span></div>',
+			'<div class="ic-ai-list-panel"%13$s data-target-key="%2$s"><span class="ic-ai-list-panel-label">%1$s</span><span class="ic-ai-list-actions" data-post-type="%3$s" data-target-key="%2$s" data-scope-count="%4$d" data-scope-label="%5$s" data-review-count="%6$d"><a href="#" class="button button-primary ic-ai-list-start">%7$s</a> %12$s <a href="%8$s" class="button button-secondary ic-ai-review-link%9$s"%10$s>%11$s</a> <span class="ic-ai-list-progress" aria-live="polite"></span></span></div>',
 			esc_html__( 'impleCode AI', 'post-type-x' ),
 			esc_attr( $target instanceof IC_AI_Target ? $target->key() : '' ),
 			esc_attr( $integration->post_type() ),
@@ -1238,7 +1268,8 @@ class IC_AI_Admin {
 			$review_class,
 			$review_attrs,
 			esc_html( $this->build_review_action_label( $review_count ) ),
-			$this->credit_usage_indicator( $scope_count )
+			$this->credit_usage_indicator( $scope_count ),
+			$hidden_attr
 		);
 	}
 
@@ -1264,12 +1295,15 @@ class IC_AI_Admin {
 			'draft'    => __( 'Suggestions pending review', 'post-type-x' ),
 			'none'     => __( 'Not processed', 'post-type-x' ),
 		);
+		$hidden_attr = $this->is_ai_list_ui_hidden( $screen ) ? ' hidden' : '';
 		?>
-		<select name="ic_ai_status">
-			<?php foreach ( $options as $value => $label ) : ?>
-				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current, $value ); ?>><?php echo esc_html( $label ); ?></option>
-			<?php endforeach; ?>
-		</select>
+		<span class="ic-ai-status-filter"<?php echo $hidden_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static boolean attribute. ?>>
+			<select name="ic_ai_status">
+				<?php foreach ( $options as $value => $label ) : ?>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current, $value ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</span>
 		<?php
 	}
 
@@ -1285,7 +1319,11 @@ class IC_AI_Admin {
 			return;
 		}
 
-		$post_type   = (string) $query->get( 'post_type' );
+		$post_type = $query->get( 'post_type' );
+		if ( ! is_scalar( $post_type ) ) {
+			return;
+		}
+		$post_type   = (string) $post_type;
 		$integration = $post_type ? $this->manager->integration( $post_type ) : false;
 		if ( ! $integration || ! $this->target_list_enabled( $integration ) ) {
 			return;
@@ -1352,6 +1390,10 @@ class IC_AI_Admin {
 	 * @return array
 	 */
 	public function register_bulk_action( $actions ) {
+		if ( $this->is_ai_list_ui_hidden() ) {
+			return $actions;
+		}
+
 		$actions[ self::BULK_ACTION ] = __( 'Enhance', 'post-type-x' );
 
 		return $actions;
