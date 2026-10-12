@@ -561,3 +561,113 @@ if ( ! function_exists( 'ic_get_site_name' ) ) {
 		return $site_name;
 	}
 }
+
+if ( ! function_exists( 'ic_nocache' ) ) {
+	/**
+	 * Applies the shared private-response cache policy.
+	 *
+	 * @param WP_REST_Response|null $response Optional REST response.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	function ic_nocache( $response = null ) {
+		$headers = wp_get_nocache_headers();
+		unset( $headers['Last-Modified'] );
+		$headers['Cache-Control']             = 'no-cache, must-revalidate, max-age=0, no-store, private';
+		$headers['Pragma']                    = 'no-cache';
+		$headers['X-LiteSpeed-Cache-Control'] = 'no-cache';
+
+		do_action( 'litespeed_control_set_nocache', 'ic_private_response' );
+
+		if ( $response instanceof WP_REST_Response ) {
+			$response_headers = $response->get_headers();
+			foreach ( array_keys( $response_headers ) as $header_name ) {
+				if ( 'last-modified' === strtolower( $header_name ) ) {
+					unset( $response_headers[ $header_name ] );
+				}
+			}
+			$response->set_headers( array_merge( $response_headers, $headers ) );
+
+			return $response;
+		}
+
+		if ( ! headers_sent() ) {
+			if ( function_exists( 'header_remove' ) ) {
+				header_remove( 'Last-Modified' );
+			}
+			foreach ( $headers as $header_name => $header_value ) {
+				header( $header_name . ': ' . $header_value, true );
+			}
+		}
+
+		return $response;
+	}
+}
+
+if ( ! function_exists( 'ic_rest_response_needs_nocache' ) ) {
+	/**
+	 * Checks whether a REST request is covered by the private-response policy.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 *
+	 * @return bool
+	 */
+	function ic_rest_response_needs_nocache( $request ) {
+		if ( ! $request instanceof WP_REST_Request ) {
+			return false;
+		}
+
+		$route  = $request->get_route();
+		$method = strtoupper( $request->get_method() );
+		if ( 0 === strpos( $route, '/implecode/v1/ai/' ) || 0 === strpos( $route, '/ic-stats/v1/' ) ) {
+			return true;
+		}
+
+		if ( 'POST' !== $method ) {
+			return false;
+		}
+
+		$exact_routes = array(
+			'/implecode/v1/options/update',
+			'/implecode/v1/options/update/',
+			'/implecode/v1/screen-update',
+			'/implecode/v1/screen-update/',
+			'/implecode/v1/freight-platform/is-risk-text',
+			'/implecode/v1/freight-platform/is-risk-text/',
+		);
+		if ( in_array( $route, $exact_routes, true ) ) {
+			return true;
+		}
+
+		if ( preg_match( '#^/implecode/v1/g-map-autocomplete/location-selected/\d+/?$#', $route ) ) {
+			return true;
+		}
+		if ( preg_match( '#^/implecode/v1/customer/.+/?$#', $route ) ) {
+			return true;
+		}
+
+		return (bool) preg_match( '#^/implecode/v1/ic_freight_platform/(?:high_risk_zones|ic_freight_trucks_limit|ic_freight_locations|ic_freight_subscriptions|ic_freight_pricing|ic_freight_dates|ic_freight_taxes|ic_freight_transaction_fees|ic_freight_labor|ic_freight_notifications)/new/\d+/?$#', $route );
+	}
+}
+
+if ( ! function_exists( 'ic_rest_nocache_response' ) ) {
+	/**
+	 * Applies cache controls after REST authentication, validation and dispatch.
+	 *
+	 * @param WP_REST_Response $response REST response.
+	 * @param WP_REST_Server   $server   REST server.
+	 * @param WP_REST_Request  $request  REST request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	function ic_rest_nocache_response( $response, $server, $request ) {
+		unset( $server );
+		if ( ic_rest_response_needs_nocache( $request ) ) {
+			return ic_nocache( $response );
+		}
+
+		return $response;
+	}
+}
+
+add_filter( 'rest_post_dispatch', 'ic_rest_nocache_response', 10, 3 );

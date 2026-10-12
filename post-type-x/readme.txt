@@ -4,7 +4,7 @@ Tags: product catalog, product gallery, catalog, catalogue, product
 Requires at least: 5.9
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 If on the off-chance you do encounter issues with the plugin pages after an update you simply need to flush the permalinks by going to WordPress > Settings > Permalinks and hitting 'save'. That should return things to normal.
 
 == Changelog ==
+
+= 1.9.2 – 12/10/2026 =
+
+* Improved privacy safeguards for product catalog API responses.
 
 = 1.9.1 – 02/10/2026 =
 
